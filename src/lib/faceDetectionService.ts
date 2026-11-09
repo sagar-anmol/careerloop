@@ -17,9 +17,16 @@ export interface DetectedFaceBox {
 export interface FaceDetectionResult {
   faceCount: number;
   faces: DetectedFaceBox[];
-  status: "verified" | "no_face" | "multiple_faces" | "camera_blocked";
+  status: "verified" | "misaligned" | "no_face" | "multiple_faces" | "camera_blocked";
   message: string;
   brightness: number; // 0 - 255
+  alignment?: {
+    isCentered: boolean;
+    isGoodSize: boolean;
+    dx: number; // normalized offset from center (-1 to 1)
+    dy: number;
+    coverage: number; // face area / frame area
+  };
 }
 
 // Global cached native detector if supported
@@ -127,12 +134,44 @@ export async function detectFaces(
         };
       }
 
+      // Check alignment of the single detected face within frame
+      const f = faces[0];
+      const faceCenterX = f.x + f.width / 2;
+      const faceCenterY = f.y + f.height / 2;
+      const frameCenterX = width / 2;
+      const frameCenterY = height / 2;
+
+      const dx = (faceCenterX - frameCenterX) / width;
+      const dy = (faceCenterY - frameCenterY) / height;
+      const coverage = (f.width * f.height) / (width * height);
+
+      // Centered tolerance: within ±15% of frame horizontal center & ±18% vertical center
+      const isCentered = Math.abs(dx) <= 0.15 && Math.abs(dy) <= 0.18;
+      // Size check: face should occupy between 10% and 55% of the frame
+      const isGoodSize = coverage >= 0.08 && coverage <= 0.60;
+
+      const isAligned = isCentered && isGoodSize;
+
+      let alignMessage = "Face perfectly aligned";
+      if (!isGoodSize) {
+        alignMessage = coverage < 0.08 ? "Move closer to the camera" : "Step slightly back from camera";
+      } else if (!isCentered) {
+        alignMessage = dx < -0.12 ? "Move slightly to your right" : dx > 0.12 ? "Move slightly to your left" : "Center your face in circle";
+      }
+
       return {
         faceCount: 1,
         faces,
-        status: "verified",
-        message: "Face verified and aligned",
+        status: isAligned ? "verified" : "misaligned",
+        message: alignMessage,
         brightness,
+        alignment: {
+          isCentered,
+          isGoodSize,
+          dx,
+          dy,
+          coverage,
+        },
       };
     } catch (err) {
       // Fallback if native detector fails on current frame
@@ -339,6 +378,22 @@ function detectFacesViaCanvasCV(
     };
   }
 
+  // Alignment evaluation for Canvas CV:
+  // Center is active and represents the bulk of the skin mass
+  const totalSkin = leftSkin + centerSkin + rightSkin;
+  const centerRatio = centerSkin / (totalSkin || 1);
+  const isCentered = centerRatio >= 0.45 && Math.abs(leftSkin - rightSkin) < significantColumnThreshold * 1.8;
+  const isGoodSize = totalSkinPixels >= minFacePixels * 1.5 && totalSkinPixels <= (sampleW * sampleH) * 0.55;
+
+  const isAligned = isCentered && isGoodSize;
+
+  let alignMsg = "1 Face Verified & Aligned";
+  if (!isGoodSize) {
+    alignMsg = totalSkinPixels < minFacePixels * 1.5 ? "Move closer to center within circle" : "Step slightly back from camera";
+  } else if (!isCentered) {
+    alignMsg = leftSkin > rightSkin ? "Move slightly to your right" : "Move slightly to your left";
+  }
+
   return {
     faceCount: 1,
     faces: [
@@ -349,8 +404,15 @@ function detectFacesViaCanvasCV(
         height: Math.floor(srcHeight * 0.65),
       },
     ],
-    status: "verified",
-    message: "1 Face Verified & In Frame",
+    status: isAligned ? "verified" : "misaligned",
+    message: isAligned ? "Face perfectly aligned in guide" : alignMsg,
     brightness: avgBrightness,
+    alignment: {
+      isCentered,
+      isGoodSize,
+      dx: (rightSkin - leftSkin) / (totalSkin || 1),
+      dy: 0,
+      coverage: totalSkinPixels / (sampleW * sampleH),
+    },
   };
 }

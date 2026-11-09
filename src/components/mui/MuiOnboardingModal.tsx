@@ -190,7 +190,7 @@ export function MuiOnboardingModal({
         setFaceResult(detectRes);
 
         if (detectRes.status === "no_face" || detectRes.status === "camera_blocked") {
-          setCameraError("Cannot capture: No face detected. Please position your face clearly in front of the camera.");
+          setCameraError("Cannot capture: No face detected. Please position your face directly in front of the camera.");
           return;
         }
 
@@ -199,36 +199,16 @@ export function MuiOnboardingModal({
           return;
         }
 
+        if (detectRes.status === "misaligned") {
+          setCameraError(`Cannot capture: ${detectRes.message}. Please center your face inside the green guide.`);
+          return;
+        }
+
         const dataUrl = canvas.toDataURL("image/jpeg");
         setCapturedPhoto(dataUrl);
         setCameraError(null);
         stopCamera();
       }
-    }
-  };
-
-  const handleSimulateSnapshot = () => {
-    // Canvas fallback for environments without real camera
-    const canvas = document.createElement("canvas");
-    canvas.width = 400;
-    canvas.height = 300;
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-      ctx.fillStyle = "#0f172a";
-      ctx.fillRect(0, 0, 400, 300);
-      ctx.fillStyle = "#405FE2";
-      ctx.beginPath();
-      ctx.arc(200, 120, 50, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(200, 240, 80, 50, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 16px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(formData.fullName || "Candidate Photo", 200, 195);
-      const dataUrl = canvas.toDataURL("image/jpeg");
-      setCapturedPhoto(dataUrl);
     }
   };
 
@@ -305,16 +285,6 @@ export function MuiOnboardingModal({
       resumeName: resumeFile ? resumeFile.name : "Resume.pdf",
     };
     onCompleteSignup(finalData);
-  };
-
-  const handleFinishAndStartAssessment = () => {
-    const finalData = {
-      ...formData,
-      candidateId,
-      photo: capturedPhoto,
-      resumeName: resumeFile ? resumeFile.name : "Resume.pdf",
-    };
-    onCompleteAndStartTest(finalData);
   };
 
   const handleClose = () => {
@@ -536,20 +506,20 @@ export function MuiOnboardingModal({
                       position: "absolute",
                       width: "55%",
                       height: "75%",
-                      border: "2px dashed",
+                      border: "3px solid",
                       borderColor:
                         faceResult?.status === "verified"
-                          ? "#22c55e"
+                          ? "#10b981"
                           : faceResult?.status === "multiple_faces"
                           ? "#ef4444"
-                          : "rgba(255, 255, 255, 0.45)",
+                          : "#f59e0b",
                       borderRadius: "50%",
                       pointerEvents: "none",
                       boxShadow:
                         faceResult?.status === "verified"
-                          ? "0 0 16px rgba(34, 197, 94, 0.35)"
-                          : "none",
-                      transition: "all 0.3s ease",
+                          ? "0 0 24px rgba(16, 185, 129, 0.6), inset 0 0 16px rgba(16, 185, 129, 0.2)"
+                          : "0 0 12px rgba(245, 158, 11, 0.3)",
+                      transition: "all 0.25s ease",
                     }}
                   />
 
@@ -564,12 +534,14 @@ export function MuiOnboardingModal({
                     }
                     label={
                       faceResult?.status === "verified"
-                        ? "1 Face Verified & Aligned"
+                        ? "Face Perfectly Aligned & Verified"
                         : faceResult?.status === "multiple_faces"
                         ? `Alert: ${faceResult.faceCount} Faces Detected`
+                        : faceResult?.status === "misaligned"
+                        ? (faceResult.message || "Align Face Inside Green Circle")
                         : faceResult?.status === "camera_blocked"
-                        ? "Camera Obstructed / Dark"
-                        : "Align Face in Center"
+                        ? "Camera Obstructed / Too Dark"
+                        : "Align Face Inside Green Circle"
                     }
                     size="small"
                     color={
@@ -583,8 +555,8 @@ export function MuiOnboardingModal({
                       position: "absolute",
                       bottom: 12,
                       fontWeight: 700,
-                      fontSize: "0.72rem",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                      fontSize: "0.74rem",
+                      boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
                     }}
                   />
                 </>
@@ -601,25 +573,21 @@ export function MuiOnboardingModal({
 
             <Box sx={{ mt: 2.5, display: "flex", justifyContent: "center", gap: 2 }}>
               {!capturedPhoto ? (
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<PhotoCameraIcon />}
-                    onClick={capturePhoto}
-                  >
-                    Take Photo Snapshot
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="inherit"
-                    size="small"
-                    onClick={handleSimulateSnapshot}
-                    sx={{ fontSize: "0.75rem" }}
-                  >
-                    Use Sample ID Photo
-                  </Button>
-                </>
+                <Button
+                  variant="contained"
+                  color={faceResult?.status === "verified" ? "success" : "primary"}
+                  startIcon={<PhotoCameraIcon />}
+                  onClick={capturePhoto}
+                  disabled={faceResult?.status !== "verified"}
+                  sx={{
+                    px: 3.5,
+                    py: 1,
+                    fontWeight: 700,
+                    boxShadow: faceResult?.status === "verified" ? "0 4px 14px rgba(16, 185, 129, 0.4)" : "none",
+                  }}
+                >
+                  {faceResult?.status === "verified" ? "Capture Verified Photo" : "Align Face to Capture"}
+                </Button>
               ) : (
                 <Button
                   variant="outlined"
