@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "deploy:pages": "npm run build && XDG_CONFIG_HOME=.wrangler-config wrangler pages deploy out --project-name=careerloop-pages",
+    "deploy:worker": "npm run build:worker && XDG_CONFIG_HOME=.wrangler-config wrangler deploy",
     "build:worker": "opennextjs-cloudflare build",
-    "preview": "npm run build:worker && XDG_CONFIG_HOME=.wrangler-config wrangler dev",
-    "deploy": "npm run build:worker && XDG_CONFIG_HOME=.wrangler-config wrangler deploy",
     "login": "XDG_CONFIG_HOME=.wrangler-config wrangler login",
     "whoami": "XDG_CONFIG_HOME=.wrangler-config wrangler whoami",
     "start": "next start",
