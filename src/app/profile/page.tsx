@@ -78,39 +78,57 @@ export default function CandidateProfileDashboardPage() {
 
     async function loadCandidate() {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!session?.user) {
-          // If no session, fallback to local storage or redirect to landing with auth prompt
-          const cached = typeof window !== "undefined" ? localStorage.getItem("cl_candidate") : null;
-          if (cached) {
-            try {
-              const parsed = JSON.parse(cached);
-              if (isMounted) setCurrentUser(parsed);
-              if (parsed?.candidateId) {
-                loadHistory(parsed.candidateId);
-              }
-            } catch (e) {
-              console.debug("Failed parsing cached candidate:", e);
+        // Read local storage cache first for instant display
+        const cached = typeof window !== "undefined" ? localStorage.getItem("cl_candidate") : null;
+        let cachedParsed: CandidateProfileData | null = null;
+        if (cached) {
+          try {
+            cachedParsed = JSON.parse(cached);
+            if (isMounted && cachedParsed) {
+              setCurrentUser(cachedParsed);
+              const cid = cachedParsed.candidateId || cachedParsed.candidate_id;
+              if (cid) loadHistory(cid);
             }
+          } catch (e) {
+            console.debug("Failed parsing cached candidate:", e);
           }
-          if (isMounted) setLoading(false);
-          return;
         }
 
-        const profile = await fetchCandidateProfile(session.user.id, undefined, session.user.email);
-        if (isMounted) {
-          const loadedUser: CandidateProfileData = profile || {
-            email: session.user.email || "",
-            id: session.user.id,
-            candidateId: `CL-2026-${session.user.id.slice(0, 6).toUpperCase()}`,
-            fullName: session.user.user_metadata?.full_name || session.user.email?.split("@")[0].replace(/[._-]/g, " ") || "Candidate",
-            domain: "Diploma / Technical Cohort",
-            city: "India",
-          };
-          setCurrentUser(loadedUser);
-          if (loadedUser.candidateId) {
-            loadHistory(loadedUser.candidateId);
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session?.user) {
+          const profile = await fetchCandidateProfile(session.user.id, undefined, session.user.email);
+          if (isMounted) {
+            const loadedUser: CandidateProfileData = profile || cachedParsed || {
+              email: session.user.email || "",
+              id: session.user.id,
+              candidateId: `CL-2026-${session.user.id.slice(0, 6).toUpperCase()}`,
+              fullName: session.user.user_metadata?.full_name || session.user.email?.split("@")[0].replace(/[._-]/g, " ") || "Candidate",
+              domain: "Diploma (Mechanical / Auto / Tech)",
+              city: "India",
+            };
+            setCurrentUser(loadedUser);
+            if (typeof window !== "undefined" && profile) {
+              localStorage.setItem("cl_candidate", JSON.stringify(loadedUser));
+            }
+            const cid = loadedUser.candidateId || loadedUser.candidate_id;
+            if (cid) {
+              loadHistory(cid);
+            }
+          }
+        } else if (!cachedParsed) {
+          // If neither session nor cache exists, check if there's any recent candidate in database
+          const { data: recentCandidate } = await supabase
+            .from("candidates")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (isMounted && recentCandidate) {
+            setCurrentUser(recentCandidate);
+            const cid = recentCandidate.candidate_id;
+            if (cid) loadHistory(cid);
           }
         }
       } catch (err) {
@@ -134,8 +152,12 @@ export default function CandidateProfileDashboardPage() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user && isMounted) {
-        const p = await fetchCandidateProfile(session.user.id);
-        if (isMounted && p) setCurrentUser(p);
+        const p = await fetchCandidateProfile(session.user.id, undefined, session.user.email);
+        if (isMounted && p) {
+          setCurrentUser(p);
+          const cid = p.candidate_id || p.candidateId;
+          if (cid) loadHistory(cid);
+        }
       }
     });
 
@@ -327,7 +349,7 @@ export default function CandidateProfileDashboardPage() {
                 { id: "overview", label: "Executive Dashboard", icon: Layers, badge: totalTests > 0 ? "Active" : "Ready" },
                 { id: "assessments", label: "Assessment & Scoring", icon: Shield, badge: `${totalTests}/2` },
                 { id: "dossier", label: "Candidate Dossier", icon: FileText, badge: "Verified" },
-                { id: "partners", label: "Agency Dispatch", icon: Building2, badge: "Tier 1" },
+                { id: "partners", label: "Agency Dispatch", icon: Building2, badge: "Locked" },
                 { id: "settings", label: "Settings & Security", icon: Settings },
               ].map((item) => {
                 const Icon = item.icon;
@@ -827,46 +849,74 @@ export default function CandidateProfileDashboardPage() {
             </div>
           )}
 
-          {/* TAB 4: RECRUITER PLACEMENT ROUTE */}
+          {/* TAB 4: RECRUITER PLACEMENT ROUTE (LOCKED) */}
           {activeTab === "partners" && (
             <div className="space-y-6">
-              <Card className="border-blue-100/70 shadow-sm bg-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-slate-900">
-                    Partner Recruiter Dispatch Pipeline
-                  </CardTitle>
-                  <CardDescription className="text-xs text-slate-500">
-                    Tier-1 manufacturing and automotive placement network with ₹0 advance fee
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { name: "ApexHire Technical Staffing", role: "Diploma Engineer Trainee (DET)", status: "Active Dispatch", salary: "₹2.8L - ₹3.6L / yr" },
-                    { name: "TalentPulse Industrial Solutions", role: "Quality Metrology & CMM Inspector", status: "Priority Queue", salary: "₹3.2L - ₹4.2L / yr" },
-                    { name: "BlueChip Automotive Recruiters", role: "Production Line & CNC Diagnostics", status: "Under Review", salary: "₹3.0L - ₹3.8L / yr" },
-                  ].map((partner, i) => (
-                    <div key={i} className="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[#003c5e] text-white flex items-center justify-center font-bold text-sm">
-                          {partner.name.charAt(0)}
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm text-slate-900">{partner.name}</h4>
-                          <p className="text-xs text-slate-500">{partner.role}</p>
-                        </div>
-                      </div>
+              <Card className="border-red-200/80 shadow-md bg-white overflow-hidden relative">
+                {/* Red Security Banner */}
+                <div className="bg-gradient-to-r from-red-600 to-rose-700 text-white px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+                      <Lock className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold tracking-wide">RESTRICTED DISPATCH ACCESS</h3>
+                      <p className="text-[11px] text-red-100">Tier-1 Corporate Recruitment Integration Channel</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="border-white/30 text-white bg-white/10 text-[10px] font-mono uppercase tracking-wider font-bold">
+                    Secure Enclave
+                  </Badge>
+                </div>
 
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          <p className="text-xs font-bold text-slate-900">{partner.salary}</p>
-                          <span className="text-[10px] text-emerald-600 font-semibold">{partner.status}</span>
-                        </div>
-                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
-                          Eligible
-                        </Badge>
+                <CardContent className="p-8 sm:p-12 text-center flex flex-col items-center justify-center">
+                  {/* Red Keypad Lock Icon Graphic */}
+                  <div className="relative mb-6">
+                    <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-red-500 via-rose-600 to-red-700 flex flex-col items-center justify-center shadow-xl shadow-red-500/25 ring-8 ring-red-100">
+                      <Lock className="w-10 h-10 text-white drop-shadow-md mb-1" />
+                      {/* Keypad dots simulation */}
+                      <div className="grid grid-cols-3 gap-1 px-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
                       </div>
                     </div>
-                  ))}
+                    <div className="absolute -bottom-2 -right-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider border-2 border-white shadow-sm">
+                      Locked
+                    </div>
+                  </div>
+
+                  {/* High Visibility Prompt Text */}
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight max-w-md">
+                    Attempt the test, give your best
+                  </h2>
+                  <p className="text-slate-600 text-xs sm:text-sm max-w-lg mt-2 leading-relaxed">
+                    Partner Recruiter Dispatch Pipeline unlocks automatically once you complete your proctored assessment. Ensure maximum focus to achieve your qualifying benchmark.
+                  </p>
+
+                  {/* Status Indicator */}
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-red-800 text-xs font-bold">
+                      <Lock className="w-3.5 h-3.5 text-red-600" />
+                      <span>Pipeline Gated</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-[#003c5e] text-xs font-semibold">
+                      <span>Quota: {attemptsLeft} attempts remaining</span>
+                    </div>
+                  </div>
+
+                  {/* Action Button to launch test */}
+                  <div className="mt-8">
+                    <Button
+                      size="lg"
+                      onClick={() => setIsAssessmentOpen(true)}
+                      disabled={totalTests >= 2}
+                      className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold shadow-lg shadow-red-500/25 px-8"
+                    >
+                      <PlayCircle className="w-5 h-5 mr-2" />
+                      {totalTests >= 2 ? "Attempts Completed" : totalTests === 1 ? "Retake Assessment Now" : "Start Proctored Test Now"}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>

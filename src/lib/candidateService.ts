@@ -43,36 +43,46 @@ export interface TestAttempt {
 export async function registerCandidateDossier(input: CandidateRegistrationInput) {
   let authUserId: string | null = null;
 
-  // 1. If password provided, sign up via Supabase Auth
+  // 1. If password provided, register / update through API route for auto email confirmation & password set
   if (input.password && input.password.length >= 6) {
-    const { data: authData, error: authErr } = await supabase.auth.signUp({
-      email: input.email.trim(),
-      password: input.password,
-      options: {
-        data: {
-          full_name: input.fullName,
-          phone: input.phone,
-          candidate_id: input.candidateId,
-          domain: input.domain,
-        },
-      },
-    });
-
-    if (authErr) {
-      // If user already exists, attempt to sign in to link session
-      if (authErr.message.includes("User already registered") || authErr.message.includes("already exists")) {
-        const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           email: input.email.trim(),
           password: input.password,
-        });
-        if (!signInErr && signInData.user) {
-          authUserId = signInData.user.id;
+          fullName: input.fullName,
+          phone: input.phone,
+          domain: input.domain,
+          candidateId: input.candidateId,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json?.user?.id) {
+          authUserId = json.user.id;
         }
-      } else {
-        console.warn("Auth signup warning:", authErr.message);
       }
-    } else if (authData.user) {
-      authUserId = authData.user.id;
+
+      // Immediately sign in with the credentials so client has an active authenticated session
+      const { data: signInData } = await supabase.auth.signInWithPassword({
+        email: input.email.trim(),
+        password: input.password,
+      });
+
+      if (signInData?.user) {
+        authUserId = signInData.user.id;
+      }
+    } catch (e) {
+      console.warn("API registration fallback:", e);
+      // Fallback to client signup if fetch fails
+      const { data: authData } = await supabase.auth.signUp({
+        email: input.email.trim(),
+        password: input.password,
+      });
+      if (authData?.user) authUserId = authData.user.id;
     }
   }
 

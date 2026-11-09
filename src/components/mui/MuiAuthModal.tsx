@@ -47,8 +47,15 @@ export function MuiAuthModal({
     try {
       const authResult = await signInCandidate(email, password);
       if (authResult?.user) {
-        const profile = await fetchCandidateProfile(authResult.user.id);
-        onSignedIn(profile || { email: authResult.user.email });
+        const profile = await fetchCandidateProfile(authResult.user.id, undefined, authResult.user.email);
+        if (profile) {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("cl_candidate", JSON.stringify(profile));
+          }
+          onSignedIn(profile);
+        } else {
+          onSignedIn({ email: authResult.user.email, id: authResult.user.id });
+        }
         onClose();
       }
     } catch (err: unknown) {
