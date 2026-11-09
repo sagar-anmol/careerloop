@@ -116,18 +116,29 @@ export default function CandidateProfileDashboardPage() {
               loadHistory(cid);
             }
           }
-        } else if (!cachedParsed) {
-          // If neither session nor cache exists, check if there's any recent candidate in database
-          const { data: recentCandidate } = await supabase
-            .from("candidates")
-            .select("*")
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
+        } else {
+          // If no active auth session, look up by cached candidate email, or most recent candidate record
+          const targetEmail = cachedParsed?.email || undefined;
+          let profile = null;
+          if (targetEmail) {
+            profile = await fetchCandidateProfile(undefined, undefined, targetEmail);
+          }
+          if (!profile) {
+            const { data: recentCandidate } = await supabase
+              .from("candidates")
+              .select("*")
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            profile = recentCandidate;
+          }
 
-          if (isMounted && recentCandidate) {
-            setCurrentUser(recentCandidate);
-            const cid = recentCandidate.candidate_id;
+          if (isMounted && profile) {
+            setCurrentUser(profile);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("cl_candidate", JSON.stringify(profile));
+            }
+            const cid = profile.candidate_id || profile.candidateId;
             if (cid) loadHistory(cid);
           }
         }
