@@ -34,7 +34,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
       title: "Strict Proctored Assessment",
       subtitle: "Anti-Cheating & Webcam Integrity",
       description:
-        "Take a timed technical evaluation with your laptop camera active. ₹0 upfront—nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
+        "Take a timed technical evaluation with your device camera active. Zero upfront fee—nominal review charges apply only after you receive an interview call or offer letter.",
       tag: "Live Camera ON",
       icon: <VideocamIcon sx={{ fontSize: 18, color: "#003c5e" }} />,
     },

@@ -6,9 +6,6 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import SecurityIcon from "@mui/icons-material/Security";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 interface MuiHeroProps {
   onStartAssessment: () => void;
@@ -19,8 +16,12 @@ export function MuiHero({ onStartAssessment }: MuiHeroProps) {
     <Box
       component="section"
       sx={{
-        py: { xs: 6, md: 8 },
-        minHeight: { xs: 540, md: 520 },
+        py: { xs: 8, sm: 10, md: 14, lg: 16 },
+        minHeight: { xs: "calc(100vh - 70px)", md: "calc(100vh - 70px)" },
+        "@supports (min-height: 100dvh)": {
+          minHeight: { xs: "calc(100dvh - 70px)", md: "calc(100dvh - 70px)" },
+        },
+        boxSizing: "border-box",
         position: "relative",
         display: "flex",
         alignItems: "center",
@@ -75,20 +76,20 @@ export function MuiHero({ onStartAssessment }: MuiHeroProps) {
               textShadow: "0 1px 6px rgba(0, 0, 0, 0.4)",
             }}
           >
-            JobHai matches ITI, Diploma, and Graduate Engineering candidates with leading companies across top industry sectors. Average packages of <strong style={{ color: "#ffffff" }}>₹2.4L to ₹4.5L CTC</strong> with Government DBT support, free bus commute, and subsidized meals. <strong style={{ color: "#ffffff" }}>Zero upfront fees</strong>—nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.
+            careerloop connects skilled talent and technical professionals with leading employers across top industry sectors. Access competitive, market-standard compensation packages, performance incentives, and career acceleration benefits. <strong style={{ color: "#ffffff" }}>Zero advance fee</strong>—nominal review charges apply only once you are shortlisted for interview rounds or receive an offer letter.
           </Typography>
 
           {/* Call to Action Button */}
-          <Box sx={{ display: "flex", justifyContent: { xs: "center", md: "flex-start" }, mb: 3.5 }}>
+          <Box sx={{ display: "flex", justifyContent: { xs: "center", md: "flex-start" } }}>
             <Button
               variant="contained"
               size="large"
               onClick={onStartAssessment}
               endIcon={<ArrowForwardIcon />}
               sx={{
-                py: 1.3,
-                px: 4,
-                fontSize: "1rem",
+                py: 1.5,
+                px: 4.5,
+                fontSize: "1.05rem",
                 fontWeight: 700,
                 bgcolor: "#405FE2",
                 color: "#ffffff",
@@ -101,56 +102,6 @@ export function MuiHero({ onStartAssessment }: MuiHeroProps) {
             >
               Sign Up &amp; Take Free Assessment
             </Button>
-          </Box>
-
-          {/* Clean Value Props - No background circle/container */}
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: { xs: "center", md: "flex-start" },
-              gap: { xs: 1.5, sm: 2.5 },
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-              <MonetizationOnIcon sx={{ color: "#22c55e", fontSize: 19 }} />
-              <Typography variant="body2" sx={{ color: "#ffffff", fontWeight: 700, textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
-                ₹0 Upfront Cost
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                width: 1,
-                height: 14,
-                bgcolor: "rgba(255, 255, 255, 0.3)",
-                display: { xs: "none", sm: "block" },
-              }}
-            />
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-              <SecurityIcon sx={{ color: "#60a5fa", fontSize: 19 }} />
-              <Typography variant="body2" sx={{ color: "#ffffff", fontWeight: 700, textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
-                Avg. ₹2.4L – ₹4.5L CTC
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                width: 1,
-                height: 14,
-                bgcolor: "rgba(255, 255, 255, 0.3)",
-                display: { xs: "none", sm: "block" },
-              }}
-            />
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
-              <VerifiedUserIcon sx={{ color: "#60a5fa", fontSize: 19 }} />
-              <Typography variant="body2" sx={{ color: "#ffffff", fontWeight: 700, textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
-                Free Bus &amp; Subsidized Canteen
-              </Typography>
-            </Box>
           </Box>
         </Box>
       </Container>

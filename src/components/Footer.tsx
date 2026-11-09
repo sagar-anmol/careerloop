@@ -14,7 +14,7 @@ export function Footer() {
           <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
             <Briefcase className="w-3.5 h-3.5" />
           </div>
-          <span className="font-bold text-white text-sm">JobHai</span>
+          <span className="font-bold text-white text-sm">careerloop</span>
           <span className="text-slate-500">&bull; Skill Assessment &amp; Pay-After-Placement Network</span>
         </div>
 
@@ -25,7 +25,7 @@ export function Footer() {
           <a href="#placement-terms" className="hover:text-blue-400 transition-colors">Pay-After-Placement</a>
           <a href="#faq" className="hover:text-blue-400 transition-colors">FAQ</a>
           <a 
-            href={`https://wa.me/918789970312?text=${encodeURIComponent("Hello JobHai, I want to inquire about the technical assessment and pay-after-placement model.")}`}
+            href={`https://wa.me/918789970312?text=${encodeURIComponent("Hello careerloop, I want to inquire about the technical assessment and pay-after-placement model.")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-emerald-400 text-emerald-500 font-semibold"
@@ -36,7 +36,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="text-[11px] text-slate-500">
-          &copy; 2026 JobHai. All rights reserved.
+          &copy; 2026 careerloop. All rights reserved.
         </div>
 
       </div>

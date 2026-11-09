@@ -39,11 +39,11 @@ export function MuiFooter() {
                 <BusinessCenterIcon fontSize="small" />
               </Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary" }}>
-                Job<span style={{ color: "#405FE2" }}>Hai</span>
+                Career<span style={{ color: "#405FE2" }}>Loop</span>
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 320, lineHeight: 1.6 }}>
-              Direct technical evaluation & recruitment partner placement network. ₹0 upfront — nominal fee for assessment & review is payable only once you receive an interview call or offer letter.
+              Direct technical evaluation &amp; recruitment partner placement network. Zero advance charges — nominal evaluation fee is payable only once you receive an interview call or offer letter.
             </Typography>
           </Grid>
 
@@ -56,11 +56,8 @@ export function MuiFooter() {
               <Link href="#how-it-works" underline="hover" color="text.secondary" variant="body2">
                 Candidate Roadmap
               </Link>
-              <Link href="#perks" underline="hover" color="text.secondary" variant="body2">
-                Workplace Perks & Benefits
-              </Link>
               <Link href="#placement-terms" underline="hover" color="text.secondary" variant="body2">
-                Average CTC & Fee Terms
+                Compensation &amp; Terms
               </Link>
               <Link href="#faq" underline="hover" color="text.secondary" variant="body2">
                 Candidate FAQ
@@ -74,9 +71,9 @@ export function MuiFooter() {
               QUALIFICATIONS
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Typography variant="body2" color="text.secondary">ITI Technical (NAPS)</Typography>
-              <Typography variant="body2" color="text.secondary">Diploma Engineers (NATS)</Typography>
-              <Typography variant="body2" color="text.secondary">B.E. / B.Tech Graduates</Typography>
+              <Typography variant="body2" color="text.secondary">Technical &amp; Skilled Trades</Typography>
+              <Typography variant="body2" color="text.secondary">Engineering Associates</Typography>
+              <Typography variant="body2" color="text.secondary">Graduates &amp; Trainees</Typography>
               <Typography variant="body2" color="text.secondary">Direct Enterprise Hiring</Typography>
             </Box>
           </Grid>
@@ -90,7 +87,7 @@ export function MuiFooter() {
               Strict proctored integrity standards. ISO-aligned data privacy.
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-              Email: placement@jobhai.in
+              Email: placement@careerloop.in
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
               Operating in: Bengaluru • Pune • Hyderabad • Gurgaon • Dubai
@@ -111,7 +108,7 @@ export function MuiFooter() {
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            © 2026 JobHai Network Technologies. All rights reserved.
+            © 2026 careerloop Network Technologies. All rights reserved.
           </Typography>
           <Typography variant="caption" color="text.secondary">
             Pay-After-Placement Agreement • Privacy Policy • Anti-Cheating Terms

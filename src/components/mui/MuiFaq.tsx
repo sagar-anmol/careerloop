@@ -21,23 +21,23 @@ export function MuiFaq() {
   const faqs = [
     {
       q: "Is there really no upfront fee to take the test and get job opportunities?",
-      a: "Yes, exactly ₹0 upfront. You never pay any advance charges to take the proctored test or create your verified candidate profile. Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
+      a: "Yes, there are zero upfront charges. You never pay any advance fees to take the proctored test or create your verified candidate profile. A nominal fee for assessment and review is payable only once you receive a verified interview call or offer letter.",
     },
     {
       q: "How does the Government DBT (Direct Benefit Transfer) stipend work?",
-      a: "Under the NAPS (for ITI) and NATS (for Diploma and Graduates) schemes, a substantial monthly portion of your stipend (₹1,500 to ₹6,150) is disbursed directly from the Central Government into your official Aadhaar-linked bank account, ensuring complete transparency.",
+      a: "Under recognized apprenticeship and industry schemes, eligible monthly stipends and training allowances are disbursed directly into your official bank account, ensuring timely and transparent payouts.",
     },
     {
       q: "What bus transportation and canteen facilities are available?",
-      a: "Partner enterprise facilities provide designated company bus commute routes connecting key city pickup points. All facilities also maintain subsidized on-site canteens serving nutritious breakfast, lunch, tea, and meal options during shifts.",
+      a: "Partner enterprise facilities typically provide designated company bus commute routes connecting key pickup points, alongside subsidized on-site dining and meal options during shifts.",
     },
     {
       q: "How are overtime hours and extra shifts compensated?",
-      a: "Overtime is calculated on a fixed hourly basis (ranging from ₹125/hr to ₹142/hr) or double-overtime provisions depending on the specific enterprise. Overtime earnings are added directly to your monthly payout slip.",
+      a: "Overtime is compensated according to standardized company policies with applicable hourly overtime rates or shift differential multipliers added directly to your monthly payout.",
     },
     {
       q: "What happens if I take the assessment but do not receive an interview or offer letter?",
-      a: "You owe exactly ₹0. Nominal fee for assessment & review is payable only once you receive an interview call or offer letter. If you do not receive an interview call or offer letter, you have zero financial or legal liability.",
+      a: "You owe nothing. The nominal assessment & review fee is payable only once you receive an interview call or official offer letter. If you do not receive an interview call or offer letter, you have zero financial liability.",
     },
   ];
 

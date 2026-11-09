@@ -146,7 +146,7 @@ export function AgencyPartnerSection({ onOpenCandidateModal }: AgencyPartnerSect
                 Get Represented by All 450+ Agencies Simultaneously
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                When you graduate from JobHai, you do not apply one-by-one into cold corporate job portals. Our partner agencies receive your verified code repository and actively advocate for you with their enterprise clients.
+                When you graduate from careerloop, you do not apply one-by-one into cold corporate job portals. Our partner agencies receive your verified code repository and actively advocate for you with their enterprise clients.
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-300 pt-2">
                 <div className="flex items-center gap-1.5">

@@ -9,7 +9,7 @@ export function MuiWhatsAppButton() {
   const handleOpenWhatsApp = () => {
     const phoneNumber = "919876543210";
     const text = encodeURIComponent(
-      "Hi JobHai Support, I want to know more about the proctored skill assessment and recruitment partner interview scheduling."
+      "Hi careerloop Support, I want to know more about the proctored skill assessment and recruitment partner interview scheduling."
     );
     window.open(`https://wa.me/${phoneNumber}?text=${text}`, "_blank");
   };

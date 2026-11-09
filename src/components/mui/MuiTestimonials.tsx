@@ -21,7 +21,7 @@ export function MuiTestimonials() {
       placedCount: "480+ Placed",
       candidateName: "Aditya Nair",
       role: "Cloud Infrastructure Engineer",
-      ctc: "₹18.5 LPA",
+      ctc: "Tier 1 Band",
       quote:
         "The proctored test was strict—live camera on and no tab switching. Once my score was validated, ApexHire reached out within 48 hours for round 1.",
       avatar: "AN",
@@ -33,7 +33,7 @@ export function MuiTestimonials() {
       placedCount: "860+ Placed",
       candidateName: "Pooja Sharma",
       role: "Senior Full-Stack Engineer",
-      ctc: "₹16.0 LPA",
+      ctc: "High-Growth CTC",
       quote:
         "Loved the pay-after-placement model. I paid zero upfront, took the assessment, and got interviewed by a high-growth fintech through TalentPulse.",
       avatar: "PS",
@@ -45,7 +45,7 @@ export function MuiTestimonials() {
       placedCount: "310+ Placed",
       candidateName: "Rohan Deshmukh",
       role: "DevOps & SRE Specialist",
-      ctc: "₹19.2 LPA",
+      ctc: "Enterprise Band",
       quote:
         "BlueChip directly matched my proctored scorecard with an enterprise banking client. Received an offer in 3 weeks, and the nominal post-placement fee was very reasonable.",
       avatar: "RD",
@@ -57,7 +57,7 @@ export function MuiTestimonials() {
       placedCount: "290+ Placed",
       candidateName: "Sneha Kapadia",
       role: "Lead Product Designer",
-      ctc: "₹14.5 LPA",
+      ctc: "Market Standard",
       quote:
         "Horizon reviewed my evaluated dossier and scheduled 2 rounds with an overseas SaaS company. Smooth, genuine, and no upfront cost pressure.",
       avatar: "SK",
@@ -69,7 +69,7 @@ export function MuiTestimonials() {
       placedCount: "420+ Placed",
       candidateName: "Vikram Sengupta",
       role: "Application Security Analyst",
-      ctc: "₹17.0 LPA",
+      ctc: "Specialist Band",
       quote:
         "The strict proctoring gave hiring managers 100% confidence in my test result. NextGen fast-tracked me straight to the hiring manager round.",
       avatar: "VS",
@@ -81,7 +81,7 @@ export function MuiTestimonials() {
       placedCount: "510+ Placed",
       candidateName: "Arjun Verma",
       role: "Systems Architect (Dubai)",
-      ctc: "₹24.0 LPA",
+      ctc: "Global Tier",
       quote:
         "Placed for a Dubai tech firm via Vanguard HR. The zero-upfront policy made it totally risk-free. I only paid the nominal fee after signing my employment contract.",
       avatar: "AV",

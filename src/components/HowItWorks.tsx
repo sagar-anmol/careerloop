@@ -60,7 +60,7 @@ export function HowItWorks() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <Badge variant="outline" className="px-3 py-1 bg-background text-primary border-primary/20 text-xs font-semibold">
-            The JobHai Advantage
+            The careerloop Advantage
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
             How The Skills &bull; Agency Pipeline Works
@@ -129,13 +129,13 @@ export function HowItWorks() {
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl text-center lg:text-left">
               <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs px-2.5 py-1">
-                The Traditional Path vs. The JobHai Agency Model
+                The Traditional Path vs. The careerloop Agency Model
               </Badge>
               <h4 className="text-2xl font-bold tracking-tight text-white">
                 Stop Sending 200 Resumes Into Company ATS Black Holes.
               </h4>
               <p className="text-sm text-blue-100/80 leading-relaxed">
-                Third-party HR agencies are commissioned by employers to fill open roles rapidly. When you graduate from JobHai, partner agencies prioritize your candidate profile because our curriculum is calibrated directly to their live client job orders.
+                Third-party HR agencies are commissioned by employers to fill open roles rapidly. When you graduate from careerloop, partner agencies prioritize your candidate profile because our curriculum is calibrated directly to their live client job orders.
               </p>
             </div>
             
@@ -146,7 +146,7 @@ export function HowItWorks() {
                 <div className="text-[11px] text-blue-200/70 mt-0.5">Cold applications</div>
               </div>
               <div className="p-4 rounded-xl bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 text-center min-w-[160px]">
-                <div className="text-xs uppercase text-emerald-300 font-semibold">JobHai Agency Model</div>
+                <div className="text-xs uppercase text-emerald-300 font-semibold">careerloop Agency Model</div>
                 <div className="text-xl font-bold text-emerald-400 mt-1">78% Interview Rate</div>
                 <div className="text-[11px] text-emerald-200/80 mt-0.5">Direct recruiter push</div>
               </div>

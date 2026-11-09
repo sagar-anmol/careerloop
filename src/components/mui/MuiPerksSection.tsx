@@ -35,15 +35,15 @@ export function MuiPerksSection() {
       icon: <AccountBalanceIcon sx={{ fontSize: 28, color: "#15803d" }} />,
       title: "Direct Benefit Transfer (DBT)",
       description:
-        "Government stipends (₹1,500 – ₹6,150) under NAPS/NATS disbursed directly into your verified bank account via national apprenticeship portals.",
-      tag: "Govt. Backed",
+        "Eligible stipends and government-recognized apprenticeship allowances disbursed directly into your verified bank account.",
+      tag: "Direct Payout",
     },
     {
       icon: <MoreTimeIcon sx={{ fontSize: 28, color: "#405FE2" }} />,
       title: "Guaranteed Overtime Pay",
       description:
-        "Earn significant extra monthly income with fixed hourly overtime allowances ranging from ₹125/hr to ₹142/hr and double overtime provisions.",
-      tag: "₹125 – ₹142 / hr",
+        "Earn significant extra monthly income with standardized hourly overtime compensation and extended shift provisions.",
+      tag: "Shift Allowances",
     },
     {
       icon: <HealthAndSafetyIcon sx={{ fontSize: 28, color: "#405FE2" }} />,
@@ -107,7 +107,7 @@ export function MuiPerksSection() {
               mx: "auto",
             }}
           >
-            Every enterprise opportunity verified through JobHai comes with comprehensive workplace amenities designed for safety, comfort, and financial growth.
+            Every enterprise opportunity verified through careerloop comes with comprehensive workplace amenities designed for safety, comfort, and financial growth.
           </Typography>
         </Box>
 

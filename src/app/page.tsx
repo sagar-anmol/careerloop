@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
 import { MuiHowItWorks } from "@/components/mui/MuiHowItWorks";
-import { MuiPerksSection } from "@/components/mui/MuiPerksSection";
 import { MuiPlacementGuarantee } from "@/components/mui/MuiPlacementGuarantee";
 import { MuiFaq } from "@/components/mui/MuiFaq";
 import { MuiFooter } from "@/components/mui/MuiFooter";
@@ -39,9 +38,6 @@ export default function HomePage() {
 
         {/* Winding Highway Candidate Journey Roadmap (matching user's diagram) */}
         <MuiHowItWorks onStartVerification={handleOpenSignup} />
-
-        {/* Workplace Amenities & Candidate Perks (Bus Commute, Canteen, DBT, Overtime, WCI) */}
-        <MuiPerksSection />
 
         {/* ₹0 Upfront Pay-After-Placement Guarantee & Cohort Stipends (ITI, Diploma, Degree) */}
         <MuiPlacementGuarantee onStartAssessment={handleOpenSignup} />

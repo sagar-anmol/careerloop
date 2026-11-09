@@ -4,7 +4,7 @@ import React from "react";
 import { MessageCircle } from "lucide-react";
 
 export function WhatsAppFloatingButton() {
-  const message = encodeURIComponent("Hello JobHai, I want to inquire about the skill assessment, ₹5,000 course training, and guaranteed HR interview calls.");
+  const message = encodeURIComponent("Hello careerloop, I want to inquire about the skill assessment, ₹5,000 course training, and guaranteed HR interview calls.");
   const whatsappUrl = `https://wa.me/918789970312?text=${message}`;
 
   return (

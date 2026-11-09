@@ -286,7 +286,7 @@ export function MuiProctoredAssessmentModal({
           <ShieldIcon sx={{ color: "#405FE2" }} />
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary" }}>
-              JobHai Proctored Testing Suite
+              careerloop Proctored Testing Suite
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Candidate ID: {candidateData?.candidateId || "JH-2026-ACTIVE"}

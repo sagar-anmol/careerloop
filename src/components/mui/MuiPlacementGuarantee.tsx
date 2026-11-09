@@ -23,47 +23,47 @@ interface MuiPlacementGuaranteeProps {
 export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuaranteeProps) {
   const tiers = [
     {
-      tier: "ITI Technical Cohort",
-      qualification: "Fitter / Turner / Machinist / Electrician (NAPS)",
-      packageRange: "Avg. ₹2.4 LPA",
-      rangeSub: "Base + Govt. DBT | With Overtime: Up to ₹2.9 LPA",
+      tier: "Technical & Operations Roles",
+      qualification: "Technical certifications, skilled trades & operations",
+      packageRange: "Competitive Industry CTC",
+      rangeSub: "Standard base pay + performance & shift allowances",
       icon: <ConstructionIcon sx={{ color: "#d97706", fontSize: 24 }} />,
       feeNote: "Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
       features: [
-        "CNC / VMC machining & assembly line training",
-        "Direct Benefit Transfer (DBT) government subsidy",
-        "Subsidized canteen & free fleet transportation",
-        "100% direct enterprise onboarding without middleman fees",
+        "Structured technical evaluation & hands-on readiness",
+        "Direct enterprise onboarding and verified placement",
+        "Subsidized workplace amenities & commuting options",
+        "Transparent hiring terms with verified partners",
       ],
       popular: false,
     },
     {
-      tier: "Diploma Engineering Cohort",
-      qualification: "Mechanical / Electrical / Automobile / Applied Tech (NATS)",
-      packageRange: "Avg. ₹3.2 LPA",
-      rangeSub: "Base + Govt. DBT | With Overtime: Up to ₹4.0 LPA",
+      tier: "Specialized Associates & Engineers",
+      qualification: "Core technical domains, applied technology & specialists",
+      packageRange: "High-Growth Packages",
+      rangeSub: "Competitive base + performance incentives & overtime",
       icon: <EngineeringIcon sx={{ color: "#405FE2", fontSize: 24 }} />,
       feeNote: "Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
       features: [
-        "Quality control, operational testing & automation maintenance",
-        "Double overtime or ₹125–₹142/hr overtime allowances",
-        "Designated bus commute network & subsidized canteen meals",
-        "1 Month paid annual leave at top partner enterprises",
+        "Quality assurance, technical operations & process maintenance",
+        "Attractive overtime allowances and shift differential bonuses",
+        "Corporate facilities, commute access & meal subsidies",
+        "Paid annual leave and health coverage at leading enterprises",
       ],
       popular: true,
     },
     {
-      tier: "Degree & Graduate Cohort",
-      qualification: "B.E. / B.Tech (Mechanical / Auto) & Graduates (BA/B.Sc/B.Com)",
-      packageRange: "Avg. ₹3.6 LPA",
-      rangeSub: "Base + Govt. DBT | With Overtime: Up to ₹4.5 LPA",
+      tier: "Graduates & Advanced Specialists",
+      qualification: "Degree graduates, engineering disciplines & management trainees",
+      packageRange: "Premium Enterprise Band",
+      rangeSub: "Market-leading CTC + supervisory growth incentives",
       icon: <SchoolIcon sx={{ color: "#15803d", fontSize: 24 }} />,
       feeNote: "Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
       features: [
-        "High-growth engineering & advanced technology enterprises",
-        "Fast-track supervisory & engineering trainee assignments",
-        "Full Workmen Compensation Insurance (WCI) coverage",
-        "Dedicated placement coordinator from onboarding to joining",
+        "Fast-track supervisory & associate trainee career tracks",
+        "Roles with top-tier corporations & high-growth leaders",
+        "Comprehensive workplace coverage and insurance benefits",
+        "Dedicated placement coordinator from evaluation to offer",
       ],
       popular: false,
     },
@@ -105,7 +105,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
               color: "text.primary",
             }}
           >
-            ₹0 Upfront. Nominal Fee Only Upon Interview or Offer Letter.
+            Zero Upfront Charges. Nominal Fee Only Upon Interview or Offer Letter.
           </Typography>
           <Typography
             variant="body1"
@@ -116,11 +116,11 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
               lineHeight: 1.6,
             }}
           >
-            There are zero upfront registration or testing charges. <strong>Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.</strong>
+            There are zero upfront registration or testing charges. <strong>Nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.</strong>
           </Typography>
         </Box>
 
-        {/* 3 Qualification Cohort Cards - Annual Avg CTC Only */}
+        {/* 3 Qualification Cohort Cards - Compensation Bands */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           {tiers.map((item, idx) => (
             <Grid size={{ xs: 12, md: 4 }} key={idx}>
@@ -167,7 +167,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
                   {item.qualification}
                 </Typography>
 
-                {/* Annual Average CTC Box (Only Annual Avg Mentioned) */}
+                {/* Compensation Band Box */}
                 <Box
                   sx={{
                     my: 1.5,
@@ -178,9 +178,9 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
                   }}
                 >
                   <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 700, display: "block", letterSpacing: "0.06em" }}>
-                    ANNUAL AVERAGE CTC
+                    COMPENSATION &amp; BENEFITS BAND
                   </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 800, color: "#405FE2", my: 0.5 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 800, color: "#405FE2", my: 0.5 }}>
                     {item.packageRange}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, display: "block" }}>
@@ -188,23 +188,9 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
                   </Typography>
                 </Box>
 
-                <Typography variant="body2" color="text.secondary" sx={{ my: 1.5 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
                   {item.feeNote}
                 </Typography>
-
-                <Box sx={{ mt: "auto", pt: 2, borderTop: "1px solid", borderColor: "divider" }}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: "text.primary", display: "block", mb: 1.5, letterSpacing: "0.05em" }}>
-                    WHAT’S INCLUDED:
-                  </Typography>
-                  {item.features.map((feat, fIdx) => (
-                    <Box key={fIdx} sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 1.2 }}>
-                      <CheckCircleIcon sx={{ fontSize: 17, color: "#15803d", mt: 0.2, flexShrink: 0 }} />
-                      <Typography variant="body2" color="text.primary">
-                        {feat}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Box>
               </Paper>
             </Grid>
           ))}
@@ -227,7 +213,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
             Our 100% Risk-Free Candidate Promise:
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Taking the proctored test and having your skills reviewed involves <strong>₹0 advance payment</strong>. <strong>Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.</strong> If you do not receive an interview or offer letter, you owe exactly ₹0.
+            Taking the proctored test and having your skills reviewed involves <strong>no advance payment</strong>. <strong>Nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.</strong> If you do not receive an interview or offer letter, you have zero financial liability.
           </Typography>
         </Alert>
 

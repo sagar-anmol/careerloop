@@ -21,7 +21,7 @@ export function TestimonialsSection() {
       role: "Full-Stack Software Engineer",
       company: "NexusPay Cloud",
       agency: "TalentPulse Staffing",
-      quote: "I skipped the cold ATS black hole completely. TalentPulse received my verified project benchmarks directly from JobHai and scheduled my interview with the VP of Engineering.",
+      quote: "I skipped the cold ATS black hole completely. TalentPulse received my verified project benchmarks directly from careerloop and scheduled my interview with the VP of Engineering.",
       skills: ["Next.js 15", "TypeScript", "PostgreSQL"]
     },
     {

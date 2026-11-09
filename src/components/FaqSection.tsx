@@ -14,7 +14,7 @@ export function FaqSection() {
   const faqs = [
     {
       q: "How does the third-party HR agency placement model actually work?",
-      a: "Unlike traditional colleges or bootcamps that merely post jobs on an alumni board, JobHai maintains contractual partnerships with over 450 accredited technical recruitment agencies (including ApexHire, TalentPulse, and BlueChip Search). These agencies are hired by tech companies to find verified candidates. When you complete your capstone and pass the benchmark audit, your candidate profile is directly placed into their high-priority talent pipeline, bypassing cold recruiter inboxes."
+      a: "Unlike traditional colleges or bootcamps that merely post jobs on an alumni board, careerloop maintains contractual partnerships with over 450 accredited technical recruitment agencies (including ApexHire, TalentPulse, and BlueChip Search). These agencies are hired by tech companies to find verified candidates. When you complete your capstone and pass the benchmark audit, your candidate profile is directly placed into their high-priority talent pipeline, bypassing cold recruiter inboxes."
     },
     {
       q: "What is the 100% Placement Guarantee?",
@@ -33,7 +33,7 @@ export function FaqSection() {
       a: "Over 68% of our partner agency mandates are 100% remote (US, UK, European, and Worldwide contracts). The remaining 32% are hybrid or on-site in major tech hubs (San Francisco, New York, London, Berlin, Austin, Toronto, Bangalore) with relocation and visa sponsorship support available."
     },
     {
-      q: "How can my HR recruitment agency partner with JobHai?",
+      q: "How can my HR recruitment agency partner with careerloop?",
       a: "HR recruitment agencies and headhunting firms can join our network for free. Click 'Register as HR Partner Agency' in the header to request verified candidate pipeline access. We will assign a dedicated talent partnership coordinator to match our graduating cohort rosters with your open client job orders."
     }
   ];

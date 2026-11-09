@@ -28,8 +28,7 @@ export function MuiHeader({ onStartAssessment }: MuiHeaderProps) {
 
   const navItems = [
     { label: "Roadmap", href: "#how-it-works" },
-    { label: "Perks & Benefits", href: "#perks" },
-    { label: "Average CTC & Fees", href: "#placement-terms" },
+    { label: "Compensation & Terms", href: "#placement-terms" },
     { label: "FAQ", href: "#faq" },
   ];
 
@@ -65,11 +64,11 @@ export function MuiHeader({ onStartAssessment }: MuiHeaderProps) {
                   letterSpacing: "-0.5px",
                 }}
               >
-                Job<span style={{ color: "#405FE2" }}>Hai</span>
+                Career<span style={{ color: "#405FE2" }}>Loop</span>
               </Typography>
               <Chip
                 icon={<CheckCircleIcon style={{ fontSize: 14, color: "#15803d" }} />}
-                label="Fee Only On Interview / Offer"
+                label="Pay Upon Interview / Offer"
                 size="small"
                 variant="outlined"
                 sx={{

@@ -623,7 +623,7 @@ export function MuiOnboardingModal({
             </Paper>
 
             <Alert severity="info" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5, borderColor: "rgba(64, 95, 226, 0.35)", bgcolor: "rgba(64, 95, 226, 0.08)" }}>
-              <strong>₹0 Upfront Assessment Policy:</strong> Taking this assessment and having your scorecard reviewed is free to start. <strong>Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.</strong>
+              <strong>Zero Advance Fee Policy:</strong> Taking this assessment and having your profile evaluated is free to start. <strong>Nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.</strong>
             </Alert>
 
             <Alert severity="warning" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem" }}>
