@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
+import { useRouter } from "next/navigation";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
 import { MuiHowItWorks } from "@/components/mui/MuiHowItWorks";
@@ -17,6 +18,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { fetchCandidateProfile, signOutCandidate } from "@/lib/candidateService";
 
 export default function HomePage() {
+  const router = useRouter();
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -60,11 +62,11 @@ export default function HomePage() {
   };
 
   // Candidate must login or signup to access the test.
-  // Clicking "Take Assessment" opens profile if logged in, or prompts login/signup if not.
+  // Clicking "Take Assessment" opens profile page if logged in, or prompts login/signup if not.
   const handleOpenAssessment = () => {
     if (currentUser) {
       setCandidateData(currentUser);
-      setIsProfileOpen(true);
+      router.push("/profile");
     } else {
       setIsAuthOpen(true);
     }
@@ -75,27 +77,27 @@ export default function HomePage() {
     setCurrentUser(null);
   };
 
-  // On login: update user, close auth, open profile screen
+  // On login: update user, close auth, open dedicated profile dashboard page
   const handleUserSignedIn = (profile: CandidateProfileData | null) => {
     setCurrentUser(profile);
     setIsAuthOpen(false);
-    setIsProfileOpen(true);
+    router.push("/profile");
   };
 
-  // On signup finished: go directly to profile screen
+  // On signup finished: go directly to dedicated profile page
   const handleOnboardingSignupCompleted = (data: CandidateProfileData | CandidateOnboardingData) => {
     setCurrentUser(data as CandidateProfileData);
     setCandidateData(data as CandidateProfileData);
     setIsOnboardingOpen(false);
-    setIsProfileOpen(true);
+    router.push("/profile");
   };
 
-  // If user finishes signup, route them directly to their profile screen to review details before taking test
+  // If user finishes signup, route them directly to their profile page to review details before taking test
   const handleOnboardingAndStartTest = (data: CandidateProfileData | CandidateOnboardingData) => {
     setCurrentUser(data as CandidateProfileData);
     setCandidateData(data as CandidateProfileData);
     setIsOnboardingOpen(false);
-    setIsProfileOpen(true);
+    router.push("/profile");
   };
 
   return (
@@ -107,7 +109,7 @@ export default function HomePage() {
         currentUser={currentUser}
         onOpenSignIn={handleOpenSignIn}
         onSignOut={handleSignOut}
-        onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenProfile={() => router.push("/profile")}
       />
 
       <Box component="main" sx={{ flexGrow: 1 }}>
