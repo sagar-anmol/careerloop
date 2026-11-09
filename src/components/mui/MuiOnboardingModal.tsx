@@ -64,6 +64,7 @@ export function MuiOnboardingModal({
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
+    password: "",
     phone: "",
     domain: "Diploma (Mechanical / Automobile / Tech)",
     experience: "Fresher / Apprentice Cohort",
@@ -223,6 +224,8 @@ export function MuiOnboardingModal({
     if (!formData.fullName.trim()) errors.fullName = "Full name is required";
     if (!formData.email.trim() || !formData.email.includes("@"))
       errors.email = "Valid email is required";
+    if (!formData.password || formData.password.length < 6)
+      errors.password = "Password must be at least 6 characters";
     if (!formData.phone.trim() || formData.phone.length < 10)
       errors.phone = "Valid 10-digit mobile number required";
     if (!formData.city.trim()) errors.city = "Current city is required";
@@ -382,6 +385,21 @@ export function MuiOnboardingModal({
                 required
               />
               <TextField
+                label="Password"
+                size="small"
+                fullWidth
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                error={Boolean(formErrors.password)}
+                helperText={formErrors.password || "Minimum 6 characters"}
+                placeholder="Create secure password"
+                required
+              />
+            </Box>
+
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
+              <TextField
                 label="WhatsApp / Mobile Number"
                 size="small"
                 fullWidth
@@ -390,6 +408,17 @@ export function MuiOnboardingModal({
                 error={Boolean(formErrors.phone)}
                 helperText={formErrors.phone}
                 placeholder="10-digit number"
+                required
+              />
+              <TextField
+                label="Current Location / City"
+                size="small"
+                fullWidth
+                value={formData.city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                error={Boolean(formErrors.city)}
+                helperText={formErrors.city}
+                placeholder="e.g. Bengaluru, Pune, Delhi NCR"
                 required
               />
             </Box>
@@ -425,18 +454,6 @@ export function MuiOnboardingModal({
                 <MenuItem value="3+ Years Senior Technician">3+ Years Senior Technician</MenuItem>
               </TextField>
             </Box>
-
-            <TextField
-              label="Current Location / City"
-              size="small"
-              fullWidth
-              value={formData.city}
-              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-              error={Boolean(formErrors.city)}
-              helperText={formErrors.city}
-              placeholder="e.g. Bengaluru, Pune, Delhi NCR, Remote"
-              required
-            />
           </Box>
         )}
 

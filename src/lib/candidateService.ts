@@ -131,12 +131,23 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     }
   }
 
-  // 4. Upsert into public.candidates
+  // 4. Check if candidate with this email already exists to update existing record rather than duplicating
+  const normalizedEmail = input.email.trim().toLowerCase();
+  const { data: existingCandidate } = await supabase
+    .from("candidates")
+    .select("id, candidate_id")
+    .eq("email", normalizedEmail)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const activeCandidateId = existingCandidate?.candidate_id || input.candidateId;
+
   const payload = {
     auth_user_id: authUserId,
-    candidate_id: input.candidateId,
+    candidate_id: activeCandidateId,
     full_name: input.fullName,
-    email: input.email.trim().toLowerCase(),
+    email: normalizedEmail,
     phone: input.phone,
     domain: input.domain,
     experience: input.experience,
@@ -147,18 +158,32 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabase
-    .from("candidates")
-    .upsert(payload, { onConflict: "candidate_id" })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Failed to save candidate to Supabase:", error);
-    throw new Error(error.message);
+  let candidateDataResult;
+  if (existingCandidate?.id) {
+    const { data: updated, error: updateErr } = await supabase
+      .from("candidates")
+      .update(payload)
+      .eq("id", existingCandidate.id)
+      .select()
+      .single();
+    if (updateErr) throw new Error(updateErr.message);
+    candidateDataResult = updated;
+  } else {
+    const { data: inserted, error: insertErr } = await supabase
+      .from("candidates")
+      .insert(payload)
+      .select()
+      .single();
+    if (insertErr) throw new Error(insertErr.message);
+    candidateDataResult = inserted;
   }
 
-  return data;
+  // Cache in localStorage for immediate profile navigation
+  if (typeof window !== "undefined") {
+    localStorage.setItem("cl_candidate", JSON.stringify(candidateDataResult));
+  }
+
+  return candidateDataResult;
 }
 
 /**
@@ -270,7 +295,7 @@ export async function signOutCandidate() {
  * Fetch candidate profile by auth user ID, candidate ID, or email
  */
 export async function fetchCandidateProfile(authUserId?: string, candidateId?: string, email?: string) {
-  let query = supabase.from("candidates").select("*");
+  let query = supabase.from("candidates").select("*").order("created_at", { ascending: false }).limit(1);
   if (authUserId) {
     query = query.eq("auth_user_id", authUserId);
   } else if (candidateId) {
@@ -283,12 +308,14 @@ export async function fetchCandidateProfile(authUserId?: string, candidateId?: s
 
   const { data, error } = await query.maybeSingle();
   if (error) {
-    // If not found by auth_user_id and email is provided, try looking up by email
-    if (email && authUserId) {
+    // If lookup fails or returns error, try looking up directly by email
+    if (email) {
       const { data: emailData } = await supabase
         .from("candidates")
         .select("*")
         .eq("email", email.trim().toLowerCase())
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (emailData) return emailData;
     }
@@ -302,6 +329,8 @@ export async function fetchCandidateProfile(authUserId?: string, candidateId?: s
       .from("candidates")
       .select("*")
       .eq("email", email.trim().toLowerCase())
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
     if (emailData) return emailData;
   }
