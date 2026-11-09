@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
@@ -10,37 +10,113 @@ import { MuiFaq } from "@/components/mui/MuiFaq";
 import { MuiFooter } from "@/components/mui/MuiFooter";
 import { MuiOnboardingModal } from "@/components/mui/MuiOnboardingModal";
 import { MuiProctoredAssessmentModal } from "@/components/mui/MuiProctoredAssessmentModal";
+import { MuiProfileModal, CandidateProfileData } from "@/components/mui/MuiProfileModal";
+import { MuiAuthModal } from "@/components/mui/MuiAuthModal";
 import { MuiWhatsAppButton } from "@/components/mui/MuiWhatsAppButton";
+import { supabase } from "@/lib/supabaseClient";
+import { fetchCandidateProfile, signOutCandidate } from "@/lib/candidateService";
 
 export default function HomePage() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
-  const [candidateData, setCandidateData] = useState<any>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [candidateData, setCandidateData] = useState<CandidateProfileData | null>(null);
+  const [currentUser, setCurrentUser] = useState<CandidateProfileData | null>(null);
+
+  // Sync Supabase Auth session & profile
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchCandidateProfile(session.user.id).then((profile) => {
+          setCurrentUser(profile || { email: session.user.email, id: session.user.id });
+        });
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        fetchCandidateProfile(session.user.id).then((profile) => {
+          setCurrentUser(profile || { email: session.user.email, id: session.user.id });
+        });
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleOpenSignup = () => {
     setIsOnboardingOpen(true);
   };
 
-  const handleOnboardingCompleted = (data: any) => {
+  const handleOpenSignIn = () => {
+    setIsAuthOpen(true);
+  };
+
+  const handleOpenAssessment = () => {
+    if (currentUser) {
+      setCandidateData(currentUser);
+    }
+    setIsAssessmentOpen(true);
+  };
+
+  const handleSignOut = async () => {
+    await signOutCandidate();
+    setCurrentUser(null);
+  };
+
+  // On login: update user, close auth, open profile screen
+  const handleUserSignedIn = (profile: CandidateProfileData | null) => {
+    setCurrentUser(profile);
+    setIsAuthOpen(false);
+    setIsProfileOpen(true);
+  };
+
+  // On signup finished: go directly to profile screen
+  const handleOnboardingSignupCompleted = (data: CandidateProfileData) => {
+    setCurrentUser(data);
+    setIsOnboardingOpen(false);
+    setIsProfileOpen(true);
+  };
+
+  // If user explicitly chooses "Take Assessment Now" at end of signup
+  const handleOnboardingAndStartTest = (data: CandidateProfileData) => {
     setCandidateData(data);
+    setCurrentUser(data);
     setIsOnboardingOpen(false);
     setIsAssessmentOpen(true);
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
-      {/* Top Corporate App Bar */}
-      <MuiHeader onStartAssessment={handleOpenSignup} />
+      {/* Top Corporate App Bar with Profile & Auth support */}
+      <MuiHeader
+        onStartAssessment={handleOpenAssessment}
+        onOpenSignup={handleOpenSignup}
+        currentUser={currentUser}
+        onOpenSignIn={handleOpenSignIn}
+        onSignOut={handleSignOut}
+        onOpenProfile={() => setIsProfileOpen(true)}
+      />
 
       <Box component="main" sx={{ flexGrow: 1 }}>
-        {/* Simple Landing Hero (Zero inputs, clean enterprise value props) */}
-        <MuiHero onStartAssessment={handleOpenSignup} />
+        {/* Simple Landing Hero with separated Signup & Assessment actions */}
+        <MuiHero
+          onOpenSignup={handleOpenSignup}
+          onStartAssessment={handleOpenAssessment}
+        />
 
-        {/* Winding Highway Candidate Journey Roadmap (matching user's diagram) */}
+        {/* Winding Highway Candidate Journey Roadmap */}
         <MuiHowItWorks onStartVerification={handleOpenSignup} />
 
-        {/* ₹0 Upfront Pay-After-Placement Guarantee & Cohort Stipends (ITI, Diploma, Degree) */}
-        <MuiPlacementGuarantee onStartAssessment={handleOpenSignup} />
+        {/* Performance Placement Guarantee & Cohort Bands */}
+        <MuiPlacementGuarantee onStartAssessment={handleOpenAssessment} />
 
         {/* Essential FAQ Accordion */}
         <MuiFaq />
@@ -52,18 +128,47 @@ export default function HomePage() {
       {/* Floating WhatsApp Support Action */}
       <MuiWhatsAppButton />
 
+      {/* Candidate Profile Dialog: KPI Metrics, Progress Bars & All Previous Test Attempts */}
+      <MuiProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        candidateProfile={currentUser}
+        onRetakeTest={(data) => {
+          setCandidateData(data);
+          setIsProfileOpen(false);
+          setIsAssessmentOpen(true);
+        }}
+        onSignOut={handleSignOut}
+      />
+
+      {/* Candidate Sign In Dialog -> On login automatically opens Profile Screen */}
+      <MuiAuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSignedIn={handleUserSignedIn}
+        onSwitchToSignUp={() => {
+          setIsAuthOpen(false);
+          setIsOnboardingOpen(true);
+        }}
+      />
+
       {/* Onboarding Dialog: Info -> Live Photo ID -> Resume Upload -> Account Creation */}
       <MuiOnboardingModal
         isOpen={isOnboardingOpen}
         onClose={() => setIsOnboardingOpen(false)}
-        onCompleteAndStartTest={handleOnboardingCompleted}
+        onCompleteSignup={handleOnboardingSignupCompleted}
+        onCompleteAndStartTest={handleOnboardingAndStartTest}
       />
 
-      {/* Strict Proctored Assessment Room: Camera PIP, No Backspace, No Back Button, Tab Detection */}
+      {/* Strict Proctored Assessment Room: Camera PIP, Anti-Cheating & Results */}
       <MuiProctoredAssessmentModal
         isOpen={isAssessmentOpen}
         onClose={() => setIsAssessmentOpen(false)}
-        candidateData={candidateData}
+        candidateData={candidateData || currentUser}
+        onViewProfile={() => {
+          setIsAssessmentOpen(false);
+          setIsProfileOpen(true);
+        }}
       />
     </Box>
   );

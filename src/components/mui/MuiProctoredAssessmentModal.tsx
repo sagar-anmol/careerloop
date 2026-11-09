@@ -22,11 +22,15 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShieldIcon from "@mui/icons-material/Shield";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { recordAssessmentResult } from "@/lib/candidateService";
+import { detectFaces, FaceDetectionResult } from "@/lib/faceDetectionService";
+import { CandidateOnboardingData } from "./MuiOnboardingModal";
 
 interface MuiProctoredAssessmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  candidateData: any;
+  candidateData: CandidateOnboardingData | null;
+  onViewProfile?: () => void;
 }
 
 const ASSESSMENT_QUESTIONS = [
@@ -101,6 +105,7 @@ export function MuiProctoredAssessmentModal({
   isOpen,
   onClose,
   candidateData,
+  onViewProfile,
 }: MuiProctoredAssessmentModalProps) {
   // Test State
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -113,9 +118,87 @@ export function MuiProctoredAssessmentModal({
   const [warningCount, setWarningCount] = useState(0);
   const [lastWarningMsg, setLastWarningMsg] = useState<string | null>(null);
 
-  // Live Camera Stream
+  // Live Camera Stream & AI Face Tracking
   const videoPipRef = useRef<HTMLVideoElement | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [faceResult, setFaceResult] = useState<FaceDetectionResult | null>(null);
+  const missingCounterRef = useRef(0);
+  const multipleCounterRef = useRef(0);
+
+  const triggerWarning = (msg: string) => {
+    setWarningCount((c) => c + 1);
+    setLastWarningMsg(msg);
+  };
+
+  const handleSubmitTest = () => {
+    let calculated = 0;
+    ASSESSMENT_QUESTIONS.forEach((q, idx) => {
+      if (selectedAnswers[idx] === q.correctAnswer) {
+        calculated += 20; // 5 questions * 20 = 100
+      }
+    });
+    setScore(calculated);
+    setIsSubmitted(true);
+
+    if (candidateData?.candidateId) {
+      recordAssessmentResult({
+        candidateId: candidateData.candidateId,
+        score: calculated,
+        status: calculated >= 60 ? "PASSED (Qualified for Agency Dispatch)" : "Under Technical Review",
+        flags: warningCount,
+        partnerRoute: "ApexHire • TalentPulse • BlueChip",
+        durationSeconds: 360 - timeLeft,
+      }).catch((err) => {
+        console.error("Failed to record assessment score in Supabase:", err);
+      });
+    }
+  };
+
+  // Continuous AI Face Detection & Multi-person tracking
+  useEffect(() => {
+    if (!isOpen || isSubmitted || !cameraActive) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      if (!videoPipRef.current) return;
+      try {
+        const result = await detectFaces(videoPipRef.current);
+        setFaceResult(result);
+
+        // 1. Flag Missing Face (>2 consecutive checks ~3.0s)
+        if (result.status === "no_face" || result.status === "camera_blocked") {
+          missingCounterRef.current += 1;
+          if (missingCounterRef.current === 2) {
+            triggerWarning("Face missing from camera frame! Please remain seated in front of your screen.");
+          } else if (missingCounterRef.current > 2 && missingCounterRef.current % 4 === 0) {
+            triggerWarning("Integrity Alert: Candidate face still not detected in proctored camera view.");
+          }
+        } else {
+          missingCounterRef.current = 0;
+        }
+
+        // 2. Flag Multiple Persons (>1 consecutive check ~2.5s)
+        if (result.status === "multiple_faces") {
+          multipleCounterRef.current += 1;
+          if (multipleCounterRef.current === 2) {
+            triggerWarning(`Multiple persons detected (${result.faceCount}) in camera view! Unauthorized assistance flagged.`);
+          } else if (multipleCounterRef.current > 2 && multipleCounterRef.current % 4 === 0) {
+            triggerWarning("Integrity Alert: Multiple individuals remain visible in proctored camera view.");
+          }
+        } else {
+          multipleCounterRef.current = 0;
+        }
+      } catch (e) {
+        console.debug("Face detection test loop error:", e);
+      }
+    }, 1400);
+
+    return () => {
+      clearInterval(interval);
+      setFaceResult(null);
+    };
+  }, [isOpen, isSubmitted, cameraActive]);
 
   // 1. Strict Proctoring: Lock Backspace Key & Browser Back Navigation
   useEffect(() => {
@@ -217,29 +300,14 @@ export function MuiProctoredAssessmentModal({
     }, 1000);
 
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isSubmitted]);
-
-  const triggerWarning = (msg: string) => {
-    setWarningCount((c) => c + 1);
-    setLastWarningMsg(msg);
-  };
 
   const handleSelectAnswer = (optionId: string) => {
     setSelectedAnswers({
       ...selectedAnswers,
       [currentQuestionIndex]: optionId,
     });
-  };
-
-  const handleSubmitTest = () => {
-    let calculated = 0;
-    ASSESSMENT_QUESTIONS.forEach((q, idx) => {
-      if (selectedAnswers[idx] === q.correctAnswer) {
-        calculated += 20; // 5 questions * 20 = 100
-      }
-    });
-    setScore(calculated);
-    setIsSubmitted(true);
   };
 
   const formatTimer = (secs: number) => {
@@ -323,7 +391,7 @@ export function MuiProctoredAssessmentModal({
       <LinearProgress variant="determinate" value={progressPercent} sx={{ height: 4 }} />
 
       <DialogContent sx={{ p: 3, position: "relative" }}>
-        {/* Live Proctoring PIP Camera Feed */}
+        {/* Live Proctoring PIP Camera Feed with AI Face Status */}
         {!isSubmitted && (
           <Paper
             elevation={6}
@@ -331,14 +399,21 @@ export function MuiProctoredAssessmentModal({
               position: "absolute",
               top: 16,
               right: 16,
-              width: 130,
-              height: 98,
+              width: 140,
+              height: 105,
               borderRadius: 2,
               overflow: "hidden",
-              border: "2px solid #ef4444",
+              border: "2px solid",
+              borderColor:
+                faceResult?.status === "verified"
+                  ? "#10b981"
+                  : faceResult?.status === "multiple_faces"
+                  ? "#ef4444"
+                  : "#f59e0b",
               bgcolor: "#000",
               zIndex: 10,
               display: { xs: "none", sm: "block" },
+              transition: "border-color 0.3s ease",
             }}
           >
             <video
@@ -348,18 +423,63 @@ export function MuiProctoredAssessmentModal({
               muted
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
+            {/* Top-left Recording indicator */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 4,
+                left: 4,
+                bgcolor: "rgba(0, 0, 0, 0.7)",
+                px: 0.6,
+                py: 0.2,
+                borderRadius: 1,
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  bgcolor: "#ef4444",
+                  animation: "pulse 1.5s infinite",
+                }}
+              />
+              <Typography variant="caption" sx={{ fontSize: "0.58rem", fontWeight: 700, color: "white", lineHeight: 1 }}>
+                REC
+              </Typography>
+            </Box>
+
+            {/* Bottom Face Status Chip */}
             <Chip
-              label="PROCTOR CAM"
+              label={
+                faceResult?.status === "verified"
+                  ? "Face: Verified (1)"
+                  : faceResult?.status === "multiple_faces"
+                  ? `Alert: ${faceResult.faceCount} Faces`
+                  : faceResult?.status === "camera_blocked"
+                  ? "Camera Dark"
+                  : "Face: Missing!"
+              }
               size="small"
               sx={{
                 position: "absolute",
-                bottom: 2,
-                left: 4,
-                fontSize: "0.55rem",
-                height: 16,
-                bgcolor: "rgba(239, 68, 68, 0.8)",
+                bottom: 3,
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontSize: "0.58rem",
+                height: 18,
+                bgcolor:
+                  faceResult?.status === "verified"
+                    ? "rgba(16, 185, 129, 0.9)"
+                    : faceResult?.status === "multiple_faces"
+                    ? "rgba(239, 68, 68, 0.95)"
+                    : "rgba(245, 158, 11, 0.95)",
                 color: "white",
                 fontWeight: 800,
+                width: "90%",
               }}
             />
           </Paper>
@@ -560,14 +680,26 @@ export function MuiProctoredAssessmentModal({
               <strong>Zero Upfront Cost:</strong> Taking this assessment and having your dossier reviewed is completely free upfront. <strong>Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.</strong>
             </Alert>
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={onClose}
-              sx={{ px: 4, py: 1.2, fontWeight: 700 }}
-            >
-              Back to Home
-            </Button>
+            <Box sx={{ display: "flex", justifyContent: "center", gap: 2, flexWrap: "wrap" }}>
+              {onViewProfile && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={onViewProfile}
+                  sx={{ px: 3, py: 1.2, fontWeight: 700 }}
+                >
+                  View Profile &amp; Test Progress
+                </Button>
+              )}
+              <Button
+                variant={onViewProfile ? "outlined" : "contained"}
+                color="inherit"
+                onClick={onClose}
+                sx={{ px: 3, py: 1.2, fontWeight: 700 }}
+              >
+                Back to Home
+              </Button>
+            </Box>
           </Box>
         )}
       </DialogContent>

@@ -17,6 +17,7 @@ import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -24,11 +25,28 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import PersonIcon from "@mui/icons-material/Person";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { registerCandidateDossier, CandidateRegistrationInput } from "@/lib/candidateService";
+import { detectFaces, FaceDetectionResult } from "@/lib/faceDetectionService";
+
+export interface CandidateOnboardingData extends Partial<CandidateRegistrationInput> {
+  fullName: string;
+  email: string;
+  phone: string;
+  domain: string;
+  experience: string;
+  city: string;
+  candidateId: string;
+  photo?: string | null;
+  resumeName?: string;
+}
 
 interface MuiOnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCompleteAndStartTest: (candidateData: any) => void;
+  onCompleteSignup: (candidateData: CandidateOnboardingData) => void;
+  onCompleteAndStartTest: (candidateData: CandidateOnboardingData) => void;
 }
 
 const steps = ["Candidate Info", "Live Photo ID", "Resume Upload", "Account Ready"];
@@ -36,6 +54,7 @@ const steps = ["Candidate Info", "Live Photo ID", "Resume Upload", "Account Read
 export function MuiOnboardingModal({
   isOpen,
   onClose,
+  onCompleteSignup,
   onCompleteAndStartTest,
 }: MuiOnboardingModalProps) {
   const [activeStep, setActiveStep] = useState(0);
@@ -58,54 +77,79 @@ export function MuiOnboardingModal({
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [faceResult, setFaceResult] = useState<FaceDetectionResult | null>(null);
 
   // Resume State
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [candidateId, setCandidateId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Start Camera when entering Step 1
+  // Start/Stop Camera when entering or leaving Step 1
   useEffect(() => {
+    let activeStream: MediaStream | null = null;
+
     if (isOpen && activeStep === 1 && !capturedPhoto) {
-      startCamera();
-    } else {
-      stopCamera();
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ video: { width: 640, height: 480 } })
+          .then((mediaStream) => {
+            activeStream = mediaStream;
+            setCameraError(null);
+            setStream(mediaStream);
+            if (videoRef.current) {
+              videoRef.current.srcObject = mediaStream;
+              videoRef.current.play().catch((e) => console.debug("Video play err:", e));
+            }
+          })
+          .catch((err: unknown) => {
+            console.warn("Camera access error:", err);
+            setCameraError(
+              "Camera permission was denied or no camera device found. You may use a simulated verification snapshot for testing."
+            );
+          });
+      } else {
+        setTimeout(() => {
+          setCameraError("Webcam access not supported in this browser environment.");
+        }, 0);
+      }
     }
+
     return () => {
-      stopCamera();
+      if (activeStream) {
+        activeStream.getTracks().forEach((track) => track.stop());
+      }
+      setStream((prev) => {
+        if (prev) {
+          prev.getTracks().forEach((track) => track.stop());
+        }
+        return null;
+      });
+      setFaceResult(null);
     };
   }, [isOpen, activeStep, capturedPhoto]);
 
-  const startCamera = async () => {
-    setCameraError(null);
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480 },
-        });
-        setStream(mediaStream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-          videoRef.current.play();
+  // Real-time Face Tracking during Onboarding Photo verification
+  useEffect(() => {
+    if (!isOpen || activeStep !== 1 || !stream || capturedPhoto) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      if (videoRef.current) {
+        try {
+          const res = await detectFaces(videoRef.current);
+          setFaceResult(res);
+        } catch (e) {
+          console.debug("Onboarding face tracking error:", e);
         }
-      } else {
-        setCameraError("Webcam access not supported in this browser environment.");
       }
-    } catch (err: any) {
-      console.warn("Camera access error:", err);
-      setCameraError(
-        "Camera permission was denied or no camera device found. You may use a simulated verification snapshot for testing."
-      );
-    }
-  };
+    }, 600);
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-  };
+    return () => clearInterval(interval);
+  }, [isOpen, activeStep, stream, capturedPhoto]);
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -114,8 +158,24 @@ export function MuiOnboardingModal({
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Run face detection on the captured canvas frame before accepting
+        const detectRes = await detectFaces(canvas);
+        setFaceResult(detectRes);
+
+        if (detectRes.status === "no_face" || detectRes.status === "camera_blocked") {
+          setCameraError("Cannot capture: No face detected. Please position your face clearly in front of the camera.");
+          return;
+        }
+
+        if (detectRes.status === "multiple_faces") {
+          setCameraError("Cannot capture: Multiple persons detected. Only one candidate is allowed in the verified photo ID.");
+          return;
+        }
+
         const dataUrl = canvas.toDataURL("image/jpeg");
         setCapturedPhoto(dataUrl);
+        setCameraError(null);
         stopCamera();
       }
     }
@@ -178,18 +238,47 @@ export function MuiOnboardingModal({
     setActiveStep(2);
   };
 
-  // Step 3 validation (Resume)
-  const handleValidateStep2 = () => {
-    if (!resumeFile) {
+  // Step 3 validation (Resume) -> Register in Supabase
+  const handleValidateStep2 = async () => {
+    let currentResume = resumeFile;
+    if (!currentResume) {
       // Mock dummy resume for seamless test experience
-      const dummyFile = new File(["Candidate Resume Content"], `${formData.fullName.replace(/\s+/g, "_")}_Resume.pdf`, {
+      currentResume = new File(["Candidate Resume Content"], `${formData.fullName.replace(/\s+/g, "_")}_Resume.pdf`, {
         type: "application/pdf",
       });
-      setResumeFile(dummyFile);
+      setResumeFile(currentResume);
     }
-    const newId = `JH-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+    const newId = `CL-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     setCandidateId(newId);
-    setActiveStep(3);
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await registerCandidateDossier({
+        ...formData,
+        candidateId: newId,
+        photoBase64: capturedPhoto,
+        resumeFile: currentResume,
+      });
+      setActiveStep(3);
+    } catch (err: unknown) {
+      console.error("Failed to register candidate to Supabase:", err);
+      const msg = err instanceof Error ? err.message : "Saved locally; database sync failed.";
+      setSaveError(msg);
+      setActiveStep(3);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFinishAndGoToProfile = () => {
+    const finalData = {
+      ...formData,
+      candidateId,
+      photo: capturedPhoto,
+      resumeName: resumeFile ? resumeFile.name : "Resume.pdf",
+    };
+    onCompleteSignup(finalData);
   };
 
   const handleFinishAndStartAssessment = () => {
@@ -414,6 +503,64 @@ export function MuiOnboardingModal({
                       fontSize: "0.7rem",
                     }}
                   />
+
+                  {/* Face Alignment Oval Guide */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      width: "55%",
+                      height: "75%",
+                      border: "2px dashed",
+                      borderColor:
+                        faceResult?.status === "verified"
+                          ? "#22c55e"
+                          : faceResult?.status === "multiple_faces"
+                          ? "#ef4444"
+                          : "rgba(255, 255, 255, 0.45)",
+                      borderRadius: "50%",
+                      pointerEvents: "none",
+                      boxShadow:
+                        faceResult?.status === "verified"
+                          ? "0 0 16px rgba(34, 197, 94, 0.35)"
+                          : "none",
+                      transition: "all 0.3s ease",
+                    }}
+                  />
+
+                  {/* Live Face Detection Status Chip */}
+                  <Chip
+                    icon={
+                      faceResult?.status === "verified" ? (
+                        <CheckCircleIcon style={{ fontSize: 14, color: "#ffffff" }} />
+                      ) : (
+                        <WarningAmberIcon style={{ fontSize: 14, color: "#ffffff" }} />
+                      )
+                    }
+                    label={
+                      faceResult?.status === "verified"
+                        ? "1 Face Verified & Aligned"
+                        : faceResult?.status === "multiple_faces"
+                        ? `Alert: ${faceResult.faceCount} Faces Detected`
+                        : faceResult?.status === "camera_blocked"
+                        ? "Camera Obstructed / Dark"
+                        : "Align Face in Center"
+                    }
+                    size="small"
+                    color={
+                      faceResult?.status === "verified"
+                        ? "success"
+                        : faceResult?.status === "multiple_faces"
+                        ? "error"
+                        : "warning"
+                    }
+                    sx={{
+                      position: "absolute",
+                      bottom: 12,
+                      fontWeight: 700,
+                      fontSize: "0.72rem",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                    }}
+                  />
                 </>
               ) : (
                 <Box
@@ -622,13 +769,14 @@ export function MuiOnboardingModal({
               </Box>
             </Paper>
 
-            <Alert severity="info" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5, borderColor: "rgba(64, 95, 226, 0.35)", bgcolor: "rgba(64, 95, 226, 0.08)" }}>
-              <strong>Zero Advance Fee Policy:</strong> Taking this assessment and having your profile evaluated is free to start. <strong>Nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.</strong>
-            </Alert>
+            {saveError && (
+              <Alert severity="warning" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5 }}>
+                {saveError}
+              </Alert>
+            )}
 
-            <Alert severity="warning" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem" }}>
-              <strong>Strict Proctoring Mandatory:</strong> The next screen will launch the online test room. 
-              Keep your camera active, stay in full window mode, and do not press Backspace or navigate away.
+            <Alert severity="success" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5 }}>
+              <strong>Registration Completed:</strong> Your candidate profile and credentials have been securely stored. You can now view your profile dashboard or proceed to the assessment whenever you choose.
             </Alert>
           </Box>
         )}
@@ -676,23 +824,36 @@ export function MuiOnboardingModal({
             variant="contained"
             color="primary"
             onClick={handleValidateStep2}
-            endIcon={<ArrowForwardIcon />}
+            disabled={isSaving}
+            endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
-            Complete Registration
+            {isSaving ? "Saving to Database..." : "Complete Registration"}
           </Button>
         )}
 
         {activeStep === 3 && (
-          <Button
-            variant="contained"
-            color="success"
-            fullWidth
-            onClick={handleFinishAndStartAssessment}
-            endIcon={<ArrowForwardIcon />}
-            sx={{ py: 1.2, fontWeight: 700 }}
-          >
-            Launch Strict Proctored Assessment Room
-          </Button>
+          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5, width: "100%" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleFinishAndGoToProfile}
+              startIcon={<PersonIcon />}
+              sx={{ py: 1.2, fontWeight: 700 }}
+            >
+              View My Profile
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              fullWidth
+              onClick={handleFinishAndStartAssessment}
+              endIcon={<ArrowForwardIcon />}
+              sx={{ py: 1.2, fontWeight: 700 }}
+            >
+              Take Assessment Now
+            </Button>
+          </Box>
         )}
       </DialogActions>
     </Dialog>

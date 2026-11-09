@@ -8,10 +8,11 @@ import Button from "@mui/material/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 interface MuiHeroProps {
+  onOpenSignup: () => void;
   onStartAssessment: () => void;
 }
 
-export function MuiHero({ onStartAssessment }: MuiHeroProps) {
+export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
   return (
     <Box
       component="section"
@@ -79,17 +80,17 @@ export function MuiHero({ onStartAssessment }: MuiHeroProps) {
             careerloop connects skilled talent and technical professionals with leading employers across top industry sectors. Access competitive, market-standard compensation packages, performance incentives, and career acceleration benefits. <strong style={{ color: "#ffffff" }}>Zero advance fee</strong>—nominal review charges apply only once you are shortlisted for interview rounds or receive an offer letter.
           </Typography>
 
-          {/* Call to Action Button */}
-          <Box sx={{ display: "flex", justifyContent: { xs: "center", md: "flex-start" } }}>
+          {/* Call to Action Buttons (Separated Signup & Assessment) */}
+          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, justifyContent: { xs: "center", md: "flex-start" } }}>
             <Button
               variant="contained"
               size="large"
-              onClick={onStartAssessment}
+              onClick={onOpenSignup}
               endIcon={<ArrowForwardIcon />}
               sx={{
                 py: 1.5,
-                px: 4.5,
-                fontSize: "1.05rem",
+                px: 4,
+                fontSize: "1.02rem",
                 fontWeight: 700,
                 bgcolor: "#405FE2",
                 color: "#ffffff",
@@ -100,7 +101,28 @@ export function MuiHero({ onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Sign Up &amp; Take Free Assessment
+              Sign Up Free
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={onStartAssessment}
+              sx={{
+                py: 1.5,
+                px: 3.5,
+                fontSize: "1.02rem",
+                fontWeight: 700,
+                color: "#ffffff",
+                borderColor: "rgba(255, 255, 255, 0.4)",
+                bgcolor: "rgba(255, 255, 255, 0.08)",
+                backdropFilter: "blur(6px)",
+                "&:hover": {
+                  borderColor: "#ffffff",
+                  bgcolor: "rgba(255, 255, 255, 0.18)",
+                },
+              }}
+            >
+              Take Assessment
             </Button>
           </Box>
         </Box>
