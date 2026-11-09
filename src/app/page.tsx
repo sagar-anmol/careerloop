@@ -30,7 +30,7 @@ export default function HomePage() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        fetchCandidateProfile(session.user.id).then((profile) => {
+        fetchCandidateProfile(session.user.id, undefined, session.user.email).then((profile) => {
           setCurrentUser(profile || { email: session.user.email, id: session.user.id });
         });
       }
@@ -40,7 +40,7 @@ export default function HomePage() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        fetchCandidateProfile(session.user.id).then((profile) => {
+        fetchCandidateProfile(session.user.id, undefined, session.user.email).then((profile) => {
           setCurrentUser(profile || { email: session.user.email, id: session.user.id });
         });
       } else {

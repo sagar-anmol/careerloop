@@ -98,13 +98,13 @@ export default function CandidateProfileDashboardPage() {
           return;
         }
 
-        const profile = await fetchCandidateProfile(session.user.id);
+        const profile = await fetchCandidateProfile(session.user.id, undefined, session.user.email);
         if (isMounted) {
           const loadedUser: CandidateProfileData = profile || {
             email: session.user.email || "",
             id: session.user.id,
             candidateId: `CL-2026-${session.user.id.slice(0, 6).toUpperCase()}`,
-            fullName: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Candidate",
+            fullName: session.user.user_metadata?.full_name || session.user.email?.split("@")[0].replace(/[._-]/g, " ") || "Candidate",
             domain: "Diploma / Technical Cohort",
             city: "India",
           };
@@ -155,15 +155,25 @@ export default function CandidateProfileDashboardPage() {
     });
   };
 
-  const candidateId = currentUser?.candidateId || currentUser?.candidate_id || "CL-2026-UNASSIGNED";
-  const fullName = currentUser?.fullName || currentUser?.full_name || "Verified Candidate";
-  const email = currentUser?.email || "candidate@careerloop.in";
+  const candidateId = currentUser?.candidateId || currentUser?.candidate_id || "CL-2026-ACTIVE";
+  const fullName =
+    currentUser?.fullName ||
+    currentUser?.full_name ||
+    (currentUser?.email ? currentUser.email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Candidate");
+  const email = currentUser?.email || "";
   const phone = currentUser?.phone || "+91 98XXXXXXXX";
   const domain = currentUser?.domain || "Diploma (Mechanical / Auto / Tech)";
   const city = currentUser?.city || "National Mobility Ready";
-  const photoUrl = currentUser?.photo || currentUser?.photo_url;
+  const photoUrl =
+    typeof currentUser?.photo === "string"
+      ? currentUser.photo
+      : typeof currentUser?.photo_url === "string"
+      ? currentUser.photo_url
+      : typeof currentUser?.photoBase64 === "string"
+      ? currentUser.photoBase64
+      : undefined;
   const resumeUrl = currentUser?.resume_url;
-  const resumeName = currentUser?.resumeName || currentUser?.resume_name || "Candidate_Resume.pdf";
+  const resumeName = currentUser?.resumeName || currentUser?.resume_name || `${fullName.replace(/\s+/g, "_")}_Resume.pdf`;
   const attemptsLeft = Math.max(0, 2 - totalTests);
 
   return (
@@ -877,7 +887,7 @@ export default function CandidateProfileDashboardPage() {
                 <CardContent className="space-y-4">
                   <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between">
                     <div>
-                      <h4 className="font-bold text-sm text-slate-900">Supabase Authentication</h4>
+                      <h4 className="font-bold text-sm text-slate-900">Registered Account</h4>
                       <p className="text-xs text-slate-500">Signed in as {email}</p>
                     </div>
                     <Button
@@ -894,7 +904,7 @@ export default function CandidateProfileDashboardPage() {
                   <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between">
                     <div>
                       <h4 className="font-bold text-sm text-slate-900">Webcam Proctoring Clearance</h4>
-                      <p className="text-xs text-slate-500">Client-side AI Face Detection enabled</p>
+                      <p className="text-xs text-slate-500">AI Face Verification active</p>
                     </div>
                     <Badge className="bg-emerald-100 text-emerald-800 text-xs font-bold">
                       Active

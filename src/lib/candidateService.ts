@@ -267,22 +267,44 @@ export async function signOutCandidate() {
 }
 
 /**
- * Fetch candidate profile by auth user ID or candidate ID
+ * Fetch candidate profile by auth user ID, candidate ID, or email
  */
-export async function fetchCandidateProfile(authUserId?: string, candidateId?: string) {
+export async function fetchCandidateProfile(authUserId?: string, candidateId?: string, email?: string) {
   let query = supabase.from("candidates").select("*");
   if (authUserId) {
     query = query.eq("auth_user_id", authUserId);
   } else if (candidateId) {
     query = query.eq("candidate_id", candidateId);
+  } else if (email) {
+    query = query.eq("email", email.trim().toLowerCase());
   } else {
     return null;
   }
 
   const { data, error } = await query.maybeSingle();
   if (error) {
+    // If not found by auth_user_id and email is provided, try looking up by email
+    if (email && authUserId) {
+      const { data: emailData } = await supabase
+        .from("candidates")
+        .select("*")
+        .eq("email", email.trim().toLowerCase())
+        .maybeSingle();
+      if (emailData) return emailData;
+    }
     console.error("Error fetching candidate profile:", error);
     return null;
   }
+
+  // If data is null and email exists, check by email
+  if (!data && email) {
+    const { data: emailData } = await supabase
+      .from("candidates")
+      .select("*")
+      .eq("email", email.trim().toLowerCase())
+      .maybeSingle();
+    if (emailData) return emailData;
+  }
+
   return data;
 }
