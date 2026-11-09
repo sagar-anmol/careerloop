@@ -59,11 +59,15 @@ export default function HomePage() {
     setIsAuthOpen(true);
   };
 
+  // Candidate must login or signup to access the test.
+  // Clicking "Take Assessment" opens profile if logged in, or prompts login/signup if not.
   const handleOpenAssessment = () => {
     if (currentUser) {
       setCandidateData(currentUser);
+      setIsProfileOpen(true);
+    } else {
+      setIsAuthOpen(true);
     }
-    setIsAssessmentOpen(true);
   };
 
   const handleSignOut = async () => {
@@ -81,16 +85,17 @@ export default function HomePage() {
   // On signup finished: go directly to profile screen
   const handleOnboardingSignupCompleted = (data: CandidateProfileData | CandidateOnboardingData) => {
     setCurrentUser(data as CandidateProfileData);
+    setCandidateData(data as CandidateProfileData);
     setIsOnboardingOpen(false);
     setIsProfileOpen(true);
   };
 
-  // If user explicitly chooses "Take Assessment Now" at end of signup
+  // If user finishes signup, route them directly to their profile screen to review details before taking test
   const handleOnboardingAndStartTest = (data: CandidateProfileData | CandidateOnboardingData) => {
-    setCandidateData(data as CandidateProfileData);
     setCurrentUser(data as CandidateProfileData);
+    setCandidateData(data as CandidateProfileData);
     setIsOnboardingOpen(false);
-    setIsAssessmentOpen(true);
+    setIsProfileOpen(true);
   };
 
   return (

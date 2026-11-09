@@ -858,26 +858,16 @@ export function MuiOnboardingModal({
         )}
 
         {activeStep === 3 && (
-          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5, width: "100%" }}>
+          <Box sx={{ width: "100%" }}>
             <Button
               variant="contained"
               color="primary"
               fullWidth
               onClick={handleFinishAndGoToProfile}
               startIcon={<PersonIcon />}
-              sx={{ py: 1.2, fontWeight: 700 }}
+              sx={{ py: 1.3, fontWeight: 700 }}
             >
-              View My Profile
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              fullWidth
-              onClick={handleFinishAndStartAssessment}
-              endIcon={<ArrowForwardIcon />}
-              sx={{ py: 1.2, fontWeight: 700 }}
-            >
-              Take Assessment Now
+              Open My Profile &amp; Dashboard
             </Button>
           </Box>
         )}

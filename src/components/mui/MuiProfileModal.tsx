@@ -147,6 +147,7 @@ export function MuiProfileModal({
   }, [isOpen, candidateId, currentScore, candidateProfile]);
 
   const handleLaunchTest = () => {
+    if (totalTests >= 2) return;
     onClose();
     onRetakeTest(candidateProfile);
   };
@@ -458,19 +459,47 @@ export function MuiProfileModal({
             <Typography variant="subtitle2" sx={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>
               All Previous Tests &amp; Attempt Logs
             </Typography>
+            <Chip
+              label={`${Math.min(totalTests, 2)} / 2 Attempts Used`}
+              size="small"
+              color={totalTests >= 2 ? "error" : "primary"}
+              sx={{ fontWeight: 700, fontSize: "0.72rem", height: 22 }}
+            />
           </Box>
 
           <Button
             variant="contained"
-            color="primary"
+            color={totalTests >= 2 ? "inherit" : "primary"}
             size="small"
             startIcon={<PlayArrowIcon />}
             onClick={handleLaunchTest}
+            disabled={totalTests >= 2}
             sx={{ fontWeight: 700, textTransform: "none" }}
           >
-            Take New Assessment
+            {totalTests >= 2 ? "Attempt Limit Reached (Max 2)" : totalTests === 1 ? "Retake Assessment (Final Attempt)" : "Take Assessment"}
           </Button>
         </Box>
+
+        {totalTests >= 2 && (
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              mb: 2,
+              borderRadius: 2,
+              bgcolor: "rgba(239, 68, 68, 0.05)",
+              borderColor: "rgba(239, 68, 68, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+            }}
+          >
+            <ShieldIcon sx={{ color: "#ef4444" }} />
+            <Typography variant="body2" sx={{ color: "text.primary" }}>
+              <strong>Maximum Attempts Reached:</strong> Each candidate is permitted a maximum of <strong>2 proctored attempts</strong>. Your highest score has been sealed and dispatched to partner employers.
+            </Typography>
+          </Paper>
+        )}
 
         {isLoadingHistory ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
