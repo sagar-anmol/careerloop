@@ -392,66 +392,6 @@ export function MuiProfileModal({
           </Paper>
         </Box>
 
-        {/* DOMAIN COMPETENCY PROGRESS BARS */}
-        <Paper variant="outlined" sx={{ p: 2.5, mb: 3, borderRadius: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              Technical Competency Breakdown (Evaluated by HR Engine)
-            </Typography>
-            <TrendingUpIcon sx={{ color: "primary.main", fontSize: 20 }} />
-          </Box>
-
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.8 }}>
-            <Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  Precision Metrology &amp; Quality Inspection
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "primary.main" }}>
-                  {totalTests > 0 ? "85%" : "Pending Test"}
-                </Typography>
-              </Box>
-              <LinearProgress variant="determinate" value={totalTests > 0 ? 85 : 0} sx={{ height: 6, borderRadius: 1 }} />
-            </Box>
-
-            <Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  Industrial Safety &amp; 5S Operational Standards
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "#10b981" }}>
-                  {totalTests > 0 ? "90%" : "Pending Test"}
-                </Typography>
-              </Box>
-              <LinearProgress variant="determinate" color="success" value={totalTests > 0 ? 90 : 0} sx={{ height: 6, borderRadius: 1 }} />
-            </Box>
-
-            <Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  Electrical &amp; Clean Energy Battery Systems
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "primary.main" }}>
-                  {totalTests > 0 ? "80%" : "Pending Test"}
-                </Typography>
-              </Box>
-              <LinearProgress variant="determinate" value={totalTests > 0 ? 80 : 0} sx={{ height: 6, borderRadius: 1 }} />
-            </Box>
-
-            <Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  CNC / VMC Machining &amp; Production Diagnostics
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "#8458B3" }}>
-                  {totalTests > 0 ? "75%" : "Pending Test"}
-                </Typography>
-              </Box>
-              <LinearProgress variant="determinate" value={totalTests > 0 ? 75 : 0} sx={{ height: 6, borderRadius: 1, "& .MuiLinearProgress-bar": { bgcolor: "#8458B3" } }} />
-            </Box>
-          </Box>
-        </Paper>
-
         {/* PREVIOUS TESTS HISTORY TABLE */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

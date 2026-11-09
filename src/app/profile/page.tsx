@@ -10,7 +10,6 @@ import {
   PlayCircle,
   Clock,
   CheckCircle2,
-  AlertTriangle,
   LogOut,
   Building2,
   Mail,
@@ -18,16 +17,11 @@ import {
   MapPin,
   GraduationCap,
   Briefcase,
-  ChevronRight,
-  TrendingUp,
   Award,
   Layers,
   Settings,
-  HelpCircle,
   Menu,
   ExternalLink,
-  RefreshCw,
-  Sparkles,
   Lock,
 } from "lucide-react";
 
@@ -210,22 +204,21 @@ export default function CandidateProfileDashboardPage() {
   const attemptsLeft = Math.max(0, 2 - totalTests);
 
   return (
-    <div className="min-h-screen bg-[#f4f7fe] text-slate-900 flex flex-col font-sans">
-      {/* Top Corporate Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full border-b border-blue-100 bg-white/95 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+      {/* Top Navigation Bar */}
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white">
+        <div className="max-w-6xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#003c5e] to-[#405FE2] flex items-center justify-center text-white shadow-sm">
-                <Briefcase className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-md bg-slate-900 flex items-center justify-center text-white">
+                <Briefcase className="w-4 h-4" />
               </div>
-              <span className="text-xl font-black tracking-tight text-slate-900">
-                Career<span className="text-[#405FE2]">Loop</span>
+              <span className="text-lg font-bold tracking-tight text-slate-900">
+                Career<span className="text-blue-600">Loop</span>
               </span>
             </Link>
-            <Badge variant="outline" className="hidden sm:inline-flex bg-blue-50/50 text-[#003c5e] border-blue-200 font-semibold text-xs ml-2">
-              Verified Candidate Portal
-            </Badge>
+            <span className="text-slate-300">|</span>
+            <span className="text-xs font-medium text-slate-500">Candidate Portal</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -234,66 +227,66 @@ export default function CandidateProfileDashboardPage() {
               size="sm"
               onClick={() => setIsAssessmentOpen(true)}
               disabled={totalTests >= 2}
-              className={`font-semibold shadow-sm text-xs sm:text-sm ${
+              className={`text-xs font-medium h-8 px-3 ${
                 totalTests >= 2
-                  ? "bg-slate-200 text-slate-500 cursor-not-allowed hover:bg-slate-200"
-                  : "bg-[#405FE2] hover:bg-[#2e47b3] text-white"
+                  ? "bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100 border border-slate-200"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
-              <PlayCircle className="w-4 h-4 mr-1.5" />
-              {totalTests >= 2 ? "Test Completed (2/2)" : totalTests === 1 ? "Retake Test (Final)" : "Take Assessment"}
+              <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
+              {totalTests >= 2 ? "Test Completed (2/2)" : totalTests === 1 ? "Retake Test (2/2)" : "Take Assessment"}
             </Button>
 
             {/* User Avatar & Menu */}
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200">
-              <Avatar className="w-8 h-8 ring-2 ring-[#405FE2]/20">
+            <div className="hidden sm:flex items-center gap-2.5 pl-3 border-l border-slate-200">
+              <Avatar className="w-8 h-8 rounded-full border border-slate-200">
                 <AvatarImage src={photoUrl || undefined} alt={fullName} />
-                <AvatarFallback className="bg-[#405FE2] text-white font-bold text-xs">
+                <AvatarFallback className="bg-slate-800 text-white font-medium text-xs">
                   {fullName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="text-left text-xs leading-tight">
-                <p className="font-bold text-slate-800">{fullName}</p>
-                <p className="text-slate-400 font-mono">{candidateId}</p>
+              <div className="text-left text-xs">
+                <p className="font-semibold text-slate-800 leading-none">{fullName}</p>
+                <p className="text-[11px] text-slate-500 font-mono mt-0.5">{candidateId}</p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleSignOut}
                 title="Sign Out"
-                className="text-slate-400 hover:text-red-600 hover:bg-red-50 ml-1"
+                className="h-8 w-8 text-slate-400 hover:text-slate-700 hover:bg-slate-100 ml-1"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
               </Button>
             </div>
 
             {/* Mobile Sheet Trigger */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger render={<Button variant="ghost" size="icon" className="sm:hidden text-slate-700" />}>
-                <Menu className="w-5 h-5" />
+              <SheetTrigger render={<Button variant="ghost" size="icon" className="sm:hidden text-slate-700 h-8 w-8" />}>
+                <Menu className="w-4 h-4" />
               </SheetTrigger>
               <SheetContent side="right" className="w-72 p-6 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <Avatar className="w-10 h-10 ring-2 ring-[#405FE2]">
+                  <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                    <Avatar className="w-10 h-10 border border-slate-200">
                       <AvatarImage src={photoUrl || undefined} />
-                      <AvatarFallback className="bg-[#405FE2] text-white font-bold">
+                      <AvatarFallback className="bg-slate-800 text-white font-medium">
                         {fullName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h4 className="font-bold text-sm text-slate-900">{fullName}</h4>
+                      <h4 className="font-semibold text-sm text-slate-900">{fullName}</h4>
                       <p className="text-xs text-slate-400 font-mono">{candidateId}</p>
                     </div>
                   </div>
 
                   <div className="space-y-1">
                     {[
-                      { id: "overview", label: "Executive Dashboard", icon: Layers },
-                      { id: "assessments", label: "Assessment & Integrity", icon: Shield },
-                      { id: "dossier", label: "Candidate Dossier", icon: FileText },
-                      { id: "partners", label: "Recruiter Placement Route", icon: Building2 },
-                      { id: "settings", label: "Account & Privacy", icon: Settings },
+                      { id: "overview", label: "Dashboard", icon: Layers },
+                      { id: "assessments", label: "Assessment History", icon: Shield },
+                      { id: "dossier", label: "Profile & Documents", icon: FileText },
+                      { id: "partners", label: "Recruiter Pipeline", icon: Building2 },
+                      { id: "settings", label: "Account Settings", icon: Settings },
                     ].map((item) => {
                       const Icon = item.icon;
                       return (
@@ -303,9 +296,9 @@ export default function CandidateProfileDashboardPage() {
                             setActiveTab(item.id as typeof activeTab);
                             setMobileMenuOpen(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                             activeTab === item.id
-                              ? "bg-[#405FE2] text-white"
+                              ? "bg-slate-900 text-white"
                               : "text-slate-600 hover:bg-slate-100"
                           }`}
                         >
@@ -320,9 +313,9 @@ export default function CandidateProfileDashboardPage() {
                 <Button
                   variant="outline"
                   onClick={handleSignOut}
-                  className="w-full text-red-600 border-red-200 hover:bg-red-50 mt-6"
+                  className="w-full text-slate-600 border-slate-200 hover:bg-slate-50 text-xs"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="w-3.5 h-3.5 mr-2" />
                   Sign Out
                 </Button>
               </SheetContent>
@@ -331,37 +324,35 @@ export default function CandidateProfileDashboardPage() {
         </div>
       </header>
 
-      {/* Main App Body with Sidebar & Content Tabs */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Sidebar Sub-Navigation */}
+      {/* Main App Body with Clean Sidebar & Content */}
+      <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Clean Sidebar Navigation */}
         <aside className="hidden md:block md:col-span-3">
-          <Card className="border-blue-100/70 shadow-sm sticky top-24 bg-white/95">
+          <Card className="border-slate-200 shadow-none bg-white">
             <CardHeader className="p-4 pb-3">
               <div className="flex items-center gap-3">
-                <Avatar className="w-12 h-12 rounded-xl ring-2 ring-[#405FE2]/20">
+                <Avatar className="w-10 h-10 rounded-lg border border-slate-200">
                   <AvatarImage src={photoUrl || undefined} alt={fullName} />
-                  <AvatarFallback className="bg-gradient-to-tr from-[#003c5e] to-[#405FE2] text-white font-bold text-lg rounded-xl">
+                  <AvatarFallback className="bg-slate-800 text-white font-medium text-sm rounded-lg">
                     {fullName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="overflow-hidden">
-                  <h3 className="font-bold text-slate-900 text-sm truncate">{fullName}</h3>
-                  <Badge variant="secondary" className="font-mono text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0">
-                    {candidateId}
-                  </Badge>
+                  <h3 className="font-semibold text-slate-900 text-sm truncate">{fullName}</h3>
+                  <p className="font-mono text-[11px] text-slate-500">{candidateId}</p>
                 </div>
               </div>
             </CardHeader>
 
             <Separator className="bg-slate-100" />
 
-            <CardContent className="p-2 space-y-1">
+            <CardContent className="p-2 space-y-0.5">
               {[
-                { id: "overview", label: "Executive Dashboard", icon: Layers, badge: totalTests > 0 ? "Active" : "Ready" },
-                { id: "assessments", label: "Assessment & Scoring", icon: Shield, badge: `${totalTests}/2` },
-                { id: "dossier", label: "Candidate Dossier", icon: FileText, badge: "Verified" },
-                { id: "partners", label: "Agency Dispatch", icon: Building2, badge: "Locked" },
-                { id: "settings", label: "Settings & Security", icon: Settings },
+                { id: "overview", label: "Dashboard", icon: Layers },
+                { id: "assessments", label: "Assessment History", icon: Shield, badge: `${totalTests}/2` },
+                { id: "dossier", label: "Profile & Documents", icon: FileText },
+                { id: "partners", label: "Recruiter Pipeline", icon: Building2, badge: "Locked" },
+                { id: "settings", label: "Account Settings", icon: Settings },
               ].map((item) => {
                 const Icon = item.icon;
                 const isSelected = activeTab === item.id;
@@ -369,19 +360,19 @@ export default function CandidateProfileDashboardPage() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id as typeof activeTab)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                       isSelected
-                        ? "bg-[#405FE2] text-white shadow-sm shadow-blue-500/25"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Icon className={`w-4 h-4 ${isSelected ? "text-white" : "text-slate-400"}`} />
+                      <Icon className={`w-3.5 h-3.5 ${isSelected ? "text-white" : "text-slate-400"}`} />
                       <span>{item.label}</span>
                     </div>
                     {item.badge && (
                       <span
-                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                        className={`text-[10px] font-medium px-1.5 py-0.2 rounded ${
                           isSelected
                             ? "bg-white/20 text-white"
                             : "bg-slate-100 text-slate-500"
@@ -397,56 +388,58 @@ export default function CandidateProfileDashboardPage() {
 
             <Separator className="bg-slate-100" />
 
-            <div className="p-3 bg-blue-50/60 rounded-b-xl border-t border-blue-100/60">
-              <div className="flex items-center justify-between text-xs mb-1">
-                <span className="font-semibold text-[#003c5e]">Evaluation Quota</span>
-                <span className="font-mono font-bold text-[#405FE2]">{attemptsLeft} left</span>
+            <div className="p-3 bg-slate-50 rounded-b-lg">
+              <div className="flex items-center justify-between text-xs mb-1.5 text-slate-600">
+                <span className="font-medium">Assessment Attempts</span>
+                <span className="font-mono text-slate-800">{totalTests} / 2</span>
               </div>
-              <Progress value={(totalTests / 2) * 100} className="h-1.5 bg-blue-200/50" />
-              <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">
-                Max 2 proctored attempts to ensure strict employer integrity standards.
+              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-blue-600 h-full rounded-full transition-all"
+                  style={{ width: `${(totalTests / 2) * 100}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 mt-1.5">
+                {attemptsLeft > 0 ? `${attemptsLeft} attempt remaining` : "All attempts completed"}
               </p>
             </div>
           </Card>
         </aside>
 
         {/* Dynamic Main Workspace Content */}
-        <main className="md:col-span-9 space-y-6">
+        <main className="md:col-span-9 space-y-5">
           {/* TAB 1: EXECUTIVE OVERVIEW */}
           {activeTab === "overview" && (
-            <div className="space-y-6">
-              {/* Hero Banner Card */}
-              <Card className="border-blue-100 bg-gradient-to-r from-[#00223d] via-[#003c5e] to-[#405FE2] text-white overflow-hidden relative shadow-md">
-                <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 to-transparent pointer-events-none" />
-                <CardContent className="p-6 sm:p-8 relative z-10">
+            <div className="space-y-5">
+              {/* Header Profile Summary */}
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardContent className="p-5 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-400/30 text-xs font-bold uppercase tracking-wider">
-                          Identity Verified
-                        </Badge>
-                        <span className="text-blue-200 text-xs font-mono font-semibold">
-                          ID: {candidateId}
-                        </span>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span className="font-mono font-medium">{candidateId}</span>
+                        <span>•</span>
+                        <span>{city}</span>
                       </div>
-                      <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                        Welcome, {fullName}
+                      <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+                        Welcome back, {fullName}
                       </h1>
-                      <p className="text-blue-100/90 text-sm max-w-xl leading-relaxed">
-                        Your technical profile is configured for direct dispatch to our 450+ hiring agencies. Complete your evaluation to generate a verified scorecard.
+                      <p className="text-slate-500 text-xs sm:text-sm">
+                        {domain}
                       </p>
                     </div>
 
-                    <div className="flex flex-col gap-2 shrink-0">
+                    <div className="flex flex-col sm:items-end gap-1.5 shrink-0">
                       <Button
+                        size="sm"
                         onClick={() => setIsAssessmentOpen(true)}
                         disabled={totalTests >= 2}
-                        className="bg-white text-[#003c5e] hover:bg-blue-50 font-bold px-5 py-2.5 shadow-md shadow-black/10"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 px-4"
                       >
-                        <PlayCircle className="w-4 h-4 mr-2 text-[#405FE2]" />
-                        {totalTests >= 2 ? "2/2 Attempts Used" : totalTests === 1 ? "Retake Assessment" : "Start Proctored Test"}
+                        <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
+                        {totalTests >= 2 ? "2/2 Attempts Used" : totalTests === 1 ? "Retake Assessment" : "Take Assessment"}
                       </Button>
-                      <span className="text-[11px] text-blue-200 text-center font-medium">
+                      <span className="text-[11px] text-slate-400">
                         {attemptsLeft} attempts remaining
                       </span>
                     </div>
@@ -454,179 +447,115 @@ export default function CandidateProfileDashboardPage() {
                 </CardContent>
               </Card>
 
-              {/* 4 Metric KPI Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="border-blue-100/70 shadow-sm bg-white hover:border-[#405FE2]/40 transition-colors">
+              {/* 3 Real Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Test Score</span>
-                      <Award className="w-4 h-4 text-[#405FE2]" />
-                    </div>
-                    <div className="text-2xl font-black text-slate-900">
+                    <p className="text-xs font-medium text-slate-500">Latest Score</p>
+                    <div className="text-2xl font-bold text-slate-900 mt-1">
                       {totalTests > 0 ? `${averageScore}%` : "—"}
                     </div>
-                    <p className="text-xs font-semibold text-emerald-600 mt-1">
-                      {totalTests > 0 ? (averageScore >= 60 ? "Qualified for Dispatch" : "Technical Review") : "Test Pending"}
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      {totalTests > 0 ? (averageScore >= 60 ? "Qualified (Passing >= 60%)" : "Under Review") : "Test not attempted"}
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-blue-100/70 shadow-sm bg-white hover:border-[#405FE2]/40 transition-colors">
+                <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Attempts</span>
-                      <Clock className="w-4 h-4 text-[#405FE2]" />
-                    </div>
-                    <div className="text-2xl font-black text-slate-900">
+                    <p className="text-xs font-medium text-slate-500">Attempts Completed</p>
+                    <div className="text-2xl font-bold text-slate-900 mt-1">
                       {totalTests} / 2
                     </div>
-                    <p className="text-xs font-semibold text-slate-500 mt-1">
-                      {attemptsLeft === 0 ? "Quota Exhausted" : `${attemptsLeft} attempt remaining`}
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      {attemptsLeft === 0 ? "Quota Exhausted" : `${attemptsLeft} attempt available`}
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-blue-100/70 shadow-sm bg-white hover:border-[#405FE2]/40 transition-colors">
+                <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Pass Rate</span>
-                      <TrendingUp className="w-4 h-4 text-emerald-500" />
+                    <p className="text-xs font-medium text-slate-500">Evaluation Status</p>
+                    <div className="text-2xl font-bold text-slate-900 mt-1">
+                      {totalTests > 0 ? (averageScore >= 60 ? "Eligible" : "Pending") : "Pending"}
                     </div>
-                    <div className="text-2xl font-black text-emerald-600">
-                      {totalTests > 0 ? `${passRate}%` : "—"}
-                    </div>
-                    <p className="text-xs font-semibold text-slate-500 mt-1">
-                      Target: &gt;= 60% Passing
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-blue-100/70 shadow-sm bg-white hover:border-[#405FE2]/40 transition-colors">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Integrity</span>
-                      <Shield className="w-4 h-4 text-emerald-500" />
-                    </div>
-                    <div className="text-2xl font-black text-emerald-600">
-                      100%
-                    </div>
-                    <p className="text-xs font-semibold text-emerald-700 mt-1">
-                      Zero Security Flags
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      {totalTests > 0 ? "Score recorded" : "Complete test to qualify"}
                     </p>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Technical Domain Competency Breakdown */}
-              <Card className="border-blue-100/70 shadow-sm bg-white">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-base font-bold text-slate-900">
-                        Technical Skill Diagnostic
-                      </CardTitle>
-                      <CardDescription className="text-xs text-slate-500">
-                        Assessed against ApexHire and BlueChip employer requirements
-                      </CardDescription>
-                    </div>
-                    <Sparkles className="w-4 h-4 text-[#405FE2]" />
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { title: "Precision Metrology & Quality Inspection", value: totalTests > 0 ? 85 : 0, color: "bg-[#405FE2]" },
-                    { title: "Industrial Safety & 5S Operational Standards", value: totalTests > 0 ? 90 : 0, color: "bg-emerald-500" },
-                    { title: "Electrical & Clean Energy Battery Systems", value: totalTests > 0 ? 80 : 0, color: "bg-[#003c5e]" },
-                    { title: "CNC / VMC Machining & Production Diagnostics", value: totalTests > 0 ? 75 : 0, color: "bg-purple-600" },
-                  ].map((skill, i) => (
-                    <div key={i} className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-slate-700">{skill.title}</span>
-                        <span className="text-slate-900 font-bold">{totalTests > 0 ? `${skill.value}%` : "Pending Evaluation"}</span>
-                      </div>
-                      <Progress value={skill.value} className="h-2 bg-slate-100" />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
               {/* Recent Test History Card */}
-              <Card className="border-blue-100/70 shadow-sm bg-white">
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between border-b border-slate-100">
                   <div>
-                    <CardTitle className="text-base font-bold text-slate-900">
-                      Recent Assessment Attempts
+                    <CardTitle className="text-sm font-semibold text-slate-900">
+                      Assessment History
                     </CardTitle>
                     <CardDescription className="text-xs text-slate-500">
-                      Proctored technical and safety evaluations recorded in database
+                      Record of completed technical assessments
                     </CardDescription>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
                     onClick={() => setActiveTab("assessments")}
-                    className="text-xs font-semibold text-[#405FE2] border-blue-200 hover:bg-blue-50"
+                    className="text-xs font-medium text-blue-600 hover:text-blue-700 h-8"
                   >
-                    View All Logs
+                    View All
                   </Button>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                   {history.length === 0 ? (
-                    <div className="text-center py-8 px-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                    <div className="text-center py-10 px-4">
                       <Shield className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                      <h4 className="font-bold text-sm text-slate-700">No Assessment Records Yet</h4>
-                      <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                        Take the 5-question proctored evaluation to generate your verified scorecard.
+                      <p className="font-medium text-xs text-slate-700">No Assessment Records Yet</p>
+                      <p className="text-xs text-slate-400 max-w-sm mx-auto mt-0.5 mb-3">
+                        Take the 5-question evaluation to record your score.
                       </p>
                       <Button
                         size="sm"
                         onClick={() => setIsAssessmentOpen(true)}
-                        className="bg-[#405FE2] hover:bg-[#2e47b3] text-white font-semibold text-xs"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8"
                       >
-                        <PlayCircle className="w-4 h-4 mr-1.5" />
-                        Start Proctored Assessment
+                        <PlayCircle className="w-3.5 h-3.5 mr-1" />
+                        Start Test
                       </Button>
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className="border-slate-100">
-                            <TableHead className="text-xs font-bold">Date</TableHead>
-                            <TableHead className="text-xs font-bold">Assessment</TableHead>
-                            <TableHead className="text-xs font-bold text-center">Score</TableHead>
-                            <TableHead className="text-xs font-bold">Status</TableHead>
-                            <TableHead className="text-xs font-bold">Integrity</TableHead>
+                          <TableRow className="border-slate-100 bg-slate-50/50">
+                            <TableHead className="text-xs font-medium text-slate-600 h-9">Date</TableHead>
+                            <TableHead className="text-xs font-medium text-slate-600 h-9">Assessment</TableHead>
+                            <TableHead className="text-xs font-medium text-slate-600 h-9 text-center">Score</TableHead>
+                            <TableHead className="text-xs font-medium text-slate-600 h-9">Status</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {history.slice(0, 3).map((item, idx) => (
                             <TableRow key={item.id || idx} className="border-slate-100">
-                              <TableCell className="text-xs text-slate-500 font-mono">
+                              <TableCell className="text-xs text-slate-500 font-mono py-2.5">
                                 {new Date(item.completed_at).toLocaleDateString("en-IN", {
                                   day: "2-digit",
                                   month: "short",
                                   year: "numeric",
                                 })}
                               </TableCell>
-                              <TableCell className="text-xs font-semibold text-slate-800">
+                              <TableCell className="text-xs text-slate-800 py-2.5">
                                 {item.test_title}
                               </TableCell>
-                              <TableCell className="text-xs font-bold text-center">
-                                <Badge
-                                  variant="outline"
-                                  className={item.score >= 60 ? "bg-emerald-50 text-emerald-700 border-emerald-300 font-bold" : "bg-amber-50 text-amber-700 border-amber-300 font-bold"}
-                                >
+                              <TableCell className="text-xs text-center py-2.5">
+                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
+                                  item.score >= 60 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                                }`}>
                                   {item.score} / {item.total_score || 100}
-                                </Badge>
+                                </span>
                               </TableCell>
-                              <TableCell className="text-xs font-bold text-emerald-600">
-                                {item.score >= 60 ? "PASSED (Qualified)" : "Under Review"}
-                              </TableCell>
-                              <TableCell className="text-xs">
-                                <Badge variant="outline" className="text-[11px] font-semibold border-slate-200">
-                                  {item.integrity_flags || 0} Flags
-                                </Badge>
+                              <TableCell className="text-xs text-slate-600 py-2.5">
+                                {item.score >= 60 ? "Passed" : "Needs Review"}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -641,44 +570,44 @@ export default function CandidateProfileDashboardPage() {
 
           {/* TAB 2: ASSESSMENTS & LOGS */}
           {activeTab === "assessments" && (
-            <div className="space-y-6">
-              <Card className="border-blue-100/70 shadow-sm bg-white">
-                <CardHeader>
+            <div className="space-y-5">
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardHeader className="p-4 sm:p-5 border-b border-slate-100">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <CardTitle className="text-lg font-bold text-slate-900">
-                        Proctored Technical Evaluation Suite
+                      <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
+                        Assessment Records
                       </CardTitle>
                       <CardDescription className="text-xs text-slate-500">
-                        Automated AI face verification and anti-cheating monitoring active
+                        History of proctored evaluations and recorded results
                       </CardDescription>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="font-mono text-xs font-bold px-2.5 py-1">
-                        Attempts Used: {totalTests} / 2
-                      </Badge>
+                      <span className="font-mono text-xs px-2 py-1 rounded bg-slate-100 text-slate-600 font-medium">
+                        Attempts: {totalTests} / 2
+                      </span>
                       <Button
                         size="sm"
                         onClick={() => setIsAssessmentOpen(true)}
                         disabled={totalTests >= 2}
-                        className="bg-[#405FE2] hover:bg-[#2e47b3] text-white font-semibold text-xs"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8"
                       >
-                        <PlayCircle className="w-4 h-4 mr-1.5" />
-                        {totalTests >= 2 ? "Quota Completed" : totalTests === 1 ? "Retake (Attempt 2 of 2)" : "Take Assessment"}
+                        <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
+                        {totalTests >= 2 ? "Completed" : totalTests === 1 ? "Retake Test" : "Take Assessment"}
                       </Button>
                     </div>
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
+                <CardContent className="p-4 sm:p-5 space-y-4">
                   {totalTests >= 2 && (
-                    <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 flex items-start gap-3">
-                      <Lock className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
+                      <Lock className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-bold text-sm text-red-900">Maximum Attempt Limit Reached</h4>
-                        <p className="text-xs text-red-700 mt-0.5 leading-relaxed">
-                          You have completed both permitted attempts. Your highest verified score ({averageScore}%) has been locked and shared with partner hiring agencies.
+                        <h4 className="font-medium text-xs text-slate-800">Attempt Limit Reached</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Both permitted attempts have been completed. Your highest verified score ({averageScore}%) is recorded.
                         </p>
                       </div>
                     </div>
@@ -687,26 +616,25 @@ export default function CandidateProfileDashboardPage() {
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
-                        <TableRow className="border-slate-100">
-                          <TableHead className="text-xs font-bold">Attempt Timestamp</TableHead>
-                          <TableHead className="text-xs font-bold">Evaluation Title</TableHead>
-                          <TableHead className="text-xs font-bold text-center">Score</TableHead>
-                          <TableHead className="text-xs font-bold">Status</TableHead>
-                          <TableHead className="text-xs font-bold">Integrity Rating</TableHead>
-                          <TableHead className="text-xs font-bold">Partner Route</TableHead>
+                        <TableRow className="border-slate-100 bg-slate-50/50">
+                          <TableHead className="text-xs font-medium text-slate-600">Timestamp</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-600">Evaluation</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-600 text-center">Score</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-600">Status</TableHead>
+                          <TableHead className="text-xs font-medium text-slate-600">Integrity</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {history.length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={6} className="text-center py-8 text-xs text-slate-400">
+                            <TableCell colSpan={5} className="text-center py-8 text-xs text-slate-400">
                               No assessment records logged. Click "Take Assessment" to begin.
                             </TableCell>
                           </TableRow>
                         ) : (
                           history.map((test, index) => (
                             <TableRow key={test.id || index} className="border-slate-100 hover:bg-slate-50/50">
-                              <TableCell className="text-xs font-mono text-slate-500">
+                              <TableCell className="text-xs font-mono text-slate-500 py-3">
                                 {new Date(test.completed_at).toLocaleString("en-IN", {
                                   day: "2-digit",
                                   month: "short",
@@ -715,27 +643,25 @@ export default function CandidateProfileDashboardPage() {
                                   minute: "2-digit",
                                 })}
                               </TableCell>
-                              <TableCell className="text-xs font-semibold text-slate-800">
+                              <TableCell className="text-xs font-medium text-slate-800 py-3">
                                 {test.test_title}
                               </TableCell>
-                              <TableCell className="text-center">
-                                <Badge
-                                  className={test.score >= 60 ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-100 font-bold" : "bg-amber-100 text-amber-800 hover:bg-amber-100 font-bold"}
+                              <TableCell className="text-center py-3">
+                                <span
+                                  className={`inline-block px-2.5 py-0.5 rounded text-xs font-semibold ${
+                                    test.score >= 60 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                                  }`}
                                 >
                                   {test.score} / {test.total_score || 100}
-                                </Badge>
+                                </span>
                               </TableCell>
-                              <TableCell className="text-xs font-bold text-emerald-600">
-                                {test.score >= 60 ? "QUALIFIED (Dispatched)" : "Under Technical Review"}
+                              <TableCell className="text-xs font-medium py-3 text-slate-700">
+                                {test.score >= 60 ? "Passed" : "Under Review"}
                               </TableCell>
-                              <TableCell>
-                                <Badge variant="outline" className="text-xs font-semibold border-emerald-300 text-emerald-700 bg-emerald-50">
-                                  <Shield className="w-3 h-3 mr-1 text-emerald-600" />
-                                  {test.integrity_flags || 0} Flags
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-xs font-medium text-slate-500">
-                                {test.partner_route || "ApexHire • TalentPulse • BlueChip"}
+                              <TableCell className="py-3">
+                                <span className="text-xs text-slate-500 font-mono">
+                                  {test.integrity_flags || 0} flags
+                                </span>
                               </TableCell>
                             </TableRow>
                           ))
@@ -750,56 +676,56 @@ export default function CandidateProfileDashboardPage() {
 
           {/* TAB 3: CANDIDATE DOSSIER */}
           {activeTab === "dossier" && (
-            <div className="space-y-6">
-              <Card className="border-blue-100/70 shadow-sm bg-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-slate-900">
-                    Candidate Dossier &amp; Identity Credentials
+            <div className="space-y-5">
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardHeader className="p-4 sm:p-5 border-b border-slate-100">
+                  <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
+                    Candidate Profile &amp; Documents
                   </CardTitle>
                   <CardDescription className="text-xs text-slate-500">
-                    Verified photo ID snapshot, uploaded resume and domain classification
+                    Verified registration details, identity photo, and resume
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="p-4 sm:p-5 space-y-5">
                   {/* Personal details grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Full Name</span>
-                      <p className="font-bold text-sm text-slate-800">{fullName}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-0.5">
+                      <span className="text-[11px] font-medium text-slate-500">Full Name</span>
+                      <p className="font-semibold text-sm text-slate-900">{fullName}</p>
                     </div>
 
-                    <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Candidate ID</span>
-                      <p className="font-mono font-bold text-sm text-[#405FE2]">{candidateId}</p>
+                    <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-0.5">
+                      <span className="text-[11px] font-medium text-slate-500">Candidate ID</span>
+                      <p className="font-mono font-semibold text-sm text-slate-900">{candidateId}</p>
                     </div>
 
-                    <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email Address</span>
-                      <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
+                    <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-0.5">
+                      <span className="text-[11px] font-medium text-slate-500">Email Address</span>
+                      <div className="flex items-center gap-1.5 text-sm text-slate-900">
                         <Mail className="w-3.5 h-3.5 text-slate-400" />
                         <span>{email}</span>
                       </div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mobile Phone</span>
-                      <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
+                    <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-0.5">
+                      <span className="text-[11px] font-medium text-slate-500">Mobile Phone</span>
+                      <div className="flex items-center gap-1.5 text-sm text-slate-900">
                         <Phone className="w-3.5 h-3.5 text-slate-400" />
                         <span>{phone}</span>
                       </div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Target Industry Domain</span>
-                      <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
+                    <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-0.5">
+                      <span className="text-[11px] font-medium text-slate-500">Qualification &amp; Domain</span>
+                      <div className="flex items-center gap-1.5 text-sm text-slate-900">
                         <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
                         <span>{domain}</span>
                       </div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Location &amp; Mobility</span>
-                      <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
+                    <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-0.5">
+                      <span className="text-[11px] font-medium text-slate-500">Location</span>
+                      <div className="flex items-center gap-1.5 text-sm text-slate-900">
                         <MapPin className="w-3.5 h-3.5 text-slate-400" />
                         <span>{city}</span>
                       </div>
@@ -807,38 +733,35 @@ export default function CandidateProfileDashboardPage() {
                   </div>
 
                   {/* Photo ID and Resume Document Viewers */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                    <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/30 flex items-center gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                    <div className="p-3.5 rounded-lg border border-slate-200 bg-white flex items-center gap-3.5">
                       {photoUrl ? (
                         <img
                           src={photoUrl}
-                          alt="Live Verified Photo"
-                          className="w-16 h-16 rounded-xl object-cover ring-2 ring-emerald-500 shadow-sm"
+                          alt="Candidate Photo"
+                          className="w-14 h-14 rounded-lg object-cover border border-slate-200"
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400">
-                          <User className="w-8 h-8" />
+                        <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 border border-slate-200">
+                          <User className="w-6 h-6" />
                         </div>
                       )}
                       <div>
-                        <div className="flex items-center gap-1 text-xs font-bold text-emerald-700">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Live Photo ID Verified</span>
-                        </div>
+                        <p className="text-xs font-semibold text-slate-900">Live Photo ID</p>
                         <p className="text-xs text-slate-500 mt-0.5">
-                          Geometric face alignment passed during candidate onboarding.
+                          Face verified during candidate registration.
                         </p>
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/30 flex items-center justify-between">
+                    <div className="p-3.5 rounded-lg border border-slate-200 bg-white flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[#405FE2]/10 text-[#405FE2] flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
                           <FileText className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-slate-900 truncate max-w-[140px]">{resumeName}</p>
-                          <span className="text-[11px] text-slate-400">Scorecard Attached</span>
+                          <p className="text-xs font-semibold text-slate-900 truncate max-w-[140px]">{resumeName}</p>
+                          <span className="text-[11px] text-slate-400">Attached Document</span>
                         </div>
                       </div>
 
@@ -847,7 +770,7 @@ export default function CandidateProfileDashboardPage() {
                           href={resumeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-blue-200 text-[#405FE2] bg-white hover:bg-blue-50 transition-colors shadow-xs"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                           View
@@ -862,71 +785,58 @@ export default function CandidateProfileDashboardPage() {
 
           {/* TAB 4: RECRUITER PLACEMENT ROUTE (LOCKED) */}
           {activeTab === "partners" && (
-            <div className="space-y-6">
-              <Card className="border-red-200/80 shadow-md bg-white overflow-hidden relative">
-                {/* Red Security Banner */}
-                <div className="bg-gradient-to-r from-red-600 to-rose-700 text-white px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
-                      <Lock className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold tracking-wide">RESTRICTED DISPATCH ACCESS</h3>
-                      <p className="text-[11px] text-red-100">Tier-1 Corporate Recruitment Integration Channel</p>
-                    </div>
+            <div className="space-y-5">
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardHeader className="p-4 sm:p-5 border-b border-slate-100 flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
+                      Recruiter Dispatch Pipeline
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-500">
+                      Direct placement network for verified candidates
+                    </CardDescription>
                   </div>
-                  <Badge variant="outline" className="border-white/30 text-white bg-white/10 text-[10px] font-mono uppercase tracking-wider font-bold">
-                    Secure Enclave
-                  </Badge>
-                </div>
+                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-medium border border-rose-200">
+                    Locked
+                  </span>
+                </CardHeader>
 
                 <CardContent className="p-8 sm:p-12 text-center flex flex-col items-center justify-center">
                   {/* Red Keypad Lock Icon Graphic */}
-                  <div className="relative mb-6">
-                    <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-red-500 via-rose-600 to-red-700 flex flex-col items-center justify-center shadow-xl shadow-red-500/25 ring-8 ring-red-100">
-                      <Lock className="w-10 h-10 text-white drop-shadow-md mb-1" />
-                      {/* Keypad dots simulation */}
-                      <div className="grid grid-cols-3 gap-1 px-3">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                  <div className="relative mb-5">
+                    <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col items-center justify-center text-rose-600 shadow-xs">
+                      <Lock className="w-7 h-7 mb-1" />
+                      {/* Keypad dots */}
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="w-1 h-1 rounded-full bg-rose-400" />
+                        <div className="w-1 h-1 rounded-full bg-rose-400" />
+                        <div className="w-1 h-1 rounded-full bg-rose-400" />
                       </div>
-                    </div>
-                    <div className="absolute -bottom-2 -right-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider border-2 border-white shadow-sm">
-                      Locked
                     </div>
                   </div>
 
                   {/* High Visibility Prompt Text */}
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight max-w-md">
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight max-w-md">
                     Attempt the test, give your best
                   </h2>
-                  <p className="text-slate-600 text-xs sm:text-sm max-w-lg mt-2 leading-relaxed">
-                    Partner Recruiter Dispatch Pipeline unlocks automatically once you complete your proctored assessment. Ensure maximum focus to achieve your qualifying benchmark.
+                  <p className="text-slate-500 text-xs sm:text-sm max-w-md mt-1.5 leading-relaxed">
+                    Partner Recruiter Dispatch Pipeline unlocks automatically once you complete your proctored assessment.
                   </p>
 
-                  {/* Status Indicator */}
-                  <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-red-800 text-xs font-bold">
-                      <Lock className="w-3.5 h-3.5 text-red-600" />
-                      <span>Pipeline Gated</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-[#003c5e] text-xs font-semibold">
-                      <span>Quota: {attemptsLeft} attempts remaining</span>
-                    </div>
-                  </div>
-
                   {/* Action Button to launch test */}
-                  <div className="mt-8">
+                  <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
                     <Button
-                      size="lg"
+                      size="sm"
                       onClick={() => setIsAssessmentOpen(true)}
                       disabled={totalTests >= 2}
-                      className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold shadow-lg shadow-red-500/25 px-8"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 px-5"
                     >
-                      <PlayCircle className="w-5 h-5 mr-2" />
-                      {totalTests >= 2 ? "Attempts Completed" : totalTests === 1 ? "Retake Assessment Now" : "Start Proctored Test Now"}
+                      <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
+                      {totalTests >= 2 ? "Attempts Completed (2/2)" : totalTests === 1 ? "Retake Assessment Now" : "Start Assessment Now"}
                     </Button>
+                    <span className="text-xs text-slate-400 font-mono">
+                      {attemptsLeft} attempts remaining
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -935,41 +845,31 @@ export default function CandidateProfileDashboardPage() {
 
           {/* TAB 5: SETTINGS & SECURITY */}
           {activeTab === "settings" && (
-            <div className="space-y-6">
-              <Card className="border-blue-100/70 shadow-sm bg-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-slate-900">
-                    Security &amp; Account Settings
+            <div className="space-y-5">
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardHeader className="p-4 sm:p-5 border-b border-slate-100">
+                  <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
+                    Account &amp; Session
                   </CardTitle>
                   <CardDescription className="text-xs text-slate-500">
-                    Manage session, camera permissions, and privacy preferences
+                    Manage session credentials and access settings
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between">
+                <CardContent className="p-4 sm:p-5 space-y-3">
+                  <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 flex items-center justify-between">
                     <div>
-                      <h4 className="font-bold text-sm text-slate-900">Registered Account</h4>
-                      <p className="text-xs text-slate-500">Signed in as {email}</p>
+                      <p className="font-medium text-xs text-slate-800">Registered Account</p>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">{email}</p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleSignOut}
-                      className="text-xs font-semibold text-red-600 border-red-200 hover:bg-red-50"
+                      className="text-xs text-slate-700 border-slate-200 hover:bg-slate-100 h-8"
                     >
-                      <LogOut className="w-3.5 h-3.5 mr-1.5" />
+                      <LogOut className="w-3 h-3 mr-1.5" />
                       Sign Out
                     </Button>
-                  </div>
-
-                  <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-sm text-slate-900">Webcam Proctoring Clearance</h4>
-                      <p className="text-xs text-slate-500">AI Face Verification active</p>
-                    </div>
-                    <Badge className="bg-emerald-100 text-emerald-800 text-xs font-bold">
-                      Active
-                    </Badge>
                   </div>
                 </CardContent>
               </Card>
