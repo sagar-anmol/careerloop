@@ -48,10 +48,12 @@ export interface CandidateProfileData {
   phone?: string;
   city?: string;
   domain?: string;
+  experience?: string;
   photo_url?: string;
-  photo?: string;
+  photo?: string | null;
   resume_url?: string;
   resume_name?: string;
+  resumeName?: string;
   assessment_score?: number | null;
   score?: number | null;
   integrity_flags?: number;

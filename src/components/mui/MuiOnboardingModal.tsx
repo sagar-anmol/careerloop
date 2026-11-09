@@ -40,6 +40,7 @@ export interface CandidateOnboardingData extends Partial<CandidateRegistrationIn
   candidateId: string;
   photo?: string | null;
   resumeName?: string;
+  [key: string]: unknown;
 }
 
 interface MuiOnboardingModalProps {
@@ -148,6 +149,31 @@ export function MuiOnboardingModal({
 
     return () => clearInterval(interval);
   }, [isOpen, activeStep, stream, capturedPhoto]);
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  };
+
+  const startCamera = async () => {
+    setCameraError(null);
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 640, height: 480 },
+        });
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+          videoRef.current.play().catch((e) => console.debug("Video play err:", e));
+        }
+      }
+    } catch (err: unknown) {
+      console.warn("Camera restart error:", err);
+    }
+  };
 
   const capturePhoto = async () => {
     if (videoRef.current && canvasRef.current) {

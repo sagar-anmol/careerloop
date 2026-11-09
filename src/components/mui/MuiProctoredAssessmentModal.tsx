@@ -25,11 +25,12 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { recordAssessmentResult } from "@/lib/candidateService";
 import { detectFaces, FaceDetectionResult } from "@/lib/faceDetectionService";
 import { CandidateOnboardingData } from "./MuiOnboardingModal";
+import { CandidateProfileData } from "./MuiProfileModal";
 
 interface MuiProctoredAssessmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  candidateData: CandidateOnboardingData | null;
+  candidateData: CandidateOnboardingData | CandidateProfileData | null;
   onViewProfile?: () => void;
 }
 

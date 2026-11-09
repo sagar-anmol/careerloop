@@ -8,7 +8,7 @@ import { MuiHowItWorks } from "@/components/mui/MuiHowItWorks";
 import { MuiPlacementGuarantee } from "@/components/mui/MuiPlacementGuarantee";
 import { MuiFaq } from "@/components/mui/MuiFaq";
 import { MuiFooter } from "@/components/mui/MuiFooter";
-import { MuiOnboardingModal } from "@/components/mui/MuiOnboardingModal";
+import { MuiOnboardingModal, CandidateOnboardingData } from "@/components/mui/MuiOnboardingModal";
 import { MuiProctoredAssessmentModal } from "@/components/mui/MuiProctoredAssessmentModal";
 import { MuiProfileModal, CandidateProfileData } from "@/components/mui/MuiProfileModal";
 import { MuiAuthModal } from "@/components/mui/MuiAuthModal";
@@ -79,16 +79,16 @@ export default function HomePage() {
   };
 
   // On signup finished: go directly to profile screen
-  const handleOnboardingSignupCompleted = (data: CandidateProfileData) => {
-    setCurrentUser(data);
+  const handleOnboardingSignupCompleted = (data: CandidateProfileData | CandidateOnboardingData) => {
+    setCurrentUser(data as CandidateProfileData);
     setIsOnboardingOpen(false);
     setIsProfileOpen(true);
   };
 
   // If user explicitly chooses "Take Assessment Now" at end of signup
-  const handleOnboardingAndStartTest = (data: CandidateProfileData) => {
-    setCandidateData(data);
-    setCurrentUser(data);
+  const handleOnboardingAndStartTest = (data: CandidateProfileData | CandidateOnboardingData) => {
+    setCandidateData(data as CandidateProfileData);
+    setCurrentUser(data as CandidateProfileData);
     setIsOnboardingOpen(false);
     setIsAssessmentOpen(true);
   };
