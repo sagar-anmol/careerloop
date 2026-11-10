@@ -66,8 +66,8 @@ export function MuiOnboardingModal({
     email: "",
     password: "",
     phone: "",
-    domain: "Diploma (Mechanical / Automobile / Tech)",
-    experience: "Fresher / Apprentice Cohort",
+    domain: "",
+    experience: "",
     city: "",
   });
 
@@ -441,7 +441,11 @@ export function MuiOnboardingModal({
                 error={Boolean(formErrors.domain)}
                 helperText={formErrors.domain}
                 required
+                displayEmpty
               >
+                <MenuItem value="" disabled>
+                  <em>Select Educational Qualification</em>
+                </MenuItem>
                 <MenuItem value="Diploma (Mechanical / Automobile / Tech)">Diploma (Mechanical / Automobile / Tech)</MenuItem>
                 <MenuItem value="Diploma (Electrical / Electronics)">Diploma (Electrical / Electronics)</MenuItem>
                 <MenuItem value="ITI (Fitter / Turner / Machinist / CNC)">ITI (Fitter / Turner / Machinist / CNC)</MenuItem>
@@ -460,7 +464,11 @@ export function MuiOnboardingModal({
                 error={Boolean(formErrors.experience)}
                 helperText={formErrors.experience}
                 required
+                displayEmpty
               >
+                <MenuItem value="" disabled>
+                  <em>Select Passing / Experience Status</em>
+                </MenuItem>
                 <MenuItem value="Fresher / Apprentice Cohort">Fresher / Apprentice Cohort</MenuItem>
                 <MenuItem value="1 Year Technical Experience">1 Year Technical Experience</MenuItem>
                 <MenuItem value="2-3 Years Industrial Experience">2-3 Years Industrial Experience</MenuItem>
