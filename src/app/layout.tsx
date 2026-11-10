@@ -4,9 +4,9 @@ import "./globals.css";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
-  title: "CareerLoop | Mock Tests, Proctored Certification & Enterprise Interviews",
+  title: "CareerLoop | Professional Recruitment & Placement Assistance",
   description:
-    "Master your skills with structured mock tests, take multiple proctored final attempts to lock in your best score, and unlock direct interviews with 450+ partner HR agencies.",
+    "Connecting skilled talent with 450+ enterprise employers through professional skill evaluation, mock test preparation, and direct recruiter coordination.",
 };
 
 export default function RootLayout({

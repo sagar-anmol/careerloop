@@ -20,43 +20,43 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
   const steps = [
     {
       step: "01",
-      circleColor: "#b11f2c", // Crimson Red matching reference
-      title: "Verified Profile & Free Baseline Test",
-      subtitle: "Identity Check & Initial Skill Benchmark",
+      circleColor: "#b11f2c", // Crimson Red
+      title: "Profile Registration & Baseline",
+      subtitle: "Secure Onboarding",
       description:
-        "Create your profile, upload your resume, and take your initial proctored baseline assessment at zero cost to benchmark your starting score.",
-      tag: "₹0 Free Screening",
+        "Register your profile, submit your professional resume, and complete our initial baseline screening at zero cost.",
+      tag: "Zero Cost Baseline",
       icon: <BadgeIcon sx={{ fontSize: 18, color: "#b11f2c" }} />,
     },
     {
       step: "02",
-      circleColor: "#003c5e", // Dark Navy Blue matching reference
-      title: "Mock Tests & Skill Acceleration",
-      subtitle: "Guided Practice & Readiness Modules",
+      circleColor: "#003c5e", // Dark Navy Blue
+      title: "Mock Tests & Proctored Certification",
+      subtitle: "CareerLoop Pro (₹5,000)",
       description:
-        "Enroll in our Career Readiness Program to access structured domain mock tests, practice problems, and interview preparation tailored to enterprise hiring standards.",
-      tag: "Mock Prep Included",
+        "Master your competencies with our structured mock test series and multi-attempt proctored exams. Our system locks in your best score for your verified dossier.",
+      tag: "Best Score Locked",
       icon: <VideocamIcon sx={{ fontSize: 18, color: "#003c5e" }} />,
     },
     {
       step: "03",
-      circleColor: "#017aa9", // Ocean Teal Blue matching reference
-      title: "Multi-Attempt Final Certification",
-      subtitle: "Best Score Selection & Verified Dossier",
+      circleColor: "#017aa9", // Ocean Teal Blue
+      title: "Direct Recruiter Coordination",
+      subtitle: "Phone, LinkedIn & WhatsApp Outreach",
       description:
-        "Take multiple proctored final test attempts. Our system automatically selects your highest score to generate a certified Candidate Dossier.",
-      tag: "Best Score Counts",
-      icon: <CheckCircleIcon sx={{ fontSize: 18, color: "#017aa9" }} />,
+        "Our placement team coordinates directly with you via call and messaging channels to match your profile with active openings across our 450+ partner network.",
+      tag: "Active Outreach",
+      icon: <HandshakeIcon sx={{ fontSize: 18, color: "#017aa9" }} />,
     },
     {
       step: "04",
-      circleColor: "#ebaa1c", // Golden Amber matching reference
-      title: "Direct Partner Interviews",
-      subtitle: "450+ Partner HR Agencies",
+      circleColor: "#ebaa1c", // Golden Amber
+      title: "Enterprise Interview & Onboarding",
+      subtitle: "Hiring & Placement",
       description:
-        "Certified candidates receive complimentary profile routing and direct interview scheduling with partner recruitment agencies and enterprise hiring teams.",
-      tag: "Direct HR Routing",
-      icon: <HandshakeIcon sx={{ fontSize: 18, color: "#ebaa1c" }} />,
+        "Attend scheduled interviews with corporate hiring managers and transition seamlessly into your new career role.",
+      tag: "Direct Interviews",
+      icon: <CheckCircleIcon sx={{ fontSize: 18, color: "#ebaa1c" }} />,
     },
   ];
 
@@ -76,7 +76,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
         <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
           <Chip
             icon={<TimelineIcon sx={{ fontSize: 16, color: "#405FE2" }} />}
-            label="Verified Candidate Journey"
+            label="Our Engagement Process"
             size="small"
             variant="outlined"
             sx={{
@@ -97,7 +97,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
               letterSpacing: "-0.02em",
             }}
           >
-            4-Step Preparation &amp; <span style={{ color: "#405FE2" }}>Placement Roadmap</span>
+            From Profile Registration to <span style={{ color: "#405FE2" }}>Direct Interviews</span>
           </Typography>
           <Typography
             variant="body1"
@@ -109,7 +109,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
               lineHeight: 1.6,
             }}
           >
-            From initial baseline screening and guided mock tests to best-score certification and direct recruiter interviews.
+            A streamlined, human-led recruitment journey designed to put your best skills forward.
           </Typography>
         </Box>
 

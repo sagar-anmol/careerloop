@@ -56,12 +56,12 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
           >
-            Practice with Mock Tests.
+            Connecting Skilled Talent
             <Box component="span" sx={{ display: "block" }}>
-              Certify Your Best Score.
+              With Leading Enterprise Employers.
             </Box>
             <Box component="span" sx={{ color: "#60a5fa", display: "block" }}>
-              Get Direct Enterprise Interviews.
+              Professional Recruitment &amp; Placement.
             </Box>
           </Typography>
 
@@ -77,7 +77,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               textShadow: "0 1px 6px rgba(0, 0, 0, 0.4)",
             }}
           >
-            CareerLoop prepares and connects technical talent with 450+ partner HR agencies. Take your initial baseline test for free, master your skills with structured mock tests, take multiple proctored final attempts to lock in your best score, and unlock direct recruiter interview scheduling.
+            CareerLoop provides end-to-end recruitment solutions, professional skill evaluations, and direct corporate placement assistance. We bridge the gap between ambitious professionals and 450+ hiring organizations through dedicated coordination and active network outreach.
           </Typography>
 
           {/* Call to Action Buttons (Separated Signup & Assessment) */}
@@ -101,7 +101,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Sign Up Free
+              Candidate Registration
             </Button>
             <Button
               variant="outlined"
@@ -122,7 +122,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Take Free Baseline Test
+              Explore Programs
             </Button>
           </Box>
         </Box>

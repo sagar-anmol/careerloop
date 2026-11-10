@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
+import { MuiServicesOverview } from "@/components/mui/MuiServicesOverview";
 import { MuiHowItWorks } from "@/components/mui/MuiHowItWorks";
 import { MuiPlacementGuarantee } from "@/components/mui/MuiPlacementGuarantee";
 import { MuiFaq } from "@/components/mui/MuiFaq";
@@ -118,6 +119,9 @@ export default function HomePage() {
           onOpenSignup={handleOpenSignup}
           onStartAssessment={handleOpenAssessment}
         />
+
+        {/* Dual Services Overview: Job Seekers & Enterprise Employers */}
+        <MuiServicesOverview />
 
         {/* Winding Highway Candidate Journey Roadmap */}
         <MuiHowItWorks onStartVerification={handleOpenSignup} />

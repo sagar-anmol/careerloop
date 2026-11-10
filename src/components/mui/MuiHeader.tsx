@@ -41,8 +41,9 @@ export function MuiHeader({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { label: "Roadmap", href: "#how-it-works" },
-    { label: "Program & Pricing", href: "#pricing-terms" },
+    { label: "Services", href: "#services" },
+    { label: "How It Works", href: "#how-it-works" },
+    { label: "CareerLoop Pro", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
   ];
 
@@ -82,7 +83,7 @@ export function MuiHeader({
               </Typography>
               <Chip
                 icon={<CheckCircleIcon style={{ fontSize: 14, color: "#15803d" }} />}
-                label="Pay Upon Interview / Offer"
+                label="Talent &amp; Recruitment Partners"
                 size="small"
                 variant="outlined"
                 sx={{
@@ -178,7 +179,7 @@ export function MuiHeader({
                     onClick={onOpenSignup}
                     sx={{ fontWeight: 600, textTransform: "none", px: 2, borderRadius: 2 }}
                   >
-                    Sign Up
+                    Register
                   </Button>
                 )}
                 <Button
@@ -187,7 +188,7 @@ export function MuiHeader({
                   onClick={onStartAssessment}
                   sx={{ fontWeight: 600, px: 2.5, textTransform: "none", borderRadius: 2 }}
                 >
-                  Take Free Baseline Test
+                  Contact Us
                 </Button>
               </Box>
             )}

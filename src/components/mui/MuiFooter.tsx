@@ -43,7 +43,7 @@ export function MuiFooter() {
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 320, lineHeight: 1.6 }}>
-              CareerLoop Pro — Structured mock tests, multi-attempt proctored certification, and candidate dossier verification. ₹5,000 program fee covers preparation and certification deliverables; interview routing is provided as complimentary placement assistance.
+              Professional recruitment agency and talent placement platform. Providing mock test preparation, proctored dossier verification, and direct employer coordination.
             </Typography>
           </Grid>
 
@@ -53,14 +53,17 @@ export function MuiFooter() {
               CANDIDATES
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Link href="#how-it-works" underline="hover" color="text.secondary" variant="body2">
-                Candidate Roadmap
+              <Link href="#services" underline="hover" color="text.secondary" variant="body2">
+                Services
               </Link>
-              <Link href="#pricing-terms" underline="hover" color="text.secondary" variant="body2">
-                Program &amp; Pricing Terms
+              <Link href="#how-it-works" underline="hover" color="text.secondary" variant="body2">
+                How It Works
+              </Link>
+              <Link href="#pricing" underline="hover" color="text.secondary" variant="body2">
+                CareerLoop Pro
               </Link>
               <Link href="#faq" underline="hover" color="text.secondary" variant="body2">
-                Candidate FAQ
+                FAQ
               </Link>
               <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
                 Terms &amp; Conditions
@@ -107,7 +110,7 @@ export function MuiFooter() {
         {/* Legal Disclaimer Box */}
         <Box sx={{ p: 2, mb: 3, borderRadius: 2, bgcolor: "rgba(0,0,0,0.03)", border: "1px solid rgba(0,0,0,0.06)" }}>
           <Typography variant="caption" sx={{ color: "text.secondary", display: "block", lineHeight: 1.6, fontSize: "0.72rem" }}>
-            <strong>Disclaimer:</strong> CareerLoop (<code>careerloop.co.in</code>) is an independent skill-assessment, mock test preparation, and career acceleration platform, not a government agency. We do not charge fees for job offers or employment guarantees. The ₹5,000 program fee is strictly for mock test series, skill training modules, multi-attempt proctored assessment auditing, and dossier generation. Interview scheduling and placement assistance are complimentary value-added services. Final hiring decisions and CTC packages rest solely with the respective hiring employers.
+            <strong>Disclaimer:</strong> CareerLoop (<code>careerloop.co.in</code>) is an independent recruitment and talent assessment platform. We do not charge fees for job offers or employment guarantees. The ₹5,000 program fee covers mock test preparation, proctored skill testing, and dossier verification services. Interview coordination is provided as a complimentary placement assistance service. Final hiring decisions rest solely with respective employers.
           </Typography>
         </Box>
 
@@ -124,7 +127,7 @@ export function MuiFooter() {
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            © 2026 CareerLoop. All rights reserved. CareerLoop Pro Program: ₹5,000 (Mock Tests, Multi-Attempt Certification &amp; Dossier Generation).
+            © 2026 CareerLoop. All rights reserved.
           </Typography>
           <Typography variant="caption" color="text.secondary">
             DPDP Act Compliant • Proctored Assessment Integrity

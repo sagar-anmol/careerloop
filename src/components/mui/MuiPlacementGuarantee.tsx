@@ -71,7 +71,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
 
   return (
     <Box
-      id="pricing-terms"
+      id="pricing"
       component="section"
       sx={{
         py: { xs: 8, md: 10 },
@@ -85,7 +85,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Chip
             icon={<ShieldOutlinedIcon style={{ fontSize: 16, color: "#15803d" }} />}
-            label="CareerLoop Pro Program Guarantee"
+            label="CareerLoop Pro"
             size="small"
             variant="outlined"
             sx={{
@@ -105,7 +105,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
               color: "text.primary",
             }}
           >
-            Complete Mock Test Series &amp; Multi-Attempt Proctored Certification (₹5,000)
+            Comprehensive Preparation &amp; Dossier Verification Program
           </Typography>
           <Typography
             variant="body1"
@@ -116,7 +116,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
               lineHeight: 1.6,
             }}
           >
-            Enroll in the CareerLoop Pro Program to unlock unlimited mock tests, multiple final proctored test attempts (best score selected), and certified dossier generation. Complimentary interview routing is included for all certified candidates.
+            Our ₹5,000 program fee covers full access to our mock test series, study resources, multi-attempt proctored assessment auditing, and verified dossier generation. Direct interview coordination and placement assistance are provided as complimentary value-added services.
           </Typography>
         </Box>
 

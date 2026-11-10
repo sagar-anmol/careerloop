@@ -20,24 +20,16 @@ export function MuiFaq() {
 
   const faqs = [
     {
-      q: "What does the ₹5,000 CareerLoop Pro fee cover?",
-      a: "The ₹5,000 fee is strictly for our CareerLoop Pro Program, which includes unlimited structured mock tests, multiple proctored final test attempts (with automatic best-score selection), skill preparation modules, and certified candidate dossier generation. Interview routing and placement assistance are provided as complimentary value-added benefits.",
+      q: "How does CareerLoop connect me with employers?",
+      a: "Unlike static job boards, our team actively coordinates with candidates via phone calls, direct messaging, LinkedIn outreach, and WhatsApp to match verified dossiers directly with our 450+ partner HR agencies.",
     },
     {
-      q: "Can I take the final test multiple times?",
-      a: "Yes! CareerLoop Pro allows multiple proctored final test attempts. Our platform automatically records and selects your highest score to build your certified candidate dossier for employer review.",
+      q: "What is included in the ₹5,000 CareerLoop Pro package?",
+      a: "The fee covers unlimited structured mock tests, skill preparation modules, multiple proctored final test attempts (with best-score selection), and certified dossier generation. Interview routing and placement support are complimentary.",
     },
     {
-      q: "Is there a free way to test my baseline skills first?",
-      a: "Yes, you can register and take your initial baseline assessment for free to check your starting score before deciding to upgrade to the full CareerLoop Pro mock test and certification package.",
-    },
-    {
-      q: "What bus transportation and canteen facilities are available?",
-      a: "Many partner industrial and enterprise facilities provide designated bus commute routes and subsidized on-site canteen meals during shifts. Exact workplace amenities depend on the specific hiring organization and location.",
-    },
-    {
-      q: "Are jobs guaranteed with the ₹5,000 program?",
-      a: "No private platform can legally guarantee employment. The ₹5,000 fee guarantees the delivery of our mock test preparation, proctored testing, best-score certification, and active profile routing to our 450+ partner HR agencies. Final hiring selections and job offers are determined entirely by the hiring employers based on candidate performance during interviews.",
+      q: "Can I test my profile before enrolling?",
+      a: "Yes, you can register and complete a free initial baseline screening to evaluate your starting readiness before choosing to upgrade to the CareerLoop Pro preparation program.",
     },
   ];
 
