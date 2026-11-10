@@ -92,40 +92,16 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
       <Container maxWidth="lg">
         {/* Header */}
         <Box sx={{ textAlign: "center", mb: 6 }}>
-          <Chip
-            icon={<ShieldOutlinedIcon style={{ fontSize: 16, color: "#15803d" }} />}
-            label="CareerLoop Pro Pass"
-            size="small"
-            variant="outlined"
-            sx={{
-              mb: 2,
-              borderColor: "rgba(21, 128, 61, 0.35)",
-              bgcolor: "rgba(21, 128, 61, 0.08)",
-              color: "#15803d",
-              fontWeight: 600,
-            }}
-          />
           <Typography
             variant="h2"
             sx={{
-              fontSize: { xs: "1.75rem", sm: "2.4rem" },
+              fontSize: { xs: "2rem", sm: "2.6rem" },
               fontWeight: 800,
-              mb: 1.5,
               color: "text.primary",
+              letterSpacing: "-0.02em",
             }}
           >
-            One-Time Access Fee for Full Program &amp; Referral Support
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: "text.secondary",
-              maxWidth: 720,
-              mx: "auto",
-              lineHeight: 1.6,
-            }}
-          >
-            One flat fee unlocks your complete access pass. Covers weekly mocks, live mentorship, expert resume curation, performance tracking, and active HR referral dispatch.
+            Our Prices
           </Typography>
         </Box>
 
