@@ -83,7 +83,8 @@ export function MuiOnboardingModal({
 
   // Program & Consent State
   const [selectedPlan, setSelectedPlan] = useState<"free_baseline" | "pro_certification">("pro_certification");
-  const [consentAgreed, setConsentAgreed] = useState(true);
+  const [consentAgreed, setConsentAgreed] = useState(false);
+  const [step2Submitted, setStep2Submitted] = useState(false);
 
   // Resume State
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -255,12 +256,13 @@ export function MuiOnboardingModal({
 
   // Step 3 validation (Resume) -> Register in Supabase
   const handleValidateStep2 = async () => {
+    setStep2Submitted(true);
     if (!resumeFile) {
-      setSaveError("Uploading your resume (PDF/DOCX) is compulsory to complete registration.");
+      setSaveError("Uploading your resume (PDF/DOCX) is compulsory to proceed.");
       return;
     }
     if (!consentAgreed) {
-      setSaveError("You must agree to the data processing consent before proceeding.");
+      setSaveError("You must accept the DPDP data processing & terms consent to proceed.");
       return;
     }
 
@@ -710,13 +712,13 @@ export function MuiOnboardingModal({
               sx={{
                 p: 2.5,
                 border: "2px dashed",
-                borderColor: resumeFile ? "#15803d" : "divider",
+                borderColor: resumeFile ? "#15803d" : step2Submitted && !resumeFile ? "#ef4444" : "divider",
                 borderRadius: 2,
-                bgcolor: resumeFile ? "rgba(21, 128, 61, 0.05)" : "background.paper",
+                bgcolor: resumeFile ? "rgba(21, 128, 61, 0.05)" : step2Submitted && !resumeFile ? "rgba(239, 68, 68, 0.05)" : "background.paper",
                 cursor: "pointer",
                 textAlign: "center",
-                transition: "border-color 0.2s",
-                "&:hover": { borderColor: "primary.main" },
+                transition: "all 0.2s",
+                "&:hover": { borderColor: resumeFile ? "#15803d" : "primary.main" },
               }}
               component="label"
             >
@@ -727,6 +729,7 @@ export function MuiOnboardingModal({
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
                     setResumeFile(e.target.files[0]);
+                    if (saveError) setSaveError(null);
                   }
                 }}
               />
@@ -774,25 +777,35 @@ export function MuiOnboardingModal({
               sx={{
                 p: 1.5,
                 borderRadius: 2,
-                bgcolor: "#f8fafc",
+                bgcolor: step2Submitted && !consentAgreed ? "rgba(239, 68, 68, 0.05)" : "#f8fafc",
                 border: "1px solid",
-                borderColor: "divider",
+                borderColor: step2Submitted && !consentAgreed ? "#ef4444" : "divider",
                 display: "flex",
                 alignItems: "flex-start",
                 gap: 1.5,
+                transition: "all 0.2s",
               }}
             >
               <input
                 type="checkbox"
                 id="dpdp-consent"
                 checked={consentAgreed}
-                onChange={(e) => setConsentAgreed(e.target.checked)}
+                onChange={(e) => {
+                  setConsentAgreed(e.target.checked);
+                  if (saveError) setSaveError(null);
+                }}
                 style={{ marginTop: 3, cursor: "pointer" }}
               />
               <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.4 }} component="label" htmlFor="dpdp-consent">
                 <strong>Data Processing &amp; Terms Consent:</strong> I agree to the processing of my proctoring data and assessment scores in full compliance with the Digital Personal Data Protection (DPDP) Act 2023. I understand that the program fee covers weekly mock tests, live mentorship, and resume curation, with complimentary direct referrals to fast-hiring HR partner networks.
               </Typography>
             </Box>
+
+            {saveError && (
+              <Alert severity="error" variant="outlined" sx={{ py: 0.5, fontSize: "0.82rem" }}>
+                {saveError}
+              </Alert>
+            )}
           </Box>
         )}
 
@@ -922,7 +935,14 @@ export function MuiOnboardingModal({
             variant="contained"
             color="primary"
             onClick={handleValidateStep2}
-            disabled={isSaving || !consentAgreed || !resumeFile}
+            disabled={isSaving}
+            sx={{
+              bgcolor: "#405FE2",
+              color: "#ffffff",
+              fontWeight: 700,
+              px: 3,
+              "&:hover": { bgcolor: "#2843be" },
+            }}
             endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
             {isSaving ? "Saving to Database..." : selectedPlan === "pro_certification" ? "Enroll in Pro & Complete" : "Start Free Baseline"}
