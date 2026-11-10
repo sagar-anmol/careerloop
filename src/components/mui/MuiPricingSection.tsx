@@ -123,14 +123,14 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
           </Typography>
         </Box>
 
-        {/* 4 Pricing Cards Grid */}
-        <Grid container spacing={3} sx={{ mb: 5, alignItems: "stretch" }}>
+        {/* 4 Pricing Cards Grid - Fully Responsive */}
+        <Grid container spacing={{ xs: 2.5, sm: 3 }} sx={{ mb: 5, alignItems: "stretch" }}>
           {plans.map((plan, idx) => (
             <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={idx} sx={{ display: "flex" }}>
               <Paper
                 variant="outlined"
                 sx={{
-                  p: { xs: 3, sm: 4 },
+                  p: { xs: 2.5, sm: 3, md: 3.5 },
                   width: "100%",
                   display: "flex",
                   flexDirection: "column",
@@ -142,7 +142,7 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
                   boxShadow: plan.isFeatured
                     ? "0 12px 36px rgba(64, 95, 226, 0.16)"
                     : "0 4px 16px rgba(0, 0, 0, 0.04)",
-                  transform: plan.isFeatured ? { md: "scale(1.03)" } : "none",
+                  transform: plan.isFeatured ? { lg: "scale(1.02)" } : "none",
                   zIndex: plan.isFeatured ? 2 : 1,
                   transition: "all 0.25s ease-in-out",
                 }}
@@ -165,37 +165,74 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
                 />
 
                 {/* Plan Header */}
-                <Box sx={{ textAlign: "center", pb: 2.5, borderBottom: "1px solid", borderColor: "divider" }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5 }}>
+                <Box sx={{ textAlign: "center", pb: 2, borderBottom: "1px solid", borderColor: "divider" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 800,
+                      color: "text.primary",
+                      mb: 0.5,
+                      fontSize: { xs: "1rem", sm: "1.05rem" },
+                      minHeight: { sm: 48, lg: 52 },
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     {plan.name}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1.5 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      display: "block",
+                      mb: 1.5,
+                      fontSize: "0.72rem",
+                      minHeight: 32,
+                    }}
+                  >
                     {plan.billingSubtitle}
                   </Typography>
 
                   <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.8 }}>
-                    <Typography variant="h3" sx={{ fontWeight: 900, color: plan.isFeatured ? "primary.main" : "text.primary" }}>
+                    <Typography
+                      variant="h3"
+                      sx={{
+                        fontWeight: 900,
+                        color: plan.isFeatured ? "primary.main" : "text.primary",
+                        fontSize: { xs: "2rem", sm: "2.25rem", md: "2.4rem" },
+                      }}
+                    >
                       {plan.price}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600 }}>
+                    <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, fontSize: "0.72rem" }}>
                       net all-inclusive
                     </Typography>
                   </Box>
                 </Box>
 
-                <Typography variant="body2" sx={{ color: "text.secondary", my: 2.5, minHeight: 44, fontSize: "0.85rem", lineHeight: 1.55 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    my: 2,
+                    minHeight: { xs: "auto", sm: 54 },
+                    fontSize: "0.82rem",
+                    lineHeight: 1.5,
+                  }}
+                >
                   {plan.description}
                 </Typography>
 
                 {/* Deliverables List */}
-                <Box sx={{ mb: 3.5, flexGrow: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: "text.primary", letterSpacing: "0.05em" }}>
+                <Box sx={{ mb: 3, flexGrow: 1, display: "flex", flexDirection: "column", gap: 1.2 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: "text.primary", letterSpacing: "0.04em", fontSize: "0.7rem" }}>
                     PROGRAM DELIVERABLES INCLUDED:
                   </Typography>
                   {plan.deliverables.map((item, dIdx) => (
-                    <Box key={dIdx} sx={{ display: "flex", alignItems: "flex-start", gap: 1.2 }}>
-                      <CheckCircleIcon sx={{ fontSize: 18, color: plan.isFeatured ? "#10b981" : "#405FE2", mt: 0.2, flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 600, lineHeight: 1.5 }}>
+                    <Box key={dIdx} sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                      <CheckCircleIcon sx={{ fontSize: 16, color: plan.isFeatured ? "#10b981" : "#405FE2", mt: 0.2, flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 600, lineHeight: 1.45, fontSize: "0.75rem" }}>
                         {item}
                       </Typography>
                     </Box>
@@ -210,8 +247,8 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
                   fullWidth
                   onClick={onEnroll}
                   sx={{
-                    py: 1.4,
-                    fontSize: "0.95rem",
+                    py: 1.2,
+                    fontSize: "0.88rem",
                     fontWeight: 800,
                     borderRadius: 2.2,
                     boxShadow: plan.isFeatured ? "0 6px 20px rgba(64, 95, 226, 0.4)" : "none",

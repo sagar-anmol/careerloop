@@ -82,7 +82,7 @@ export function MuiOnboardingModal({
   const [faceResult, setFaceResult] = useState<FaceDetectionResult | null>(null);
 
   // Program & Consent State
-  const [selectedPlan, setSelectedPlan] = useState<"starter_practice" | "pro_all_access">("starter_practice");
+  const [selectedPlan, setSelectedPlan] = useState<"starter_practice" | "pro_all_access" | "mentorship_1on1">("pro_all_access");
   const [consentAgreed, setConsentAgreed] = useState(false);
   const [step2Submitted, setStep2Submitted] = useState(false);
 
@@ -296,7 +296,12 @@ export function MuiOnboardingModal({
       candidateId,
       photo: capturedPhoto,
       resumeName: resumeFile ? resumeFile.name : "Resume.pdf",
-      partner_route: selectedPlan === "pro_all_access" ? "CareerLoop Pro (₹4,999)" : "Starter Practice (₹1,999)",
+      partner_route:
+        selectedPlan === "pro_all_access"
+          ? "CareerLoop Pro (₹4,999)"
+          : selectedPlan === "mentorship_1on1"
+          ? "1-on-1 Mentorship (₹8,999)"
+          : "Starter Practice (₹1,999)",
       selected_plan: selectedPlan,
     };
     onCompleteSignup(finalData);
@@ -658,36 +663,41 @@ export function MuiOnboardingModal({
             </Box>
 
             {/* Plan Selector */}
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" }, gap: 1.5 }}>
               <Paper
                 variant="outlined"
                 onClick={() => setSelectedPlan("starter_practice")}
                 sx={{
-                  p: 2,
+                  p: 1.8,
                   borderRadius: 2,
                   cursor: "pointer",
                   border: "2px solid",
                   borderColor: selectedPlan === "starter_practice" ? "primary.main" : "divider",
                   bgcolor: selectedPlan === "starter_practice" ? "rgba(37, 99, 235, 0.05)" : "background.paper",
                   transition: "all 0.2s",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}
               >
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    Starter Practice Pass
+                <div>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: "0.85rem" }}>
+                      Starter Pass
+                    </Typography>
+                    <Chip label="₹1,999" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
+                  </Box>
+                  <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "0.72rem", lineHeight: 1.35 }}>
+                    Weekly mock tests &amp; standard resume check.
                   </Typography>
-                  <Chip label="₹1,999" size="small" color="primary" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
-                </Box>
-                <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                  Weekly mock tests, score tracking, standard resume check &amp; baseline readiness evaluation.
-                </Typography>
+                </div>
               </Paper>
 
               <Paper
                 variant="outlined"
                 onClick={() => setSelectedPlan("pro_all_access")}
                 sx={{
-                  p: 2,
+                  p: 1.8,
                   borderRadius: 2,
                   cursor: "pointer",
                   border: "2px solid",
@@ -695,17 +705,51 @@ export function MuiOnboardingModal({
                   bgcolor: selectedPlan === "pro_all_access" ? "rgba(16, 185, 129, 0.05)" : "background.paper",
                   transition: "all 0.2s",
                   position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}
               >
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    CareerLoop Pro All-Access
+                <div>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#047857" }}>
+                      Pro All-Access
+                    </Typography>
+                    <Chip label="₹4,999" size="small" color="success" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
+                  </Box>
+                  <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "0.72rem", lineHeight: 1.35 }}>
+                    Weekly mocks, live mentorship &amp; direct 450+ HR referrals.
                   </Typography>
-                  <Chip label="₹4,999" size="small" color="success" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
-                </Box>
-                <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                  Unlimited weekly mocks, live expert mentorship, ATS resume curation &amp; direct 450+ agency referrals.
-                </Typography>
+                </div>
+              </Paper>
+
+              <Paper
+                variant="outlined"
+                onClick={() => setSelectedPlan("mentorship_1on1")}
+                sx={{
+                  p: 1.8,
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  border: "2px solid",
+                  borderColor: selectedPlan === "mentorship_1on1" ? "#d97706" : "divider",
+                  bgcolor: selectedPlan === "mentorship_1on1" ? "rgba(217, 119, 6, 0.05)" : "background.paper",
+                  transition: "all 0.2s",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#b45309" }}>
+                      1-on-1 Intensive
+                    </Typography>
+                    <Chip label="₹8,999" size="small" color="warning" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
+                  </Box>
+                  <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "0.72rem", lineHeight: 1.35 }}>
+                    Dedicated senior industry mocks &amp; custom company targeting.
+                  </Typography>
+                </div>
               </Paper>
             </Box>
 
@@ -952,6 +996,8 @@ export function MuiOnboardingModal({
               ? "Saving to Database..."
               : selectedPlan === "pro_all_access"
               ? "Enroll in Pro All-Access (₹4,999)"
+              : selectedPlan === "mentorship_1on1"
+              ? "Enroll in 1-on-1 Mentorship (₹8,999)"
               : "Enroll in Starter Pass (₹1,999)"}
           </Button>
         )}
