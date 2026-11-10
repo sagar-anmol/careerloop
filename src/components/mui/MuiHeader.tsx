@@ -41,9 +41,9 @@ export function MuiHeader({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { label: "Services", href: "#services" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "CareerLoop Pro", href: "#pricing" },
+    { label: "Program Features", href: "#features" },
+    { label: "Weekly Roadmap", href: "#roadmap" },
+    { label: "Pricing & Pass", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
   ];
 
@@ -83,7 +83,7 @@ export function MuiHeader({
               </Typography>
               <Chip
                 icon={<CheckCircleIcon style={{ fontSize: 14, color: "#15803d" }} />}
-                label="Talent &amp; Recruitment Partners"
+                label="Career Accelerator Pass"
                 size="small"
                 variant="outlined"
                 sx={{
@@ -174,21 +174,21 @@ export function MuiHeader({
                 )}
                 {onOpenSignup && (
                   <Button
-                    variant="outlined"
+                    variant="contained"
                     color="primary"
                     onClick={onOpenSignup}
-                    sx={{ fontWeight: 600, textTransform: "none", px: 2, borderRadius: 2 }}
+                    sx={{ fontWeight: 700, textTransform: "none", px: 2, borderRadius: 2 }}
                   >
-                    Register
+                    Get CareerLoop Pro
                   </Button>
                 )}
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   onClick={onStartAssessment}
-                  sx={{ fontWeight: 600, px: 2.5, textTransform: "none", borderRadius: 2 }}
+                  sx={{ fontWeight: 600, px: 2, textTransform: "none", borderRadius: 2 }}
                 >
-                  Contact Us
+                  View Fast-Hiring Partners
                 </Button>
               </Box>
             )}

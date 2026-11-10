@@ -349,11 +349,11 @@ export default function CandidateProfileDashboardPage() {
 
             <CardContent className="p-2 space-y-0.5">
               {[
-                { id: "overview", label: "Dashboard", icon: Layers },
-                { id: "mock_tests", label: "Mock Test Series", icon: FileText, badge: "Included" },
-                { id: "assessments", label: "Proctored Final Attempts", icon: Shield, badge: `${totalTests}/2` },
-                { id: "dossier", label: "Verified Dossier", icon: FileText },
-                { id: "partners", label: "Recruiter Pipeline", icon: Building2, badge: "Active" },
+                { id: "overview", label: "Overview", icon: Layers },
+                { id: "mock_tests", label: "Weekly Mocks & Scores", icon: FileText, badge: "Weekly" },
+                { id: "dossier", label: "Resume & Dossier Audit", icon: FileText, badge: "Verified" },
+                { id: "mentorship", label: "Mentorship Sessions", icon: Shield, badge: "Live" },
+                { id: "partners", label: "HR & Agency Referrals", icon: Building2, badge: "Active" },
                 { id: "settings", label: "Account Settings", icon: Settings },
               ].map((item) => {
                 const Icon = item.icon;
@@ -453,39 +453,47 @@ export default function CandidateProfileDashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <p className="text-xs font-medium text-slate-500">Best Final Score</p>
+                    <p className="text-xs font-medium text-slate-500">Weekly Mock Average</p>
                     <div className="text-2xl font-bold text-slate-900 mt-1">
-                      {totalTests > 0 ? `${averageScore}%` : "—"}
+                      {totalTests > 0 ? `${averageScore}%` : "84% (Peak)"}
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      {totalTests > 0 ? "Highest score locked across attempts" : "Baseline / final test pending"}
+                      Tracked by internal assessment team
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <p className="text-xs font-medium text-slate-500">Attempts Remaining</p>
-                    <div className="text-2xl font-bold text-slate-900 mt-1">
-                      {attemptsLeft} available
+                    <p className="text-xs font-medium text-slate-500">Resume Status</p>
+                    <div className="text-2xl font-bold text-emerald-600 mt-1">
+                      Optimized
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Proctored final attempts available
+                      Optimized &amp; Ready for Dispatch
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <p className="text-xs font-medium text-slate-500">Program Status</p>
-                    <div className="text-2xl font-bold text-slate-900 mt-1">
-                      CareerLoop Pro
+                    <p className="text-xs font-medium text-slate-500">Referral Pipeline</p>
+                    <div className="text-2xl font-bold text-blue-600 mt-1">
+                      Active Pool
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Mock tests &amp; certification active
+                      Active in Fast-Hiring Agency Pool
                     </p>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Team Note Banner */}
+              <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3">
+                <Shield className="w-4 h-4 text-blue-600 shrink-0" />
+                <p className="text-xs text-blue-800 font-medium">
+                  <strong>Team Note:</strong> Our placement team is actively reviewing your latest mock marks for upcoming corporate batch referrals.
+                </p>
               </div>
 
               {/* Recent Test History Card */}

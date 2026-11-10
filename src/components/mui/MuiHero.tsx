@@ -56,12 +56,12 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
           >
-            Connecting Skilled Talent
+            Weekly Mocks. Expert Mentorship.
             <Box component="span" sx={{ display: "block" }}>
-              With Leading Enterprise Employers.
+              Direct HR &amp; Agency Referrals.
             </Box>
             <Box component="span" sx={{ color: "#60a5fa", display: "block" }}>
-              Professional Recruitment &amp; Placement.
+              Accelerate Your Career Today.
             </Box>
           </Typography>
 
@@ -77,7 +77,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               textShadow: "0 1px 6px rgba(0, 0, 0, 0.4)",
             }}
           >
-            CareerLoop provides end-to-end recruitment solutions, professional skill evaluations, and direct corporate placement assistance. We bridge the gap between ambitious professionals and 450+ hiring organizations through dedicated coordination and active network outreach.
+            Join CareerLoop Pro to access weekly mock tests, live mentorship sessions, and expert resume optimization. Our team analyzes your performance metrics and routes your verified candidate dossier directly to 450+ fast-hiring HR agencies and corporate employers.
           </Typography>
 
           {/* Call to Action Buttons (Separated Signup & Assessment) */}
@@ -101,12 +101,13 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Candidate Registration
+              Unlock CareerLoop Pro
             </Button>
             <Button
               variant="outlined"
               size="large"
-              onClick={onStartAssessment}
+              component="a"
+              href="#roadmap"
               sx={{
                 py: 1.5,
                 px: 3.5,
@@ -122,7 +123,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Explore Programs
+              Explore Weekly Schedule
             </Button>
           </Box>
         </Box>

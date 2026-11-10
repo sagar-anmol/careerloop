@@ -5,9 +5,9 @@ import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
-import { MuiServicesOverview } from "@/components/mui/MuiServicesOverview";
+import { MuiProgramFeatures } from "@/components/mui/MuiProgramFeatures";
 import { MuiHowItWorks } from "@/components/mui/MuiHowItWorks";
-import { MuiPlacementGuarantee } from "@/components/mui/MuiPlacementGuarantee";
+import { MuiPricingSection } from "@/components/mui/MuiPricingSection";
 import { MuiFaq } from "@/components/mui/MuiFaq";
 import { MuiFooter } from "@/components/mui/MuiFooter";
 import { MuiOnboardingModal, CandidateOnboardingData } from "@/components/mui/MuiOnboardingModal";
@@ -120,14 +120,14 @@ export default function HomePage() {
           onStartAssessment={handleOpenAssessment}
         />
 
-        {/* Dual Services Overview: Job Seekers & Enterprise Employers */}
-        <MuiServicesOverview />
+        {/* All-In-One Program Features */}
+        <MuiProgramFeatures />
 
-        {/* Winding Highway Candidate Journey Roadmap */}
+        {/* 4-Step Execution Workflow Roadmap */}
         <MuiHowItWorks onStartVerification={handleOpenSignup} />
 
-        {/* Performance Placement Guarantee & Cohort Bands */}
-        <MuiPlacementGuarantee onStartAssessment={handleOpenAssessment} />
+        {/* Pricing & Pro All-Access Pass */}
+        <MuiPricingSection onEnroll={handleOpenSignup} />
 
         {/* Essential FAQ Accordion */}
         <MuiFaq />

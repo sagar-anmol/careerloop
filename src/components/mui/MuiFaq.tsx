@@ -20,16 +20,20 @@ export function MuiFaq() {
 
   const faqs = [
     {
-      q: "How does CareerLoop connect me with employers?",
-      a: "Unlike static job boards, our team actively coordinates with candidates via phone calls, direct messaging, LinkedIn outreach, and WhatsApp to match verified dossiers directly with our 450+ partner HR agencies.",
+      q: "How does the team use my mock marks and resume?",
+      a: "Our internal team reviews your weekly mock test scores and analyzes your performance trends. We then update and optimize your resume to highlight your strengths, packaging both into a verified candidate dossier that we refer directly to fast-hiring HR teams and agencies.",
     },
     {
-      q: "What is included in the ₹5,000 CareerLoop Pro package?",
-      a: "The fee covers unlimited structured mock tests, skill preparation modules, multiple proctored final test attempts (with best-score selection), and certified dossier generation. Interview routing and placement support are complimentary.",
+      q: "What does the ₹5,000 subscription fee cover?",
+      a: "The fee covers full access to our weekly mock test portal, live mentorship sessions, expert resume curation, performance tracking, and active candidate dossier management. Direct HR and agency referral coordination is included as a complimentary value-added service.",
     },
     {
-      q: "Can I test my profile before enrolling?",
-      a: "Yes, you can register and complete a free initial baseline screening to evaluate your starting readiness before choosing to upgrade to the CareerLoop Pro preparation program.",
+      q: "How fast are the partner companies hiring?",
+      a: "Our fast-hiring partner network consists of 450+ HR agencies and corporate enterprises with active, ongoing recruitment cycles across tech, operations, and general management roles.",
+    },
+    {
+      q: "Are job placements guaranteed?",
+      a: "No platform can legally guarantee a job offer. The subscription guarantees the full delivery of our preparation services, mock testing, resume optimization, and active employer referrals. Final hiring decisions and selections are made entirely by the corporate recruiters based on interview performance.",
     },
   ];
 
@@ -69,7 +73,7 @@ export function MuiFaq() {
             Frequently Asked Questions
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Everything you need to know about mock tests, multi-attempt certification, and partner interview routing.
+            Everything you need to know about weekly mocks, mentorship, and our referral network.
           </Typography>
         </Box>
 

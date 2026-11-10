@@ -4,9 +4,9 @@ import "./globals.css";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
-  title: "CareerLoop | Professional Recruitment & Placement Assistance",
+  title: "CareerLoop Pro | Weekly Mocks, Mentorship & Direct HR Placement Support",
   description:
-    "Connecting skilled talent with 450+ enterprise employers through professional skill evaluation, mock test preparation, and direct recruiter coordination.",
+    "Master your skills with weekly mock tests, expert mentorship, resume analysis, and direct referrals to 450+ fast-hiring HR agencies and corporate partners.",
 };
 
 export default function RootLayout({

@@ -1,125 +1,185 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "CareerLoop",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "updated_at": "2026-11-10",
   "website_metadata": {
     "brand_name": "CareerLoop",
-    "meta_title": "CareerLoop | Professional Recruitment & Placement Assistance",
-    "meta_description": "Connecting skilled talent with 450+ enterprise employers through professional skill evaluation, mock test preparation, and direct recruiter coordination."
+    "meta_title": "CareerLoop Pro | Weekly Mocks, Mentorship & Direct HR Placement Support",
+    "meta_description": "Master your skills with weekly mock tests, expert mentorship, resume analysis, and direct referrals to 450+ fast-hiring HR agencies and corporate partners."
   },
   "sections": [
     {
       "tag": "navigation_bar",
       "brand": {
         "title": "CareerLoop",
-        "badge": "Talent & Recruitment Partners"
+        "badge": "Career Accelerator Pass"
       },
       "navigation_links": [
-        { "label": "Services", "anchor": "#services" },
-        { "label": "How It Works", "anchor": "#how-it-works" },
-        { "label": "CareerLoop Pro", "anchor": "#pricing" },
+        { "label": "Program Features", "anchor": "#features" },
+        { "label": "Weekly Roadmap", "anchor": "#roadmap" },
+        { "label": "Pricing & Pass", "anchor": "#pricing" },
         { "label": "FAQ", "anchor": "#faq" }
       ],
       "actions": [
         { "label": "Candidate Login", "type": "auth_signin" },
-        { "label": "Register", "type": "auth_signup" },
-        { "label": "Contact Us", "type": "contact_trigger" }
+        { "label": "Get CareerLoop Pro", "type": "auth_signup" },
+        { "label": "View Fast-Hiring Partners", "type": "partners_modal" }
       ]
     },
     {
       "tag": "hero_banner",
-      "headline_primary": "Connecting Skilled Talent",
-      "headline_secondary": "With Leading Enterprise Employers.",
-      "headline_highlight": "Professional Recruitment & Placement.",
-      "subheadline": "CareerLoop provides end-to-end recruitment solutions, professional skill evaluations, and direct corporate placement assistance. We bridge the gap between ambitious professionals and 450+ hiring organizations through dedicated coordination and active network outreach.",
+      "headline_primary": "Weekly Mocks. Expert Mentorship.",
+      "headline_secondary": "Direct HR & Agency Referrals.",
+      "headline_highlight": "Accelerate Your Career Today.",
+      "subheadline": "Join CareerLoop Pro to access weekly mock tests, live mentorship sessions, and expert resume optimization. Our team analyzes your performance metrics and routes your verified candidate dossier directly to 450+ fast-hiring HR agencies and corporate employers.",
       "cta_buttons": [
-        { "label": "Candidate Registration", "action": "open_signup" },
-        { "label": "Explore Programs", "action": "open_assessment" }
+        { "label": "Unlock CareerLoop Pro", "action": "open_checkout" },
+        { "label": "Explore Weekly Schedule", "action": "scroll_roadmap" }
       ]
     },
     {
-      "tag": "services_overview",
-      "title": "Our Workforce & Recruitment Solutions",
-      "subtitle": "Streamlining talent acquisition and career progression through professional standards.",
-      "cards": [
+      "tag": "program_features",
+      "badge": "All-In-One Subscription",
+      "title": "Everything Included in Your CareerLoop Pro Pass",
+      "subtitle": "Designed to bridge the gap between skill preparation and direct employer hiring.",
+      "features": [
         {
-          "title": "For Professionals & Job Seekers",
-          "description": "Access structured mock tests, multi-attempt proctored certification, and direct interview coordination managed by our recruitment advisory team via phone, LinkedIn, and virtual channels."
+          "icon": "weekly_mocks",
+          "title": "Weekly Mock Test Series",
+          "description": "Regular timed assessments mirroring actual technical and aptitude rounds used by fast-hiring enterprises."
         },
         {
-          "title": "For Enterprise Employers",
-          "description": "Partner with us for rapid talent sourcing, pre-vetted technical assessments, and customized candidate pipelines tailored to your corporate hiring criteria."
+          "icon": "resume_analysis",
+          "title": "Expert Resume & Profile Curation",
+          "description": "Our internal team reviews, optimizes, and updates your resume and skill dossier to meet strict corporate ATS and HR standards."
+        },
+        {
+          "icon": "mentorship",
+          "title": "Live Expert Mentorship",
+          "description": "Interactive guidance sessions focused on problem-solving approaches, interview etiquette, and technical readiness."
+        },
+        {
+          "icon": "direct_referrals",
+          "title": "Direct HR & Agency Referrals",
+          "description": "Your mock scores, performance trends, and curated resume are actively routed by our team to 450+ fast-hiring partner networks."
         }
       ]
     },
     {
       "tag": "candidate_roadmap",
-      "badge": "Our Engagement Process",
-      "title": "From Profile Registration to Direct Interviews",
-      "subtitle": "A streamlined, human-led recruitment journey designed to put your best skills forward.",
+      "badge": "Execution Workflow",
+      "title": "How Our Team Handles Your Placement Journey",
+      "subtitle": "A structured 4-step pipeline from subscription activation to enterprise interview dispatch.",
       "steps": [
         {
           "step_number": "01",
-          "title": "Profile Registration & Baseline",
-          "subtitle": "Secure Onboarding",
-          "description": "Register your profile, submit your professional resume, and complete our initial baseline screening at zero cost."
+          "title": "Profile Onboarding & Audit",
+          "subtitle": "Resume & Skill Intake",
+          "description": "Submit your current resume and profile details. Our team performs an initial baseline audit to map your target industry tracks."
         },
         {
           "step_number": "02",
-          "title": "Mock Tests & Proctored Certification",
-          "subtitle": "CareerLoop Pro (₹5,000)",
-          "description": "Master your competencies with our structured mock test series and multi-attempt proctored exams. Our system locks in your best score for your verified dossier."
+          "title": "Weekly Mocks & Mentorship",
+          "subtitle": "Active Skill Training",
+          "description": "Participate in weekly mock tests and live mentorship sessions. Every test score is logged to measure progress and readiness."
         },
         {
           "step_number": "03",
-          "title": "Direct Recruiter Coordination",
-          "subtitle": "Phone, LinkedIn & WhatsApp Outreach",
-          "description": "Our placement team coordinates directly with you via call and messaging channels to match your profile with active openings across our 450+ partner network."
+          "title": "Score & Resume Optimization",
+          "subtitle": "Internal Team Analysis",
+          "description": "Our team analyzes your peak mock marks, polishes your updated resume, and compiles your certified candidate scorecard dossier."
         },
         {
           "step_number": "04",
-          "title": "Enterprise Interview & Onboarding",
-          "subtitle": "Hiring & Placement",
-          "description": "Attend scheduled interviews with corporate hiring managers and transition seamlessly into your new career role."
+          "title": "Fast-Hiring Agency Dispatch",
+          "subtitle": "Direct Corporate Referrals",
+          "description": "We push your optimized dossier directly to our network of fast-hiring HR managers, agencies, and recruiters for interview scheduling."
         }
       ]
     },
     {
-      "tag": "pricing_and_program",
-      "badge": "CareerLoop Pro",
-      "title": "Comprehensive Preparation & Dossier Verification Program",
-      "description": "Our ₹5,000 program fee covers full access to our mock test series, study resources, multi-attempt proctored assessment auditing, and verified dossier generation. Direct interview coordination and placement assistance are provided as complimentary value-added services.",
-      "cta": "Enroll in CareerLoop Pro (₹5,000)"
+      "tag": "pricing_and_subscription",
+      "badge": "CareerLoop Pro Pass",
+      "title": "One-Time Access Fee for Full Program & Referral Support",
+      "description": "One flat fee unlocks your complete access pass. Covers weekly mocks, live mentorship, expert resume curation, performance tracking, and active HR referral dispatch.",
+      "pricing_card": {
+        "plan_name": "CareerLoop Pro All-Access Pass",
+        "price": "₹5,000",
+        "billing_cycle": "One-Time Payment (Lifetime Portal & Program Access)",
+        "deliverables": [
+          "Unlimited access to Weekly Mock Test Series",
+          "Live Expert Mentorship & Interview Prep Sessions",
+          "Professional Resume Analysis & Curation by our Team",
+          "Performance tracking based on peak mock marks",
+          "Complimentary Direct Referrals to 450+ Fast-Hiring HR Agencies"
+        ],
+        "compliance_note": "Subscription fee covers preparation deliverables, mock infrastructure, and dossier optimization. Interview scheduling and placement assistance are provided as complimentary member benefits. Final hiring decisions rest with employers.",
+        "cta": "Enroll & Secure Your Pass (₹5,000)"
+      }
     },
     {
       "tag": "frequently_asked_questions",
       "badge": "Got Questions?",
       "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about weekly mocks, mentorship, and our referral network.",
       "items": [
         {
-          "question": "How does CareerLoop connect me with employers?",
-          "answer": "Unlike static job boards, our team actively coordinates with candidates via phone calls, direct messaging, LinkedIn outreach, and WhatsApp to match verified dossiers directly with our 450+ partner HR agencies."
+          "question": "How does the team use my mock marks and resume?",
+          "answer": "Our internal team reviews your weekly mock test scores and analyzes your performance trends. We then update and optimize your resume to highlight your strengths, packaging both into a verified candidate dossier that we refer directly to fast-hiring HR teams and agencies."
         },
         {
-          "question": "What is included in the ₹5,000 CareerLoop Pro package?",
-          "answer": "The fee covers unlimited structured mock tests, skill preparation modules, multiple proctored final test attempts (with best-score selection), and certified dossier generation. Interview routing and placement support are complimentary."
+          "question": "What does the ₹5,000 subscription fee cover?",
+          "answer": "The fee covers full access to our weekly mock test portal, live mentorship sessions, expert resume curation, performance tracking, and active candidate dossier management. Direct HR and agency referral coordination is included as a complimentary value-added service."
         },
         {
-          "question": "Can I test my profile before enrolling?",
-          "answer": "Yes, you can register and complete a free initial baseline screening to evaluate your starting readiness before choosing to upgrade to the CareerLoop Pro preparation program."
+          "question": "How fast are the partner companies hiring?",
+          "answer": "Our fast-hiring partner network consists of 450+ HR agencies and corporate enterprises with active, ongoing recruitment cycles across tech, operations, and general management roles."
+        },
+        {
+          "question": "Are job placements guaranteed?",
+          "answer": "No platform can legally guarantee a job offer. The subscription guarantees the full delivery of our preparation services, mock testing, resume optimization, and active employer referrals. Final hiring decisions and selections are made entirely by the corporate recruiters based on interview performance."
         }
       ]
     },
     {
+      "tag": "candidate_profile_dashboard",
+      "page_route": "/dashboard",
+      "sidebar_tabs": [
+        { "id": "overview", "label": "Overview" },
+        { "id": "weekly_mocks", "label": "Weekly Mocks & Scores" },
+        { "id": "resume_status", "label": "Resume & Dossier Audit" },
+        { "id": "mentorship", "label": "Mentorship Sessions" },
+        { "id": "referrals", "label": "HR & Agency Referrals" },
+        { "id": "settings", "label": "Account Settings" }
+      ],
+      "dashboard_overview": {
+        "welcome_text": "Welcome back, {fullName}",
+        "metrics": [
+          { "label": "Weekly Mock Average", "description": "Tracked by internal assessment team" },
+          { "label": "Resume Status", "description": "Optimized & Ready for Dispatch" },
+          { "label": "Referral Pipeline", "description": "Active in Fast-Hiring Agency Pool" }
+        ],
+        "team_note": "Our placement team is actively reviewing your latest mock marks for upcoming corporate batch referrals."
+      }
+    },
+    {
       "tag": "footer",
-      "brand_summary": "Professional recruitment agency and talent placement platform. Providing mock test preparation, proctored dossier verification, and direct employer coordination.",
+      "brand_summary": "CareerLoop Pro — Comprehensive weekly mocks, expert mentorship, resume optimization, and direct HR referral pipeline connecting talent with fast-hiring enterprises.",
+      "candidate_links": [
+        "Program Roadmap",
+        "Pricing Pass",
+        "Candidate FAQ",
+        "Terms & Conditions",
+        "Refund Policy",
+        "Privacy Policy"
+      ],
       "support_and_trust": {
         "contact_email": "support@careerloop.co.in",
         "operating_locations": "Bengaluru • Pune • Hyderabad • Gurgaon • Chennai",
-        "legal_disclaimer": "Disclaimer: CareerLoop (careerloop.co.in) is an independent recruitment and talent assessment platform. We do not charge fees for job offers or employment guarantees. The ₹5,000 program fee covers mock test preparation, proctored skill testing, and dossier verification services. Interview coordination is provided as a complimentary placement assistance service. Final hiring decisions rest solely with respective employers."
+        "legal_disclaimer": "Disclaimer: CareerLoop (`careerloop.co.in`) is an independent career acceleration and skill preparation platform, not a government agency or guaranteed employment provider. The subscription fee covers mock testing, mentorship, resume curation, and dossier management services. Employer referrals and interview scheduling are complimentary assistance benefits. Final hiring selections and compensation packages rest solely with respective corporate employers."
       },
-      "copyright": "© 2026 CareerLoop. All rights reserved."
+      "copyright": "© 2026 CareerLoop. All rights reserved. CareerLoop Pro Subscription Model."
     }
   ]
 }

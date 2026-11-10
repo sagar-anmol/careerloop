@@ -43,7 +43,7 @@ export function MuiFooter() {
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 320, lineHeight: 1.6 }}>
-              Professional recruitment agency and talent placement platform. Providing mock test preparation, proctored dossier verification, and direct employer coordination.
+              CareerLoop Pro — Comprehensive weekly mocks, expert mentorship, resume optimization, and direct HR referral pipeline connecting talent with fast-hiring enterprises.
             </Typography>
           </Grid>
 
@@ -53,23 +53,20 @@ export function MuiFooter() {
               CANDIDATES
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Link href="#services" underline="hover" color="text.secondary" variant="body2">
-                Services
-              </Link>
-              <Link href="#how-it-works" underline="hover" color="text.secondary" variant="body2">
-                How It Works
+              <Link href="#roadmap" underline="hover" color="text.secondary" variant="body2">
+                Program Roadmap
               </Link>
               <Link href="#pricing" underline="hover" color="text.secondary" variant="body2">
-                CareerLoop Pro
+                Pricing Pass
               </Link>
               <Link href="#faq" underline="hover" color="text.secondary" variant="body2">
-                FAQ
+                Candidate FAQ
               </Link>
               <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
                 Terms &amp; Conditions
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
-                Refund &amp; Cancellation Policy
+                Refund Policy
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
                 Privacy Policy
@@ -110,7 +107,7 @@ export function MuiFooter() {
         {/* Legal Disclaimer Box */}
         <Box sx={{ p: 2, mb: 3, borderRadius: 2, bgcolor: "rgba(0,0,0,0.03)", border: "1px solid rgba(0,0,0,0.06)" }}>
           <Typography variant="caption" sx={{ color: "text.secondary", display: "block", lineHeight: 1.6, fontSize: "0.72rem" }}>
-            <strong>Disclaimer:</strong> CareerLoop (<code>careerloop.co.in</code>) is an independent recruitment and talent assessment platform. We do not charge fees for job offers or employment guarantees. The ₹5,000 program fee covers mock test preparation, proctored skill testing, and dossier verification services. Interview coordination is provided as a complimentary placement assistance service. Final hiring decisions rest solely with respective employers.
+            <strong>Disclaimer:</strong> CareerLoop (<code>careerloop.co.in</code>) is an independent career acceleration and skill preparation platform, not a government agency or guaranteed employment provider. The subscription fee covers mock testing, mentorship, resume curation, and dossier management services. Employer referrals and interview scheduling are complimentary assistance benefits. Final hiring selections and compensation packages rest solely with respective corporate employers.
           </Typography>
         </Box>
 
@@ -127,7 +124,7 @@ export function MuiFooter() {
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            © 2026 CareerLoop. All rights reserved.
+            © 2026 CareerLoop. All rights reserved. CareerLoop Pro Subscription Model.
           </Typography>
           <Typography variant="caption" color="text.secondary">
             DPDP Act Compliant • Proctored Assessment Integrity

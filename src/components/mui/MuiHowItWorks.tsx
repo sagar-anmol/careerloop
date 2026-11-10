@@ -21,48 +21,48 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
     {
       step: "01",
       circleColor: "#b11f2c", // Crimson Red
-      title: "Profile Registration & Baseline",
-      subtitle: "Secure Onboarding",
+      title: "Profile Onboarding & Audit",
+      subtitle: "Resume & Skill Intake",
       description:
-        "Register your profile, submit your professional resume, and complete our initial baseline screening at zero cost.",
-      tag: "Zero Cost Baseline",
+        "Submit your current resume and profile details. Our team performs an initial baseline audit to map your target industry tracks.",
+      tag: "Intake & Audit",
       icon: <BadgeIcon sx={{ fontSize: 18, color: "#b11f2c" }} />,
     },
     {
       step: "02",
       circleColor: "#003c5e", // Dark Navy Blue
-      title: "Mock Tests & Proctored Certification",
-      subtitle: "CareerLoop Pro (₹5,000)",
+      title: "Weekly Mocks & Mentorship",
+      subtitle: "Active Skill Training",
       description:
-        "Master your competencies with our structured mock test series and multi-attempt proctored exams. Our system locks in your best score for your verified dossier.",
-      tag: "Best Score Locked",
+        "Participate in weekly mock tests and live mentorship sessions. Every test score is logged to measure progress and readiness.",
+      tag: "Weekly Practice",
       icon: <VideocamIcon sx={{ fontSize: 18, color: "#003c5e" }} />,
     },
     {
       step: "03",
       circleColor: "#017aa9", // Ocean Teal Blue
-      title: "Direct Recruiter Coordination",
-      subtitle: "Phone, LinkedIn & WhatsApp Outreach",
+      title: "Score & Resume Optimization",
+      subtitle: "Internal Team Analysis",
       description:
-        "Our placement team coordinates directly with you via call and messaging channels to match your profile with active openings across our 450+ partner network.",
-      tag: "Active Outreach",
-      icon: <HandshakeIcon sx={{ fontSize: 18, color: "#017aa9" }} />,
+        "Our team analyzes your peak mock marks, polishes your updated resume, and compiles your certified candidate scorecard dossier.",
+      tag: "Dossier Curation",
+      icon: <CheckCircleIcon sx={{ fontSize: 18, color: "#017aa9" }} />,
     },
     {
       step: "04",
       circleColor: "#ebaa1c", // Golden Amber
-      title: "Enterprise Interview & Onboarding",
-      subtitle: "Hiring & Placement",
+      title: "Fast-Hiring Agency Dispatch",
+      subtitle: "Direct Corporate Referrals",
       description:
-        "Attend scheduled interviews with corporate hiring managers and transition seamlessly into your new career role.",
-      tag: "Direct Interviews",
-      icon: <CheckCircleIcon sx={{ fontSize: 18, color: "#ebaa1c" }} />,
+        "We push your optimized dossier directly to our network of fast-hiring HR managers, agencies, and recruiters for interview scheduling.",
+      tag: "Direct Referrals",
+      icon: <HandshakeIcon sx={{ fontSize: 18, color: "#ebaa1c" }} />,
     },
   ];
 
   return (
     <Box
-      id="how-it-works"
+      id="roadmap"
       component="section"
       sx={{
         py: { xs: 8, md: 11 },
@@ -76,7 +76,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
         <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
           <Chip
             icon={<TimelineIcon sx={{ fontSize: 16, color: "#405FE2" }} />}
-            label="Our Engagement Process"
+            label="Execution Workflow"
             size="small"
             variant="outlined"
             sx={{
@@ -97,7 +97,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
               letterSpacing: "-0.02em",
             }}
           >
-            From Profile Registration to <span style={{ color: "#405FE2" }}>Direct Interviews</span>
+            How Our Team Handles Your <span style={{ color: "#405FE2" }}>Placement Journey</span>
           </Typography>
           <Typography
             variant="body1"
@@ -109,7 +109,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
               lineHeight: 1.6,
             }}
           >
-            A streamlined, human-led recruitment journey designed to put your best skills forward.
+            A structured 4-step pipeline from subscription activation to enterprise interview dispatch.
           </Typography>
         </Box>
 
