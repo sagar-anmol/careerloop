@@ -24,7 +24,7 @@ export function MuiFaq() {
       a: "Our internal team reviews your weekly mock test scores and analyzes your performance trends. We then update and optimize your resume to highlight your strengths, packaging both into a verified candidate dossier that we refer directly to fast-hiring HR teams and agencies.",
     },
     {
-      q: "What does the ₹5,000 subscription fee cover?",
+      q: "What does the ₹4,999 subscription fee cover?",
       a: "The fee covers full access to our weekly mock test portal, live mentorship sessions, expert resume curation, performance tracking, and active candidate dossier management. Direct HR and agency referral coordination is included as a complimentary value-added service.",
     },
     {

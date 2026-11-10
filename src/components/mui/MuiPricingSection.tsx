@@ -7,23 +7,75 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
 import Alert from "@mui/material/Alert";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import StarIcon from "@mui/icons-material/Star";
 import HandshakeIcon from "@mui/icons-material/Handshake";
+import SchoolIcon from "@mui/icons-material/School";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 
 interface MuiPricingSectionProps {
   onEnroll?: () => void;
 }
 
 export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
-  const deliverables = [
-    "Unlimited access to Weekly Mock Test Series",
-    "Live Expert Mentorship & Interview Prep Sessions",
-    "Professional Resume Analysis & Curation by our Team",
-    "Performance tracking based on peak mock marks",
-    "Complimentary Direct Referrals to 450+ Fast-Hiring HR Agencies",
+  const plans = [
+    {
+      name: "Starter Practice Pass",
+      badge: "Foundational",
+      badgeColor: "default" as const,
+      isFeatured: false,
+      price: "₹1,999",
+      billingSubtitle: "Portal & Mock Assessment Access",
+      description: "Designed for candidates looking to benchmark core aptitude, practice domain mocks, and identify initial skill gaps.",
+      deliverables: [
+        "Access to Weekly Mock Test Series",
+        "Automated Performance & Accuracy Analytics",
+        "Standard Resume Diagnostic Checklist",
+        "Community Q&A and Knowledge Base Access",
+        "Candidate Profile Listing in General Database",
+      ],
+      buttonLabel: "Enroll in Starter Pass",
+      buttonVariant: "outlined" as const,
+    },
+    {
+      name: "CareerLoop Pro All-Access Pass",
+      badge: "Most Popular • All-Access",
+      badgeColor: "primary" as const,
+      isFeatured: true,
+      price: "₹4,999",
+      billingSubtitle: "Lifetime Portal & Program Access",
+      description: "Complete career acceleration pass. Covers weekly mocks, live mentorship, expert resume curation, and direct HR referral dispatch.",
+      deliverables: [
+        "Unlimited access to Weekly Mock Test Series",
+        "Live Expert Mentorship & Interview Prep Sessions",
+        "Professional Resume Analysis & Curation by our Team",
+        "Performance tracking based on peak mock marks",
+        "Complimentary Direct Referrals to 450+ Fast-Hiring HR Agencies",
+      ],
+      buttonLabel: "Enroll & Secure Your Pass (₹4,999)",
+      buttonVariant: "contained" as const,
+    },
+    {
+      name: "Enterprise Mentorship Track",
+      badge: "1-on-1 Intensive",
+      badgeColor: "success" as const,
+      isFeatured: false,
+      price: "₹8,999",
+      billingSubtitle: "Dedicated Placement Advisory Track",
+      description: "For specialists, graduates, and professionals seeking 1-on-1 interview drills, custom company targeting, and executive resume overhaul.",
+      deliverables: [
+        "Everything in CareerLoop Pro All-Access Pass",
+        "Dedicated 1-on-1 Senior Industry Mock Interviews",
+        "Tailored ATS Resume Customization for Target Companies",
+        "Priority Fast-Track Dispatch to Enterprise HR Recruiters",
+        "Post-Interview Debrief & Offer Negotiation Guidance",
+      ],
+      buttonLabel: "Join Enterprise Track",
+      buttonVariant: "outlined" as const,
+    },
   ];
 
   return (
@@ -37,9 +89,9 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
         borderColor: "divider",
       }}
     >
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         {/* Header */}
-        <Box sx={{ textAlign: "center", mb: 5 }}>
+        <Box sx={{ textAlign: "center", mb: 6 }}>
           <Chip
             icon={<ShieldOutlinedIcon style={{ fontSize: 16, color: "#15803d" }} />}
             label="CareerLoop Pro Pass"
@@ -68,7 +120,7 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
             variant="body1"
             sx={{
               color: "text.secondary",
-              maxWidth: 680,
+              maxWidth: 720,
               mx: "auto",
               lineHeight: 1.6,
             }}
@@ -77,91 +129,109 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
           </Typography>
         </Box>
 
-        {/* Pricing Card */}
-        <Paper
-          variant="outlined"
-          sx={{
-            p: { xs: 3.5, sm: 5 },
-            borderRadius: 4,
-            borderColor: "primary.main",
-            borderWidth: 2,
-            boxShadow: "0 12px 36px rgba(64, 95, 226, 0.12)",
-            bgcolor: "#ffffff",
-            position: "relative",
-            mb: 4,
-          }}
-        >
-          <Chip
-            icon={<StarIcon sx={{ fontSize: 14, color: "#ffffff !important" }} />}
-            label="All-Access Pass"
-            color="primary"
-            size="small"
-            sx={{
-              position: "absolute",
-              top: -14,
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontWeight: 800,
-              px: 1.5,
-              py: 0.5,
-              fontSize: "0.75rem",
-              boxShadow: "0 4px 12px rgba(64, 95, 226, 0.4)",
-            }}
-          />
+        {/* 3 Pricing Cards Grid */}
+        <Grid container spacing={3} sx={{ mb: 5, alignItems: "stretch" }}>
+          {plans.map((plan, idx) => (
+            <Grid size={{ xs: 12, md: 4 }} key={idx} sx={{ display: "flex" }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: { xs: 3, sm: 4 },
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  borderRadius: 3.5,
+                  bgcolor: "#ffffff",
+                  position: "relative",
+                  borderColor: plan.isFeatured ? "primary.main" : "divider",
+                  borderWidth: plan.isFeatured ? 2.5 : 1,
+                  boxShadow: plan.isFeatured
+                    ? "0 12px 36px rgba(64, 95, 226, 0.16)"
+                    : "0 4px 16px rgba(0, 0, 0, 0.04)",
+                  transform: plan.isFeatured ? { md: "scale(1.03)" } : "none",
+                  zIndex: plan.isFeatured ? 2 : 1,
+                  transition: "all 0.25s ease-in-out",
+                }}
+              >
+                {/* Highlight Badge */}
+                <Chip
+                  icon={plan.isFeatured ? <StarIcon sx={{ fontSize: 13, color: "#ffffff !important" }} /> : undefined}
+                  label={plan.badge}
+                  color={plan.badgeColor}
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: -13,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontWeight: 700,
+                    fontSize: "0.72rem",
+                    px: 1,
+                  }}
+                />
 
-          <Box sx={{ textAlign: "center", pb: 3, borderBottom: "1px solid", borderColor: "divider" }}>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5 }}>
-              CareerLoop Pro All-Access Pass
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-              One-Time Payment (Lifetime Portal &amp; Program Access)
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 1 }}>
-              <Typography variant="h2" sx={{ fontWeight: 900, color: "primary.main", fontSize: { xs: "2.5rem", sm: "3.25rem" } }}>
-                ₹5,000
-              </Typography>
-              <Typography variant="subtitle2" sx={{ color: "text.secondary", fontWeight: 600 }}>
-                net all-inclusive
-              </Typography>
-            </Box>
-          </Box>
+                {/* Plan Header */}
+                <Box sx={{ textAlign: "center", pb: 2.5, borderBottom: "1px solid", borderColor: "divider" }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5 }}>
+                    {plan.name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1.5 }}>
+                    {plan.billingSubtitle}
+                  </Typography>
 
-          {/* Deliverables List */}
-          <Box sx={{ py: 3.5, display: "flex", flexDirection: "column", gap: 1.8 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "text.primary", letterSpacing: "0.04em" }}>
-              PROGRAM DELIVERABLES INCLUDED:
-            </Typography>
-            {deliverables.map((item, dIdx) => (
-              <Box key={dIdx} sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
-                <CheckCircleIcon sx={{ fontSize: 20, color: "#10b981", mt: 0.2, flexShrink: 0 }} />
-                <Typography variant="body2" sx={{ color: "text.primary", fontWeight: 600, lineHeight: 1.5 }}>
-                  {item}
+                  <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.8 }}>
+                    <Typography variant="h3" sx={{ fontWeight: 900, color: plan.isFeatured ? "primary.main" : "text.primary" }}>
+                      {plan.price}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600 }}>
+                      net all-inclusive
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Typography variant="body2" sx={{ color: "text.secondary", my: 2.5, minHeight: 44, fontSize: "0.85rem", lineHeight: 1.55 }}>
+                  {plan.description}
                 </Typography>
-              </Box>
-            ))}
-          </Box>
 
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            fullWidth
-            onClick={onEnroll}
-            sx={{
-              py: 1.7,
-              fontSize: "1.08rem",
-              fontWeight: 800,
-              borderRadius: 2.5,
-              boxShadow: "0 6px 20px rgba(64, 95, 226, 0.4)",
-              "&:hover": {
-                bgcolor: "#2843be",
-                boxShadow: "0 8px 24px rgba(64, 95, 226, 0.6)",
-              },
-            }}
-          >
-            Enroll &amp; Secure Your Pass (₹5,000)
-          </Button>
-        </Paper>
+                {/* Deliverables List */}
+                <Box sx={{ mb: 3.5, flexGrow: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: "text.primary", letterSpacing: "0.05em" }}>
+                    PROGRAM DELIVERABLES INCLUDED:
+                  </Typography>
+                  {plan.deliverables.map((item, dIdx) => (
+                    <Box key={dIdx} sx={{ display: "flex", alignItems: "flex-start", gap: 1.2 }}>
+                      <CheckCircleIcon sx={{ fontSize: 18, color: plan.isFeatured ? "#10b981" : "#405FE2", mt: 0.2, flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 600, lineHeight: 1.5 }}>
+                        {item}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* CTA Button */}
+                <Button
+                  variant={plan.buttonVariant}
+                  color="primary"
+                  size="large"
+                  fullWidth
+                  onClick={onEnroll}
+                  sx={{
+                    py: 1.4,
+                    fontSize: "0.95rem",
+                    fontWeight: 800,
+                    borderRadius: 2.2,
+                    boxShadow: plan.isFeatured ? "0 6px 20px rgba(64, 95, 226, 0.4)" : "none",
+                    "&:hover": {
+                      bgcolor: plan.isFeatured ? "#2843be" : undefined,
+                    },
+                  }}
+                >
+                  {plan.buttonLabel}
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
 
         {/* Compliance Note */}
         <Alert

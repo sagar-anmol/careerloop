@@ -677,12 +677,12 @@ export function MuiOnboardingModal({
               >
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    CareerLoop Pro
+                    CareerLoop Pro All-Access Pass
                   </Typography>
-                  <Chip label="₹5,000 Program" size="small" color="success" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
+                  <Chip label="₹4,999" size="small" color="success" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
                 </Box>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                  Unlimited domain mock tests, multi-attempt best-score certification &amp; complimentary partner interview routing.
+                  Unlimited weekly mock tests, live mentorship, resume curation &amp; complimentary fast-hiring HR referrals.
                 </Typography>
               </Paper>
             </Box>
@@ -773,7 +773,7 @@ export function MuiOnboardingModal({
                 style={{ marginTop: 3, cursor: "pointer" }}
               />
               <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.4 }} component="label" htmlFor="dpdp-consent">
-                <strong>Data Processing &amp; Terms Consent:</strong> I agree to the processing of my proctoring data and assessment scores in full compliance with the Digital Personal Data Protection (DPDP) Act 2023. I understand that the ₹5,000 fee covers mock tests and certification services, with complimentary interview routing to partner recruitment agencies.
+                <strong>Data Processing &amp; Terms Consent:</strong> I agree to the processing of my proctoring data and assessment scores in full compliance with the Digital Personal Data Protection (DPDP) Act 2023. I understand that the program fee covers weekly mock tests, live mentorship, and resume curation, with complimentary direct referrals to fast-hiring HR partner networks.
               </Typography>
             </Box>
           </Box>
