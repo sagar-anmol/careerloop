@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "CareerLoop",
+  "version": "2.0.0",
+  "updated_at": "2026-11-10",
+  "website_metadata": {
+    "brand_name": "CareerLoop",
+    "meta_title": "CareerLoop | Mock Tests, Proctored Certification & Enterprise Interviews",
+    "meta_description": "Master your skills with structured mock tests, take multiple proctored final attempts to lock in your best score, and unlock direct interviews with 450+ partner HR agencies."
+  },
+  "sections": [
+    {
+      "tag": "navigation_bar",
+      "brand": {
+        "title": "CareerLoop",
+        "badge": "Verified Candidate Portal"
+      },
+      "navigation_links": [
+        { "label": "Roadmap", "anchor": "#how-it-works" },
+        { "label": "Program & Pricing", "anchor": "#pricing-terms" },
+        { "label": "FAQ", "anchor": "#faq" }
+      ],
+      "actions": [
+        { "label": "Candidate Login", "type": "auth_signin" },
+        { "label": "Sign Up", "type": "auth_signup" },
+        { "label": "Take Free Baseline Test", "action": "assessment_trigger" },
+        { "label": "My Profile", "type": "profile_link" }
+      ]
+    },
+    {
+      "tag": "hero_banner",
+      "headline_primary": "Practice with Mock Tests.",
+      "headline_secondary": "Certify Your Best Score.",
+      "headline_highlight": "Get Direct Enterprise Interviews.",
+      "subheadline": "CareerLoop prepares and connects technical talent with 450+ partner HR agencies. Take your initial baseline test for free, master your skills with structured mock tests, take multiple proctored final attempts to lock in your best score, and unlock direct recruiter interview scheduling.",
+      "cta_buttons": [
+        { "label": "Sign Up Free", "action": "open_signup" },
+        { "label": "Take Free Baseline Test", "action": "open_assessment" }
+      ]
+    },
+    {
+      "tag": "candidate_roadmap",
+      "badge": "Verified Candidate Journey",
+      "title": "4-Step Preparation & Placement Roadmap",
+      "subtitle": "From initial baseline screening and guided mock tests to best-score certification and direct recruiter interviews.",
+      "steps": [
+        {
+          "step_number": "01",
+          "title": "Verified Profile & Free Baseline Test",
+          "subtitle": "Identity Check & Initial Skill Benchmark",
+          "description": "Create your profile, upload your resume, and take your initial proctored baseline assessment at zero cost to benchmark your starting score.",
+          "badge_tag": "₹0 Free Screening"
+        },
+        {
+          "step_number": "02",
+          "title": "Mock Tests & Skill Acceleration",
+          "subtitle": "Guided Practice & Readiness Modules",
+          "description": "Enroll in our Career Readiness Program to access structured domain mock tests, practice problems, and interview preparation tailored to enterprise hiring standards.",
+          "badge_tag": "Mock Prep Included"
+        },
+        {
+          "step_number": "03",
+          "title": "Multi-Attempt Final Certification",
+          "subtitle": "Best Score Selection & Verified Dossier",
+          "description": "Take multiple proctored final test attempts. Our system automatically selects your highest score to generate a certified Candidate Dossier.",
+          "badge_tag": "Best Score Counts"
+        },
+        {
+          "step_number": "04",
+          "title": "Direct Partner Interviews",
+          "subtitle": "450+ Partner HR Agencies",
+          "description": "Certified candidates receive complimentary profile routing and direct interview scheduling with partner recruitment agencies and enterprise hiring teams.",
+          "badge_tag": "Direct HR Routing"
+        }
+      ]
+    },
+    {
+      "tag": "compensation_and_placement_guarantee",
+      "badge": "CareerLoop Pro Program Guarantee",
+      "title": "Complete Mock Test Series & Multi-Attempt Proctored Certification (₹5,000)",
+      "description": "Enroll in the CareerLoop Pro Program to unlock unlimited mock tests, multiple final proctored test attempts (best score selected), and certified dossier generation. Complimentary interview routing is included for all certified candidates.",
+      "compensation_tiers": [
+        {
+          "tier_name": "Technical & Operations Roles",
+          "target_audience": "Technical certifications, skilled trades & operations",
+          "compensation_range": "Competitive Industry CTC",
+          "compensation_details": "Indicative band: Standard base pay + applicable shift allowances (set by hiring employer)",
+          "fee_terms": "Program Fee: ₹5,000 for Mock Tests, Multi-Attempt Certification & Dossier Generation. Interview routing is complimentary.",
+          "highlights": [
+            "Structured domain mock tests & hands-on readiness modules",
+            "Multiple proctored final attempts with best-score selection",
+            "Verified dossier routing to partner industrial & enterprise recruiters",
+            "Transparent evaluation and interview scheduling workflow"
+          ]
+        },
+        {
+          "tier_name": "Specialized Associates & Engineers",
+          "target_audience": "Core technical domains, applied technology & specialists",
+          "compensation_range": "High-Growth Packages",
+          "compensation_details": "Indicative band: Competitive base + performance & shift incentives (set by hiring employer)",
+          "is_featured": true,
+          "fee_terms": "Program Fee: ₹5,000 for Mock Tests, Multi-Attempt Certification & Dossier Generation. Interview routing is complimentary.",
+          "highlights": [
+            "Advanced mock tests tailored for QA, technical operations & engineering",
+            "Matched with partner companies offering standard overtime & shift bonuses",
+            "Opportunities at corporate facilities with commute & meal amenities",
+            "Direct profile visibility across 450+ partner recruitment agencies"
+          ]
+        },
+        {
+          "tier_name": "Graduates & Advanced Specialists",
+          "target_audience": "Degree graduates, engineering disciplines & management trainees",
+          "compensation_range": "Premium Enterprise Band",
+          "compensation_details": "Indicative band: Market-standard CTC + growth incentives (set by hiring employer)",
+          "fee_terms": "Program Fee: ₹5,000 for Mock Tests, Multi-Attempt Certification & Dossier Generation. Interview routing is complimentary.",
+          "highlights": [
+            "Evaluations designed for graduate engineer & associate trainee tracks",
+            "Profile routing to top-tier corporations & high-growth employers",
+            "Matched with enterprises offering standard statutory & health benefits",
+            "Dedicated dossier support from skill evaluation to interview scheduling"
+          ]
+        }
+      ],
+      "compliance_promise": {
+        "title": "Our 100% Program & Service Delivery Promise:",
+        "statement": "The ₹5,000 program fee covers the delivery of mock test series, study material, multiple proctored final exam attempts, and certified dossier generation. Interview routing is provided as a complimentary placement assistance benefit. Final hiring decisions and CTC packages rest solely with the respective hiring employers."
+      },
+      "cta": "Enroll in CareerLoop Pro (₹5,000)"
+    },
+    {
+      "tag": "frequently_asked_questions",
+      "badge": "Got Questions?",
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about mock tests, multi-attempt certification, and partner interview routing.",
+      "items": [
+        {
+          "question": "What does the ₹5,000 CareerLoop Pro fee cover?",
+          "answer": "The ₹5,000 fee is strictly for our CareerLoop Pro Program, which includes unlimited structured mock tests, multiple proctored final test attempts (with automatic best-score selection), skill preparation modules, and certified candidate dossier generation. Interview routing and placement assistance are provided as complimentary value-added benefits."
+        },
+        {
+          "question": "Can I take the final test multiple times?",
+          "answer": "Yes! CareerLoop Pro allows multiple proctored final test attempts. Our platform automatically records and selects your highest score to build your certified candidate dossier for employer review."
+        },
+        {
+          "question": "Is there a free way to test my baseline skills first?",
+          "answer": "Yes, you can register and take your initial baseline assessment for free to check your starting score before deciding to upgrade to the full CareerLoop Pro mock test and certification package."
+        },
+        {
+          "question": "What bus transportation and canteen facilities are available?",
+          "answer": "Many partner industrial and enterprise facilities provide designated bus commute routes and subsidized on-site canteen meals during shifts. Exact workplace amenities depend on the specific hiring organization and location."
+        },
+        {
+          "question": "Are jobs guaranteed with the ₹5,000 program?",
+          "answer": "No private platform can legally guarantee employment. The ₹5,000 fee guarantees the delivery of our mock test preparation, proctored testing, best-score certification, and active profile routing to our 450+ partner HR agencies. Final hiring selections and job offers are determined entirely by the hiring employers based on candidate performance during interviews."
+        }
+      ]
+    },
+    {
+      "tag": "candidate_profile_dashboard",
+      "page_route": "/profile",
+      "sidebar_tabs": [
+        { "id": "overview", "label": "Dashboard" },
+        { "id": "mock_tests", "label": "Mock Test Series" },
+        { "id": "assessments", "label": "Proctored Final Attempts" },
+        { "id": "dossier", "label": "Verified Dossier" },
+        { "id": "partners", "label": "Recruiter Pipeline" },
+        { "id": "settings", "label": "Account Settings" }
+      ],
+      "dashboard_overview": {
+        "welcome_text": "Welcome back, {fullName}",
+        "metrics": [
+          { "label": "Best Final Score", "description": "Highest score locked across attempts" },
+          { "label": "Attempts Remaining", "description": "Proctored final attempts available" },
+          { "label": "Program Status", "description": "CareerLoop Pro Active" }
+        ],
+        "quota_notice": "Multiple final proctored attempts allowed; your highest score automatically populates your verified dossier."
+      },
+      "candidate_dossier": {
+        "title": "Candidate Profile & Certified Dossier",
+        "description": "Verified registration details, identity photo, best-score scorecard, and resume",
+        "fields": [
+          "Full Name",
+          "Candidate ID",
+          "Email Address",
+          "Mobile Phone",
+          "Qualification & Domain",
+          "Best Proctored Score",
+          "Live Photo ID",
+          "Attached Resume"
+        ]
+      },
+      "locked_recruiter_pipeline": {
+        "title": "Recruiter Dispatch Pipeline",
+        "badge": "Active",
+        "lock_banner": "UNLOCKED VIA CAREERLOOP PRO",
+        "primary_prompt": "Your verified best-score dossier is active in our agency pool",
+        "description": "Partner Recruiter Dispatch Pipeline automatically routes your best-score certified dossier to 450+ partner agencies for interview scheduling.",
+        "cta": "View Interview Schedule"
+      }
+    },
+    {
+      "tag": "onboarding_and_auth_modal",
+      "modal_title": "Candidate Onboarding & Program Enrollment",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Candidate Info",
+          "fields": [
+            "Full Name",
+            "Email Address",
+            "Password (Min 6 characters)",
+            "WhatsApp / Mobile Number",
+            "Current Location / City",
+            "Educational Qualification",
+            "Passing / Experience Status"
+          ]
+        },
+        {
+          "step": 2,
+          "name": "Live Photo ID",
+          "description": "Live Identity Snapshot with automatic facial alignment check for anti-impersonation proctoring compliance."
+        },
+        {
+          "step": 3,
+          "name": "Program Selection & Consent",
+          "description": "Choose Free Baseline or CareerLoop Pro (₹5,000 for Mock Tests & Multi-Attempt Certification). By proceeding, you consent to CareerLoop processing your data under the DPDP Act, 2023."
+        },
+        {
+          "step": 4,
+          "name": "Account Ready",
+          "description": "Confirmation and automatic routing to candidate profile dashboard."
+        }
+      ]
+    },
+    {
+      "tag": "footer",
+      "brand_summary": "CareerLoop Pro — Structured mock tests, multi-attempt proctored certification, and candidate dossier verification. ₹5,000 program fee covers preparation and certification deliverables; interview routing is provided as complimentary placement assistance.",
+      "candidate_links": [
+        "Candidate Roadmap",
+        "Program & Pricing Terms",
+        "Candidate FAQ",
+        "Terms & Conditions",
+        "Refund & Cancellation Policy",
+        "Privacy Policy"
+      ],
+      "qualification_tracks": [
+        "Technical & Skilled Trades",
+        "Engineering Associates",
+        "Graduates & Trainees",
+        "Enterprise Skill Verification"
+      ],
+      "support_and_trust": {
+        "compliance_note": "Strict proctored integrity standards. DPDP Act 2023 compliant data privacy.",
+        "contact_email": "support@careerloop.co.in",
+        "operating_locations": "Bengaluru • Pune • Hyderabad • Gurgaon • Chennai",
+        "legal_disclaimer": "Disclaimer: CareerLoop (`careerloop.co.in`) is an independent skill-assessment, mock test preparation, and career acceleration platform, not a government agency. We do not charge fees for job offers or employment guarantees. The ₹5,000 program fee is strictly for mock test series, skill training modules, multi-attempt proctored assessment auditing, and dossier generation. Interview scheduling and placement assistance are complimentary value-added services. Final hiring decisions and CTC packages rest solely with the respective hiring employers."
+      },
+      "copyright": "© 2026 CareerLoop. All rights reserved. CareerLoop Pro Program: ₹5,000 (Mock Tests, Multi-Attempt Certification & Dossier Generation)."
+    }
+  ]
+}
