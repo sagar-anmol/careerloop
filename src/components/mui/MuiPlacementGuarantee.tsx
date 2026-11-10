@@ -26,14 +26,14 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
       tier: "Technical & Operations Roles",
       qualification: "Technical certifications, skilled trades & operations",
       packageRange: "Competitive Industry CTC",
-      rangeSub: "Standard base pay + performance & shift allowances",
+      rangeSub: "Indicative band: Standard base pay + applicable shift allowances (set by hiring employer)",
       icon: <ConstructionIcon sx={{ color: "#d97706", fontSize: 24 }} />,
-      feeNote: "Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
+      feeNote: "Program Fee: ₹5,000 for Mock Tests, Multi-Attempt Certification & Dossier Generation. Interview routing is complimentary.",
       features: [
-        "Structured technical evaluation & hands-on readiness",
-        "Direct enterprise onboarding and verified placement",
-        "Subsidized workplace amenities & commuting options",
-        "Transparent hiring terms with verified partners",
+        "Structured domain mock tests & hands-on readiness modules",
+        "Multiple proctored final attempts with best-score selection",
+        "Verified dossier routing to partner industrial & enterprise recruiters",
+        "Transparent evaluation and interview scheduling workflow",
       ],
       popular: false,
     },
@@ -41,14 +41,14 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
       tier: "Specialized Associates & Engineers",
       qualification: "Core technical domains, applied technology & specialists",
       packageRange: "High-Growth Packages",
-      rangeSub: "Competitive base + performance incentives & overtime",
+      rangeSub: "Indicative band: Competitive base + performance & shift incentives (set by hiring employer)",
       icon: <EngineeringIcon sx={{ color: "#405FE2", fontSize: 24 }} />,
-      feeNote: "Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
+      feeNote: "Program Fee: ₹5,000 for Mock Tests, Multi-Attempt Certification & Dossier Generation. Interview routing is complimentary.",
       features: [
-        "Quality assurance, technical operations & process maintenance",
-        "Attractive overtime allowances and shift differential bonuses",
-        "Corporate facilities, commute access & meal subsidies",
-        "Paid annual leave and health coverage at leading enterprises",
+        "Advanced mock tests tailored for QA, technical operations & engineering",
+        "Matched with partner companies offering standard overtime & shift bonuses",
+        "Opportunities at corporate facilities with commute & meal amenities",
+        "Direct profile visibility across 450+ partner recruitment agencies",
       ],
       popular: true,
     },
@@ -56,14 +56,14 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
       tier: "Graduates & Advanced Specialists",
       qualification: "Degree graduates, engineering disciplines & management trainees",
       packageRange: "Premium Enterprise Band",
-      rangeSub: "Market-leading CTC + supervisory growth incentives",
+      rangeSub: "Indicative band: Market-standard CTC + growth incentives (set by hiring employer)",
       icon: <SchoolIcon sx={{ color: "#15803d", fontSize: 24 }} />,
-      feeNote: "Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
+      feeNote: "Program Fee: ₹5,000 for Mock Tests, Multi-Attempt Certification & Dossier Generation. Interview routing is complimentary.",
       features: [
-        "Fast-track supervisory & associate trainee career tracks",
-        "Roles with top-tier corporations & high-growth leaders",
-        "Comprehensive workplace coverage and insurance benefits",
-        "Dedicated placement coordinator from evaluation to offer",
+        "Evaluations designed for graduate engineer & associate trainee tracks",
+        "Profile routing to top-tier corporations & high-growth employers",
+        "Matched with enterprises offering standard statutory & health benefits",
+        "Dedicated dossier support from skill evaluation to interview scheduling",
       ],
       popular: false,
     },
@@ -71,7 +71,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
 
   return (
     <Box
-      id="placement-terms"
+      id="pricing-terms"
       component="section"
       sx={{
         py: { xs: 8, md: 10 },
@@ -85,7 +85,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Chip
             icon={<ShieldOutlinedIcon style={{ fontSize: 16, color: "#15803d" }} />}
-            label="Zero Risk Candidate Promise"
+            label="CareerLoop Pro Program Guarantee"
             size="small"
             variant="outlined"
             sx={{
@@ -105,7 +105,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
               color: "text.primary",
             }}
           >
-            Zero Upfront Charges. Nominal Fee Only Upon Interview or Offer Letter.
+            Complete Mock Test Series &amp; Multi-Attempt Proctored Certification (₹5,000)
           </Typography>
           <Typography
             variant="body1"
@@ -116,7 +116,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
               lineHeight: 1.6,
             }}
           >
-            There are zero upfront registration or testing charges. <strong>Nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.</strong>
+            Enroll in the CareerLoop Pro Program to unlock unlimited mock tests, multiple final proctored test attempts (best score selected), and certified dossier generation. Complimentary interview routing is included for all certified candidates.
           </Typography>
         </Box>
 
@@ -178,7 +178,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
                   }}
                 >
                   <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 700, display: "block", letterSpacing: "0.06em" }}>
-                    COMPENSATION &amp; BENEFITS BAND
+                    INDICATIVE EMPLOYER BAND
                   </Typography>
                   <Typography variant="h5" sx={{ fontWeight: 800, color: "#405FE2", my: 0.5 }}>
                     {item.packageRange}
@@ -188,7 +188,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
                   </Typography>
                 </Box>
 
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5, fontSize: "0.82rem", lineHeight: 1.5 }}>
                   {item.feeNote}
                 </Typography>
               </Paper>
@@ -210,10 +210,10 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
           }}
         >
           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-            Our 100% Risk-Free Candidate Promise:
+            Our 100% Program &amp; Service Delivery Promise:
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Taking the proctored test and having your skills reviewed involves <strong>no advance payment</strong>. <strong>Nominal fee for assessment &amp; review is payable only once you receive an interview call or offer letter.</strong> If you do not receive an interview or offer letter, you have zero financial liability.
+            The ₹5,000 program fee covers the delivery of mock test series, study material, multiple proctored final exam attempts, and certified dossier generation. Interview routing is provided as a complimentary placement assistance benefit. Final hiring decisions and CTC packages rest solely with the respective hiring employers.
           </Typography>
         </Alert>
 
@@ -226,7 +226,7 @@ export function MuiPlacementGuarantee({ onStartAssessment }: MuiPlacementGuarant
             onClick={onStartAssessment}
             sx={{ px: 4, py: 1.5, fontWeight: 700 }}
           >
-            Create Free Profile & Take Skill Assessment
+            Enroll in CareerLoop Pro (₹5,000)
           </Button>
         </Box>
       </Container>

@@ -44,7 +44,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
             textAlign: { xs: "center", md: "left" },
           }}
         >
-          {/* Main Title - Premier on its own line */}
+          {/* Main Title */}
           <Typography
             variant="h1"
             sx={{
@@ -56,16 +56,16 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
           >
-            Verified Technical Assessment.
+            Practice with Mock Tests.
             <Box component="span" sx={{ display: "block" }}>
-              Premier Enterprise Roles.
+              Certify Your Best Score.
             </Box>
             <Box component="span" sx={{ color: "#60a5fa", display: "block" }}>
-              Pay Only When Placed.
+              Get Direct Enterprise Interviews.
             </Box>
           </Typography>
 
-          {/* Subtitle - Punchy & concise */}
+          {/* Subtitle */}
           <Typography
             variant="body1"
             sx={{
@@ -77,7 +77,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               textShadow: "0 1px 6px rgba(0, 0, 0, 0.4)",
             }}
           >
-            careerloop connects skilled talent and technical professionals with leading employers across top industry sectors. Access competitive, market-standard compensation packages, performance incentives, and career acceleration benefits. <strong style={{ color: "#ffffff" }}>Zero advance fee</strong>—nominal review charges apply only once you are shortlisted for interview rounds or receive an offer letter.
+            CareerLoop prepares and connects technical talent with 450+ partner HR agencies. Take your initial baseline test for free, master your skills with structured mock tests, take multiple proctored final attempts to lock in your best score, and unlock direct recruiter interview scheduling.
           </Typography>
 
           {/* Call to Action Buttons (Separated Signup & Assessment) */}
@@ -122,7 +122,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Take Assessment
+              Take Free Baseline Test
             </Button>
           </Box>
         </Box>

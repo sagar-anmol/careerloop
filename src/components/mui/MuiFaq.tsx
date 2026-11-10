@@ -20,24 +20,24 @@ export function MuiFaq() {
 
   const faqs = [
     {
-      q: "Is there really no upfront fee to take the test and get job opportunities?",
-      a: "Yes, there are zero upfront charges. You never pay any advance fees to take the proctored test or create your verified candidate profile. A nominal fee for assessment and review is payable only once you receive a verified interview call or offer letter.",
+      q: "What does the ₹5,000 CareerLoop Pro fee cover?",
+      a: "The ₹5,000 fee is strictly for our CareerLoop Pro Program, which includes unlimited structured mock tests, multiple proctored final test attempts (with automatic best-score selection), skill preparation modules, and certified candidate dossier generation. Interview routing and placement assistance are provided as complimentary value-added benefits.",
     },
     {
-      q: "How does the Government DBT (Direct Benefit Transfer) stipend work?",
-      a: "Under recognized apprenticeship and industry schemes, eligible monthly stipends and training allowances are disbursed directly into your official bank account, ensuring timely and transparent payouts.",
+      q: "Can I take the final test multiple times?",
+      a: "Yes! CareerLoop Pro allows multiple proctored final test attempts. Our platform automatically records and selects your highest score to build your certified candidate dossier for employer review.",
+    },
+    {
+      q: "Is there a free way to test my baseline skills first?",
+      a: "Yes, you can register and take your initial baseline assessment for free to check your starting score before deciding to upgrade to the full CareerLoop Pro mock test and certification package.",
     },
     {
       q: "What bus transportation and canteen facilities are available?",
-      a: "Partner enterprise facilities typically provide designated company bus commute routes connecting key pickup points, alongside subsidized on-site dining and meal options during shifts.",
+      a: "Many partner industrial and enterprise facilities provide designated bus commute routes and subsidized on-site canteen meals during shifts. Exact workplace amenities depend on the specific hiring organization and location.",
     },
     {
-      q: "How are overtime hours and extra shifts compensated?",
-      a: "Overtime is compensated according to standardized company policies with applicable hourly overtime rates or shift differential multipliers added directly to your monthly payout.",
-    },
-    {
-      q: "What happens if I take the assessment but do not receive an interview or offer letter?",
-      a: "You owe nothing. The nominal assessment & review fee is payable only once you receive an interview call or official offer letter. If you do not receive an interview call or offer letter, you have zero financial liability.",
+      q: "Are jobs guaranteed with the ₹5,000 program?",
+      a: "No private platform can legally guarantee employment. The ₹5,000 fee guarantees the delivery of our mock test preparation, proctored testing, best-score certification, and active profile routing to our 450+ partner HR agencies. Final hiring selections and job offers are determined entirely by the hiring employers based on candidate performance during interviews.",
     },
   ];
 
@@ -77,7 +77,7 @@ export function MuiFaq() {
             Frequently Asked Questions
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Everything you need to know about the onboarding, proctored test, and recruitment process.
+            Everything you need to know about mock tests, multi-attempt certification, and partner interview routing.
           </Typography>
         </Box>
 

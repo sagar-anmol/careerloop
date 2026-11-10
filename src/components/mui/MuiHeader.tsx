@@ -42,7 +42,7 @@ export function MuiHeader({
 
   const navItems = [
     { label: "Roadmap", href: "#how-it-works" },
-    { label: "Compensation & Terms", href: "#placement-terms" },
+    { label: "Program & Pricing", href: "#pricing-terms" },
     { label: "FAQ", href: "#faq" },
   ];
 
@@ -146,7 +146,7 @@ export function MuiHeader({
                   onClick={onStartAssessment}
                   sx={{ fontWeight: 700, textTransform: "none", px: 2, py: 0.6, borderRadius: 2 }}
                 >
-                  Take Assessment
+                  Take Free Baseline Test
                 </Button>
                 {onSignOut && (
                   <Button
@@ -187,7 +187,7 @@ export function MuiHeader({
                   onClick={onStartAssessment}
                   sx={{ fontWeight: 600, px: 2.5, textTransform: "none", borderRadius: 2 }}
                 >
-                  Take Assessment
+                  Take Free Baseline Test
                 </Button>
               </Box>
             )}
@@ -274,7 +274,7 @@ export function MuiHeader({
                   }}
                   sx={{ fontWeight: 700, textTransform: "none" }}
                 >
-                  Take Assessment
+                  Take Free Baseline Test
                 </Button>
               </ListItem>
               <ListItem disablePadding sx={{ mt: 1 }}>

@@ -56,7 +56,7 @@ export default function CandidateProfileDashboardPage() {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
-  const [activeTab, setActiveTab] = useState<"overview" | "assessments" | "dossier" | "partners" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "mock_tests" | "assessments" | "dossier" | "partners" | "settings">("overview");
   const [currentUser, setCurrentUser] = useState<CandidateProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState<TestAttempt[]>([]);
@@ -283,8 +283,9 @@ export default function CandidateProfileDashboardPage() {
                   <div className="space-y-1">
                     {[
                       { id: "overview", label: "Dashboard", icon: Layers },
-                      { id: "assessments", label: "Assessment History", icon: Shield },
-                      { id: "dossier", label: "Profile & Documents", icon: FileText },
+                      { id: "mock_tests", label: "Mock Test Series", icon: FileText },
+                      { id: "assessments", label: "Proctored Final Attempts", icon: Shield },
+                      { id: "dossier", label: "Verified Dossier", icon: FileText },
                       { id: "partners", label: "Recruiter Pipeline", icon: Building2 },
                       { id: "settings", label: "Account Settings", icon: Settings },
                     ].map((item) => {
@@ -349,9 +350,10 @@ export default function CandidateProfileDashboardPage() {
             <CardContent className="p-2 space-y-0.5">
               {[
                 { id: "overview", label: "Dashboard", icon: Layers },
-                { id: "assessments", label: "Assessment History", icon: Shield, badge: `${totalTests}/2` },
-                { id: "dossier", label: "Profile & Documents", icon: FileText },
-                { id: "partners", label: "Recruiter Pipeline", icon: Building2, badge: "Locked" },
+                { id: "mock_tests", label: "Mock Test Series", icon: FileText, badge: "Included" },
+                { id: "assessments", label: "Proctored Final Attempts", icon: Shield, badge: `${totalTests}/2` },
+                { id: "dossier", label: "Verified Dossier", icon: FileText },
+                { id: "partners", label: "Recruiter Pipeline", icon: Building2, badge: "Active" },
                 { id: "settings", label: "Account Settings", icon: Settings },
               ].map((item) => {
                 const Icon = item.icon;
@@ -390,7 +392,7 @@ export default function CandidateProfileDashboardPage() {
 
             <div className="p-3 bg-slate-50 rounded-b-lg">
               <div className="flex items-center justify-between text-xs mb-1.5 text-slate-600">
-                <span className="font-medium">Assessment Attempts</span>
+                <span className="font-medium">Final Test Attempts</span>
                 <span className="font-mono text-slate-800">{totalTests} / 2</span>
               </div>
               <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
@@ -400,7 +402,7 @@ export default function CandidateProfileDashboardPage() {
                 />
               </div>
               <p className="text-[11px] text-slate-400 mt-1.5">
-                {attemptsLeft > 0 ? `${attemptsLeft} attempt remaining` : "All attempts completed"}
+                Multiple final proctored attempts allowed; highest score automatically populates your verified dossier.
               </p>
             </div>
           </Card>
@@ -451,36 +453,36 @@ export default function CandidateProfileDashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <p className="text-xs font-medium text-slate-500">Latest Score</p>
+                    <p className="text-xs font-medium text-slate-500">Best Final Score</p>
                     <div className="text-2xl font-bold text-slate-900 mt-1">
                       {totalTests > 0 ? `${averageScore}%` : "—"}
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      {totalTests > 0 ? (averageScore >= 60 ? "Qualified (Passing >= 60%)" : "Under Review") : "Test not attempted"}
+                      {totalTests > 0 ? "Highest score locked across attempts" : "Baseline / final test pending"}
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <p className="text-xs font-medium text-slate-500">Attempts Completed</p>
+                    <p className="text-xs font-medium text-slate-500">Attempts Remaining</p>
                     <div className="text-2xl font-bold text-slate-900 mt-1">
-                      {totalTests} / 2
+                      {attemptsLeft} available
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      {attemptsLeft === 0 ? "Quota Exhausted" : `${attemptsLeft} attempt available`}
+                      Proctored final attempts available
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-slate-200 shadow-none bg-white">
                   <CardContent className="p-4">
-                    <p className="text-xs font-medium text-slate-500">Evaluation Status</p>
+                    <p className="text-xs font-medium text-slate-500">Program Status</p>
                     <div className="text-2xl font-bold text-slate-900 mt-1">
-                      {totalTests > 0 ? (averageScore >= 60 ? "Eligible" : "Pending") : "Pending"}
+                      CareerLoop Pro
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      {totalTests > 0 ? "Score recorded" : "Complete test to qualify"}
+                      Mock tests &amp; certification active
                     </p>
                   </CardContent>
                 </Card>
@@ -563,6 +565,51 @@ export default function CandidateProfileDashboardPage() {
                       </Table>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* TAB: MOCK TESTS */}
+          {activeTab === "mock_tests" && (
+            <div className="space-y-5">
+              <Card className="border-slate-200 shadow-none bg-white">
+                <CardHeader className="p-4 sm:p-5 border-b border-slate-100">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
+                        CareerLoop Pro Mock Test Series
+                      </CardTitle>
+                      <CardDescription className="text-xs text-slate-500">
+                        Practice modules tailored to enterprise engineering &amp; industrial criteria
+                      </CardDescription>
+                    </div>
+                    <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-emerald-50 text-emerald-700 border-emerald-300">
+                      Pro Access Active
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-4 sm:p-5 space-y-3">
+                  {[
+                    { title: "Metrology & Mechanical Inspection Mock Test", questions: "15 Questions", duration: "20 Mins", status: "Ready" },
+                    { title: "Industrial Safety & 5S Operational Readiness", questions: "15 Questions", duration: "20 Mins", status: "Ready" },
+                    { title: "Electrical Circuits & EV Battery Packaging Practice", questions: "15 Questions", duration: "20 Mins", status: "Ready" },
+                    { title: "Full-Length Proctored Simulation Mock", questions: "30 Questions", duration: "45 Mins", status: "Ready" },
+                  ].map((mock, i) => (
+                    <div key={i} className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h4 className="font-semibold text-xs text-slate-900">{mock.title}</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{mock.questions} • {mock.duration} • Domain Specific</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => setIsAssessmentOpen(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8 px-4 self-start sm:self-center"
+                      >
+                        Start Practice
+                      </Button>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             </div>
@@ -783,7 +830,7 @@ export default function CandidateProfileDashboardPage() {
             </div>
           )}
 
-          {/* TAB 4: RECRUITER PLACEMENT ROUTE (LOCKED) */}
+          {/* TAB 4: RECRUITER PLACEMENT ROUTE */}
           {activeTab === "partners" && (
             <div className="space-y-5">
               <Card className="border-slate-200 shadow-none bg-white">
@@ -793,50 +840,32 @@ export default function CandidateProfileDashboardPage() {
                       Recruiter Dispatch Pipeline
                     </CardTitle>
                     <CardDescription className="text-xs text-slate-500">
-                      Direct placement network for verified candidates
+                      Partner Recruiter Dispatch Pipeline automatically routes your best-score certified dossier to 450+ partner agencies
                     </CardDescription>
                   </div>
-                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-medium border border-rose-200">
-                    Locked
+                  <span className="font-mono text-xs px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 font-semibold border border-emerald-300">
+                    Active
                   </span>
                 </CardHeader>
 
-                <CardContent className="p-8 sm:p-12 text-center flex flex-col items-center justify-center">
-                  {/* Red Keypad Lock Icon Graphic */}
-                  <div className="relative mb-5">
-                    <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col items-center justify-center text-rose-600 shadow-xs">
-                      <Lock className="w-7 h-7 mb-1" />
-                      {/* Keypad dots */}
-                      <div className="grid grid-cols-3 gap-1">
-                        <div className="w-1 h-1 rounded-full bg-rose-400" />
-                        <div className="w-1 h-1 rounded-full bg-rose-400" />
-                        <div className="w-1 h-1 rounded-full bg-rose-400" />
-                      </div>
-                    </div>
+                <CardContent className="p-6 sm:p-8 text-center flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 mb-3">
+                    <Building2 className="w-6 h-6" />
                   </div>
-
-                  {/* High Visibility Prompt Text */}
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight max-w-md">
-                    Attempt the test, give your best
-                  </h2>
-                  <p className="text-slate-500 text-xs sm:text-sm max-w-md mt-1.5 leading-relaxed">
-                    Partner Recruiter Dispatch Pipeline unlocks automatically once you complete your proctored assessment.
+                  <h3 className="text-base font-bold text-slate-900">
+                    Your verified best-score dossier is active in our agency pool
+                  </h3>
+                  <p className="text-slate-500 text-xs max-w-md mt-1.5 leading-relaxed">
+                    Partner Recruiter Dispatch Pipeline automatically routes your best-score certified dossier to 450+ partner agencies for interview scheduling.
                   </p>
-
-                  {/* Action Button to launch test */}
-                  <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+                  <div className="mt-4 flex gap-2">
                     <Button
                       size="sm"
-                      onClick={() => setIsAssessmentOpen(true)}
-                      disabled={totalTests >= 2}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 px-5"
+                      onClick={() => setActiveTab("assessments")}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8 px-4"
                     >
-                      <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
-                      {totalTests >= 2 ? "Attempts Completed (2/2)" : totalTests === 1 ? "Retake Assessment Now" : "Start Assessment Now"}
+                      View Best Score Dossier
                     </Button>
-                    <span className="text-xs text-slate-400 font-mono">
-                      {attemptsLeft} attempts remaining
-                    </span>
                   </div>
                 </CardContent>
               </Card>

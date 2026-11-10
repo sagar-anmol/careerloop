@@ -50,7 +50,7 @@ interface MuiOnboardingModalProps {
   onCompleteAndStartTest: (candidateData: CandidateOnboardingData) => void;
 }
 
-const steps = ["Candidate Info", "Live Photo ID", "Resume Upload", "Account Ready"];
+const steps = ["Candidate Info", "Live Photo ID", "Program & Consent", "Account Ready"];
 
 export function MuiOnboardingModal({
   isOpen,
@@ -80,6 +80,10 @@ export function MuiOnboardingModal({
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [faceResult, setFaceResult] = useState<FaceDetectionResult | null>(null);
+
+  // Program & Consent State
+  const [selectedPlan, setSelectedPlan] = useState<"free_baseline" | "pro_certification">("pro_certification");
+  const [consentAgreed, setConsentAgreed] = useState(true);
 
   // Resume State
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -318,7 +322,7 @@ export function MuiOnboardingModal({
             Candidate Onboarding
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            Step {activeStep + 1} of 4 • Free & Pay-After-Placement
+            Step {activeStep + 1} of 4 • Free Baseline or CareerLoop Pro
           </Typography>
         </Box>
         <IconButton aria-label="close" onClick={handleClose} size="small">
@@ -619,25 +623,81 @@ export function MuiOnboardingModal({
           </Box>
         )}
 
-        {/* STEP 2: RESUME UPLOAD */}
+        {/* STEP 2: PROGRAM SELECTION & RESUME */}
         {activeStep === 2 && (
-          <Box sx={{ textAlign: "center" }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }} gutterBottom>
-              Upload Verified Resume
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary", mb: 2.5 }}>
-              Upload your resume (PDF, DOCX). We attach your verified assessment scorecard directly to this document.
-            </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ textAlign: "center", mb: 0.5 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }} gutterBottom>
+                Select Program &amp; Upload Resume
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                Choose your participation tier and attach your resume for your candidate dossier.
+              </Typography>
+            </Box>
 
+            {/* Plan Selector */}
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
+              <Paper
+                variant="outlined"
+                onClick={() => setSelectedPlan("free_baseline")}
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  border: "2px solid",
+                  borderColor: selectedPlan === "free_baseline" ? "primary.main" : "divider",
+                  bgcolor: selectedPlan === "free_baseline" ? "rgba(37, 99, 235, 0.05)" : "background.paper",
+                  transition: "all 0.2s",
+                }}
+              >
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    Free Baseline Test
+                  </Typography>
+                  <Chip label="₹0 Free" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
+                </Box>
+                <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
+                  1 single proctored baseline diagnostic to benchmark your starting score before upgrading.
+                </Typography>
+              </Paper>
+
+              <Paper
+                variant="outlined"
+                onClick={() => setSelectedPlan("pro_certification")}
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  border: "2px solid",
+                  borderColor: selectedPlan === "pro_certification" ? "#10b981" : "divider",
+                  bgcolor: selectedPlan === "pro_certification" ? "rgba(16, 185, 129, 0.05)" : "background.paper",
+                  transition: "all 0.2s",
+                  position: "relative",
+                }}
+              >
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    CareerLoop Pro
+                  </Typography>
+                  <Chip label="₹5,000 Program" size="small" color="success" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
+                </Box>
+                <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
+                  Unlimited domain mock tests, multi-attempt best-score certification &amp; complimentary partner interview routing.
+                </Typography>
+              </Paper>
+            </Box>
+
+            {/* Resume Upload Box */}
             <Paper
               variant="outlined"
               sx={{
-                p: 4,
+                p: 2.5,
                 border: "2px dashed",
                 borderColor: resumeFile ? "#15803d" : "divider",
-                borderRadius: 3,
+                borderRadius: 2,
                 bgcolor: resumeFile ? "rgba(21, 128, 61, 0.05)" : "background.paper",
                 cursor: "pointer",
+                textAlign: "center",
                 transition: "border-color 0.2s",
                 "&:hover": { borderColor: "primary.main" },
               }}
@@ -653,59 +713,69 @@ export function MuiOnboardingModal({
                   }
                 }}
               />
-              <Box
-                sx={{
-                  width: 50,
-                  height: 50,
-                  mx: "auto",
-                  mb: 2,
-                  borderRadius: "50%",
-                  bgcolor: resumeFile ? "rgba(16, 185, 129, 0.1)" : "rgba(37, 99, 235, 0.1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: resumeFile ? "#10b981" : "primary.main",
-                }}
-              >
-                {resumeFile ? <CheckCircleIcon fontSize="medium" /> : <UploadFileIcon fontSize="medium" />}
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5 }}>
+                <Box
+                  sx={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: "50%",
+                    bgcolor: resumeFile ? "rgba(16, 185, 129, 0.1)" : "rgba(37, 99, 235, 0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: resumeFile ? "#10b981" : "primary.main",
+                  }}
+                >
+                  {resumeFile ? <CheckCircleIcon fontSize="small" /> : <UploadFileIcon fontSize="small" />}
+                </Box>
+                <Box sx={{ textAlign: "left" }}>
+                  {resumeFile ? (
+                    <>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#34d399", fontSize: "0.85rem" }}>
+                        {resumeFile.name}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                        {(resumeFile.size / (1024 * 1024)).toFixed(2)} MB • Click to replace
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "text.primary", fontSize: "0.85rem" }}>
+                        Attach Resume (PDF / DOCX)
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                        Click to browse or drop file here (Optional for baseline)
+                      </Typography>
+                    </>
+                  )}
+                </Box>
               </Box>
-
-              {resumeFile ? (
-                <>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#34d399" }}>
-                    {resumeFile.name}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    {(resumeFile.size / (1024 * 1024)).toFixed(2)} MB • Click to replace
-                  </Typography>
-                </>
-              ) : (
-                <>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "text.primary" }}>
-                    Click to browse or drop your resume here
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    Supports PDF, DOC, DOCX (Max 10MB)
-                  </Typography>
-                </>
-              )}
             </Paper>
 
-            {!resumeFile && (
-              <Button
-                size="small"
-                variant="text"
-                sx={{ mt: 2, fontSize: "0.75rem", color: "text.secondary" }}
-                onClick={() => {
-                  const sampleFile = new File(["Sample Resume Content"], "Rahul_Sharma_Resume.pdf", {
-                    type: "application/pdf",
-                  });
-                  setResumeFile(sampleFile);
-                }}
-              >
-                Or attach default resume for test run
-              </Button>
-            )}
+            {/* DPDP Consent */}
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 2,
+                bgcolor: "#f8fafc",
+                border: "1px solid",
+                borderColor: "divider",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 1.5,
+              }}
+            >
+              <input
+                type="checkbox"
+                id="dpdp-consent"
+                checked={consentAgreed}
+                onChange={(e) => setConsentAgreed(e.target.checked)}
+                style={{ marginTop: 3, cursor: "pointer" }}
+              />
+              <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.4 }} component="label" htmlFor="dpdp-consent">
+                <strong>Data Processing &amp; Terms Consent:</strong> I agree to the processing of my proctoring data and assessment scores in full compliance with the Digital Personal Data Protection (DPDP) Act 2023. I understand that the ₹5,000 fee covers mock tests and certification services, with complimentary interview routing to partner recruitment agencies.
+              </Typography>
+            </Box>
           </Box>
         )}
 
@@ -826,7 +896,7 @@ export function MuiOnboardingModal({
             disabled={!capturedPhoto}
             endIcon={<ArrowForwardIcon />}
           >
-            Next: Upload Resume
+            Next: Program &amp; Consent
           </Button>
         )}
 
@@ -835,10 +905,10 @@ export function MuiOnboardingModal({
             variant="contained"
             color="primary"
             onClick={handleValidateStep2}
-            disabled={isSaving}
+            disabled={isSaving || !consentAgreed}
             endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
-            {isSaving ? "Saving to Database..." : "Complete Registration"}
+            {isSaving ? "Saving to Database..." : selectedPlan === "pro_certification" ? "Enroll in Pro & Complete" : "Start Free Baseline"}
           </Button>
         )}
 

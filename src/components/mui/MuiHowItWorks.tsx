@@ -21,41 +21,41 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
     {
       step: "01",
       circleColor: "#b11f2c", // Crimson Red matching reference
-      title: "Complete Verified Profile",
-      subtitle: "Info, Live Webcam Photo & Resume",
+      title: "Verified Profile & Free Baseline Test",
+      subtitle: "Identity Check & Initial Skill Benchmark",
       description:
-        "Provide your professional background, capture a mandatory live webcam identity snapshot, and upload your latest resume. Zero fluff.",
-      tag: "5 Minutes",
+        "Create your profile, upload your resume, and take your initial proctored baseline assessment at zero cost to benchmark your starting score.",
+      tag: "₹0 Free Screening",
       icon: <BadgeIcon sx={{ fontSize: 18, color: "#b11f2c" }} />,
     },
     {
       step: "02",
       circleColor: "#003c5e", // Dark Navy Blue matching reference
-      title: "Strict Proctored Assessment",
-      subtitle: "Anti-Cheating & Webcam Integrity",
+      title: "Mock Tests & Skill Acceleration",
+      subtitle: "Guided Practice & Readiness Modules",
       description:
-        "Take a timed technical evaluation with your device camera active. Zero upfront fee—nominal review charges apply only after you receive an interview call or offer letter.",
-      tag: "Live Camera ON",
+        "Enroll in our Career Readiness Program to access structured domain mock tests, practice problems, and interview preparation tailored to enterprise hiring standards.",
+      tag: "Mock Prep Included",
       icon: <VideocamIcon sx={{ fontSize: 18, color: "#003c5e" }} />,
     },
     {
       step: "03",
       circleColor: "#017aa9", // Ocean Teal Blue matching reference
-      title: "Skill Verification & Dossier",
-      subtitle: "Practical Evaluation Scorecard",
+      title: "Multi-Attempt Final Certification",
+      subtitle: "Best Score Selection & Verified Dossier",
       description:
-        "Our system benchmarks your code quality, system design reasoning, and execution speed. Qualified candidates get a certified candidate dossier.",
-      tag: "Instant Evaluation",
+        "Take multiple proctored final test attempts. Our system automatically selects your highest score to generate a certified Candidate Dossier.",
+      tag: "Best Score Counts",
       icon: <CheckCircleIcon sx={{ fontSize: 18, color: "#017aa9" }} />,
     },
     {
       step: "04",
       circleColor: "#ebaa1c", // Golden Amber matching reference
-      title: "Direct Agency Interviews",
+      title: "Direct Partner Interviews",
       subtitle: "450+ Partner HR Agencies",
       description:
-        "Our backend routes your verified scorecard directly to partner recruitment agencies. Nominal fee for assessment & review is payable only once you receive an interview call or offer letter.",
-      tag: "Fee Only On Interview / Offer",
+        "Certified candidates receive complimentary profile routing and direct interview scheduling with partner recruitment agencies and enterprise hiring teams.",
+      tag: "Direct HR Routing",
       icon: <HandshakeIcon sx={{ fontSize: 18, color: "#ebaa1c" }} />,
     },
   ];
@@ -97,7 +97,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
               letterSpacing: "-0.02em",
             }}
           >
-            Candidate Evaluation <span style={{ color: "#405FE2" }}>Roadmap</span>
+            4-Step Preparation &amp; <span style={{ color: "#405FE2" }}>Placement Roadmap</span>
           </Typography>
           <Typography
             variant="body1"
@@ -109,7 +109,7 @@ export function MuiHowItWorks({ onStartVerification }: MuiHowItWorksProps) {
               lineHeight: 1.6,
             }}
           >
-            Follow our 4-milestone highway from identity & profile verification to proctored evaluation and direct recruiter interview scheduling.
+            From initial baseline screening and guided mock tests to best-score certification and direct recruiter interviews.
           </Typography>
         </Box>
 

@@ -4,9 +4,9 @@ import "./globals.css";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
-  title: "JobHai | Candidate Evaluation & Recruitment Partner Placement",
+  title: "CareerLoop | Mock Tests, Proctored Certification & Enterprise Interviews",
   description:
-    "Complete our proctored technical evaluation and receive direct interview calls from our network of 450+ partner HR agencies. ₹0 upfront — pay only when placed.",
+    "Master your skills with structured mock tests, take multiple proctored final attempts to lock in your best score, and unlock direct interviews with 450+ partner HR agencies.",
 };
 
 export default function RootLayout({

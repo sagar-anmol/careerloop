@@ -43,7 +43,7 @@ export function MuiFooter() {
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 320, lineHeight: 1.6 }}>
-              Direct technical evaluation &amp; recruitment partner placement network. Zero advance charges — nominal evaluation fee is payable only once you receive an interview call or offer letter.
+              CareerLoop Pro — Structured mock tests, multi-attempt proctored certification, and candidate dossier verification. ₹5,000 program fee covers preparation and certification deliverables; interview routing is provided as complimentary placement assistance.
             </Typography>
           </Grid>
 
@@ -56,12 +56,21 @@ export function MuiFooter() {
               <Link href="#how-it-works" underline="hover" color="text.secondary" variant="body2">
                 Candidate Roadmap
               </Link>
-              <Link href="#placement-terms" underline="hover" color="text.secondary" variant="body2">
-                Compensation &amp; Terms
+              <Link href="#pricing-terms" underline="hover" color="text.secondary" variant="body2">
+                Program &amp; Pricing Terms
               </Link>
               <Link href="#faq" underline="hover" color="text.secondary" variant="body2">
                 Candidate FAQ
               </Link>
+              <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
+                Terms &amp; Conditions
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
+                Refund &amp; Cancellation Policy
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
+                Privacy Policy
+              </Typography>
             </Box>
           </Grid>
 
@@ -74,7 +83,7 @@ export function MuiFooter() {
               <Typography variant="body2" color="text.secondary">Technical &amp; Skilled Trades</Typography>
               <Typography variant="body2" color="text.secondary">Engineering Associates</Typography>
               <Typography variant="body2" color="text.secondary">Graduates &amp; Trainees</Typography>
-              <Typography variant="body2" color="text.secondary">Direct Enterprise Hiring</Typography>
+              <Typography variant="body2" color="text.secondary">Enterprise Skill Verification</Typography>
             </Box>
           </Grid>
 
@@ -83,21 +92,28 @@ export function MuiFooter() {
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "text.primary" }} gutterBottom>
               SUPPORT & TRUST
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Strict proctored integrity standards. ISO-aligned data privacy.
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Strict proctored integrity standards. DPDP Act 2023 compliant data privacy.
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-              Email: placement@careerloop.in
+              Email: support@careerloop.co.in
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-              Operating in: Bengaluru • Pune • Hyderabad • Gurgaon • Dubai
+              Operating in: Bengaluru • Pune • Hyderabad • Gurgaon • Chennai
             </Typography>
           </Grid>
         </Grid>
 
+        {/* Legal Disclaimer Box */}
+        <Box sx={{ p: 2, mb: 3, borderRadius: 2, bgcolor: "rgba(0,0,0,0.03)", border: "1px solid rgba(0,0,0,0.06)" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block", lineHeight: 1.6, fontSize: "0.72rem" }}>
+            <strong>Disclaimer:</strong> CareerLoop (<code>careerloop.co.in</code>) is an independent skill-assessment, mock test preparation, and career acceleration platform, not a government agency. We do not charge fees for job offers or employment guarantees. The ₹5,000 program fee is strictly for mock test series, skill training modules, multi-attempt proctored assessment auditing, and dossier generation. Interview scheduling and placement assistance are complimentary value-added services. Final hiring decisions and CTC packages rest solely with the respective hiring employers.
+          </Typography>
+        </Box>
+
         <Box
           sx={{
-            pt: 4,
+            pt: 3,
             borderTop: "1px solid",
             borderColor: "divider",
             display: "flex",
@@ -108,10 +124,10 @@ export function MuiFooter() {
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            © 2026 careerloop Network Technologies. All rights reserved.
+            © 2026 CareerLoop. All rights reserved. CareerLoop Pro Program: ₹5,000 (Mock Tests, Multi-Attempt Certification &amp; Dossier Generation).
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Pay-After-Placement Agreement • Privacy Policy • Anti-Cheating Terms
+            DPDP Act Compliant • Proctored Assessment Integrity
           </Typography>
         </Box>
       </Container>
