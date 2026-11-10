@@ -202,11 +202,17 @@ export default function CandidateProfileDashboardPage() {
   const resumeUrl = currentUser?.resume_url;
   const resumeName = currentUser?.resumeName || currentUser?.resume_name || `${fullName.replace(/\s+/g, "_")}_Resume.pdf`;
   const attemptsLeft = Math.max(0, 2 - totalTests);
+  const is1on1User =
+    Boolean(currentUser?.partner_route?.includes("8,999")) ||
+    Boolean(currentUser?.partner_route?.includes("1-on-1")) ||
+    Boolean(currentUser?.selected_plan === "mentorship_1on1") ||
+    Boolean(currentUser?.plan_tier === "mentorship_1on1");
   const isProUser =
-    Boolean(currentUser?.partner_route?.includes("4,999")) ||
-    Boolean(currentUser?.partner_route?.includes("Pro")) ||
-    Boolean(currentUser?.selected_plan === "pro_all_access") ||
-    Boolean(currentUser?.plan_tier === "pro_all_access");
+    !is1on1User &&
+    (Boolean(currentUser?.partner_route?.includes("4,999")) ||
+      Boolean(currentUser?.partner_route?.includes("Pro")) ||
+      Boolean(currentUser?.selected_plan === "pro_all_access") ||
+      Boolean(currentUser?.plan_tier === "pro_all_access"));
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
@@ -245,17 +251,27 @@ export default function CandidateProfileDashboardPage() {
             {/* User Avatar & Menu */}
             <div className="hidden sm:flex items-center gap-2.5 pl-3 border-l border-slate-200">
               <div className="relative inline-flex items-center justify-center">
-                <Avatar className={`w-8 h-8 rounded-full ${isProUser ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_8px_rgba(245,158,11,0.6)]" : "border border-slate-200"}`}>
+                <Avatar className={`w-8 h-8 rounded-full ${
+                  is1on1User
+                    ? "border-2 border-black ring-2 ring-amber-400 ring-offset-0 shadow-[0_0_10px_rgba(250,204,21,0.7)]"
+                    : isProUser
+                    ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+                    : "border border-slate-200"
+                }`}>
                   <AvatarImage src={photoUrl || undefined} alt={fullName} />
                   <AvatarFallback className="bg-slate-800 text-white font-medium text-xs">
                     {fullName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                {isProUser && (
+                {is1on1User ? (
+                  <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-black text-amber-400 font-black text-[8px] px-1.5 py-0.2 rounded shadow-md border border-amber-400 leading-none tracking-wider whitespace-nowrap">
+                    1o1
+                  </span>
+                ) : isProUser ? (
                   <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded shadow-sm border border-white leading-none tracking-tighter">
                     PRO
                   </span>
-                )}
+                ) : null}
               </div>
               <div className="text-left text-xs">
                 <p className="font-semibold text-slate-800 leading-none">{fullName}</p>
@@ -280,12 +296,29 @@ export default function CandidateProfileDashboardPage() {
               <SheetContent side="right" className="w-72 p-6 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-                    <Avatar className="w-10 h-10 border border-slate-200">
-                      <AvatarImage src={photoUrl || undefined} />
-                      <AvatarFallback className="bg-slate-800 text-white font-medium">
-                        {fullName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative inline-flex items-center justify-center">
+                      <Avatar className={`w-10 h-10 rounded-full ${
+                        is1on1User
+                          ? "border-2 border-black ring-2 ring-amber-400 ring-offset-0 shadow-[0_0_10px_rgba(250,204,21,0.7)]"
+                          : isProUser
+                          ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+                          : "border border-slate-200"
+                      }`}>
+                        <AvatarImage src={photoUrl || undefined} />
+                        <AvatarFallback className="bg-slate-800 text-white font-medium">
+                          {fullName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      {is1on1User ? (
+                        <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-black text-amber-400 font-black text-[8px] px-1.5 py-0.2 rounded shadow-md border border-amber-400 leading-none tracking-wider whitespace-nowrap">
+                          1o1
+                        </span>
+                      ) : isProUser ? (
+                        <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded shadow-sm border border-white leading-none tracking-tighter">
+                          PRO
+                        </span>
+                      ) : null}
+                    </div>
                     <div>
                       <h4 className="font-semibold text-sm text-slate-900">{fullName}</h4>
                       <p className="text-xs text-slate-400 font-mono">{candidateId}</p>
@@ -345,26 +378,41 @@ export default function CandidateProfileDashboardPage() {
             <CardHeader className="p-4 pb-3">
               <div className="flex items-center gap-3">
                 <div className="relative inline-flex items-center justify-center">
-                  <Avatar className={`w-10 h-10 rounded-lg ${isProUser ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_10px_rgba(245,158,11,0.6)]" : "border border-slate-200"}`}>
+                  <Avatar className={`w-10 h-10 rounded-lg ${
+                    is1on1User
+                      ? "border-2 border-black ring-2 ring-amber-400 ring-offset-0 shadow-[0_0_12px_rgba(250,204,21,0.75)]"
+                      : isProUser
+                      ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_10px_rgba(245,158,11,0.6)]"
+                      : "border border-slate-200"
+                  }`}>
                     <AvatarImage src={photoUrl || undefined} alt={fullName} />
                     <AvatarFallback className="bg-slate-800 text-white font-medium text-sm rounded-lg">
                       {fullName.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  {isProUser && (
+                  {is1on1User ? (
+                    <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-black text-amber-400 font-black text-[8px] px-1.5 py-0.2 rounded shadow-md border border-amber-400 leading-none tracking-wider whitespace-nowrap">
+                      1o1
+                    </span>
+                  ) : isProUser ? (
                     <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded shadow-sm border border-white leading-none tracking-tighter">
                       PRO
                     </span>
-                  )}
+                  ) : null}
                 </div>
                 <div className="overflow-hidden">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <h3 className="font-semibold text-slate-900 text-sm truncate">{fullName}</h3>
-                    {isProUser && (
+                    {is1on1User ? (
+                      <span className="bg-slate-950 text-amber-400 font-extrabold text-[9px] px-1.5 py-0.5 rounded border border-amber-400/80 uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                        1-on-1 Mentorship
+                      </span>
+                    ) : isProUser ? (
                       <span className="bg-amber-100 text-amber-800 font-bold text-[9px] px-1.5 py-0.5 rounded border border-amber-200 uppercase tracking-wider">
                         Pro Member
                       </span>
-                    )}
+                    ) : null}
                   </div>
                   <p className="font-mono text-[11px] text-slate-500">{candidateId}</p>
                 </div>

@@ -46,6 +46,23 @@ export function MuiHeader({
     { label: "FAQ", href: "#faq" },
   ];
 
+  const is1on1User = Boolean(
+    currentUser &&
+      (currentUser.partner_route?.includes("8,999") ||
+        currentUser.partner_route?.includes("1-on-1") ||
+        currentUser.selected_plan === "mentorship_1on1" ||
+        (currentUser as any).plan_tier === "mentorship_1on1")
+  );
+
+  const isProUser = Boolean(
+    currentUser &&
+      !is1on1User &&
+      (currentUser.partner_route?.includes("4,999") ||
+        currentUser.partner_route?.includes("Pro") ||
+        currentUser.selected_plan === "pro_all_access" ||
+        (currentUser as any).plan_tier === "pro_all_access")
+  );
+
   return (
     <AppBar position="sticky" elevation={0}>
       <Container maxWidth="lg">
@@ -134,25 +151,48 @@ export function MuiHeader({
                           width: 26,
                           height: 26,
                           fontSize: "0.75rem",
-                          border:
-                            currentUser.partner_route?.includes("4,999") ||
-                            currentUser.selected_plan === "pro_all_access" ||
-                            currentUser.partner_route?.includes("Pro")
-                              ? "2px solid #f59e0b"
-                              : "none",
-                          boxShadow:
-                            currentUser.partner_route?.includes("4,999") ||
-                            currentUser.selected_plan === "pro_all_access" ||
-                            currentUser.partner_route?.includes("Pro")
-                              ? "0 0 8px rgba(245, 158, 11, 0.7)"
-                              : "none",
+                          border: is1on1User
+                            ? "2px solid #000000"
+                            : isProUser
+                            ? "2px solid #f59e0b"
+                            : "none",
+                          boxShadow: is1on1User
+                            ? "0 0 0 2px #facc15, 0 0 8px rgba(250, 204, 21, 0.7)"
+                            : isProUser
+                            ? "0 0 8px rgba(245, 158, 11, 0.7)"
+                            : "none",
                         }}
                       >
                         {currentUser.full_name ? currentUser.full_name.charAt(0).toUpperCase() : <PersonIcon sx={{ fontSize: 14 }} />}
                       </Avatar>
-                      {(currentUser.partner_route?.includes("4,999") ||
-                        currentUser.selected_plan === "pro_all_access" ||
-                        currentUser.partner_route?.includes("Pro")) && (
+                      {is1on1User && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: -5,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            bgcolor: "#000000",
+                            color: "#facc15",
+                            fontSize: "8px",
+                            fontWeight: 900,
+                            lineHeight: 1,
+                            px: "3.5px",
+                            py: "1px",
+                            borderRadius: "3px",
+                            border: "1px solid #facc15",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.6), 0 0 6px rgba(250,204,21,0.5)",
+                            letterSpacing: "0.04em",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          1o1
+                        </Box>
+                      )}
+                      {isProUser && (
                         <Box
                           sx={{
                             position: "absolute",
@@ -317,9 +357,76 @@ export function MuiHeader({
                     onOpenProfile?.();
                   }}
                   startIcon={
-                    <Avatar sx={{ bgcolor: "primary.main", color: "white", width: 22, height: 22, fontSize: "0.7rem" }}>
-                      {currentUser.full_name ? currentUser.full_name.charAt(0).toUpperCase() : <PersonIcon sx={{ fontSize: 14 }} />}
-                    </Avatar>
+                    <Box sx={{ position: "relative", display: "inline-flex" }}>
+                      <Avatar
+                        src={typeof currentUser.photo_url === "string" ? currentUser.photo_url : undefined}
+                        sx={{
+                          bgcolor: "primary.main",
+                          color: "white",
+                          width: 24,
+                          height: 24,
+                          fontSize: "0.7rem",
+                          border: is1on1User
+                            ? "2px solid #000000"
+                            : isProUser
+                            ? "2px solid #f59e0b"
+                            : "none",
+                          boxShadow: is1on1User
+                            ? "0 0 0 2px #facc15, 0 0 8px rgba(250, 204, 21, 0.7)"
+                            : isProUser
+                            ? "0 0 6px rgba(245, 158, 11, 0.7)"
+                            : "none",
+                        }}
+                      >
+                        {currentUser.full_name ? currentUser.full_name.charAt(0).toUpperCase() : <PersonIcon sx={{ fontSize: 14 }} />}
+                      </Avatar>
+                      {is1on1User && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: -4,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            bgcolor: "#000000",
+                            color: "#facc15",
+                            fontSize: "7px",
+                            fontWeight: 900,
+                            lineHeight: 1,
+                            px: "2.5px",
+                            py: "0.5px",
+                            borderRadius: "3px",
+                            border: "1px solid #facc15",
+                            letterSpacing: "0.03em",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          1o1
+                        </Box>
+                      )}
+                      {isProUser && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: -3,
+                            right: -4,
+                            bgcolor: "#f59e0b",
+                            color: "#000",
+                            fontSize: "7px",
+                            fontWeight: 900,
+                            lineHeight: 1,
+                            px: "2px",
+                            py: "0.5px",
+                            borderRadius: "3px",
+                            border: "1px solid #ffffff",
+                          }}
+                        >
+                          PRO
+                        </Box>
+                      )}
+                    </Box>
                   }
                   sx={{ fontWeight: 700, textTransform: "none", py: 1 }}
                 >
