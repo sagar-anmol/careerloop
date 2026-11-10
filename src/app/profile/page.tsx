@@ -202,6 +202,11 @@ export default function CandidateProfileDashboardPage() {
   const resumeUrl = currentUser?.resume_url;
   const resumeName = currentUser?.resumeName || currentUser?.resume_name || `${fullName.replace(/\s+/g, "_")}_Resume.pdf`;
   const attemptsLeft = Math.max(0, 2 - totalTests);
+  const isProUser =
+    Boolean(currentUser?.partner_route?.includes("4,999")) ||
+    Boolean(currentUser?.partner_route?.includes("Pro")) ||
+    Boolean(currentUser?.selected_plan === "pro_all_access") ||
+    Boolean(currentUser?.plan_tier === "pro_all_access");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
@@ -239,12 +244,19 @@ export default function CandidateProfileDashboardPage() {
 
             {/* User Avatar & Menu */}
             <div className="hidden sm:flex items-center gap-2.5 pl-3 border-l border-slate-200">
-              <Avatar className="w-8 h-8 rounded-full border border-slate-200">
-                <AvatarImage src={photoUrl || undefined} alt={fullName} />
-                <AvatarFallback className="bg-slate-800 text-white font-medium text-xs">
-                  {fullName.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative inline-flex items-center justify-center">
+                <Avatar className={`w-8 h-8 rounded-full ${isProUser ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_8px_rgba(245,158,11,0.6)]" : "border border-slate-200"}`}>
+                  <AvatarImage src={photoUrl || undefined} alt={fullName} />
+                  <AvatarFallback className="bg-slate-800 text-white font-medium text-xs">
+                    {fullName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                {isProUser && (
+                  <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded shadow-sm border border-white leading-none tracking-tighter">
+                    PRO
+                  </span>
+                )}
+              </div>
               <div className="text-left text-xs">
                 <p className="font-semibold text-slate-800 leading-none">{fullName}</p>
                 <p className="text-[11px] text-slate-500 font-mono mt-0.5">{candidateId}</p>
@@ -332,14 +344,28 @@ export default function CandidateProfileDashboardPage() {
           <Card className="border-slate-200 shadow-none bg-white">
             <CardHeader className="p-4 pb-3">
               <div className="flex items-center gap-3">
-                <Avatar className="w-10 h-10 rounded-lg border border-slate-200">
-                  <AvatarImage src={photoUrl || undefined} alt={fullName} />
-                  <AvatarFallback className="bg-slate-800 text-white font-medium text-sm rounded-lg">
-                    {fullName.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative inline-flex items-center justify-center">
+                  <Avatar className={`w-10 h-10 rounded-lg ${isProUser ? "ring-2 ring-amber-400 ring-offset-1 shadow-[0_0_10px_rgba(245,158,11,0.6)]" : "border border-slate-200"}`}>
+                    <AvatarImage src={photoUrl || undefined} alt={fullName} />
+                    <AvatarFallback className="bg-slate-800 text-white font-medium text-sm rounded-lg">
+                      {fullName.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isProUser && (
+                    <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded shadow-sm border border-white leading-none tracking-tighter">
+                      PRO
+                    </span>
+                  )}
+                </div>
                 <div className="overflow-hidden">
-                  <h3 className="font-semibold text-slate-900 text-sm truncate">{fullName}</h3>
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="font-semibold text-slate-900 text-sm truncate">{fullName}</h3>
+                    {isProUser && (
+                      <span className="bg-amber-100 text-amber-800 font-bold text-[9px] px-1.5 py-0.5 rounded border border-amber-200 uppercase tracking-wider">
+                        Pro Member
+                      </span>
+                    )}
+                  </div>
                   <p className="font-mono text-[11px] text-slate-500">{candidateId}</p>
                 </div>
               </div>

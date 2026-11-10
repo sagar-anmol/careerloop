@@ -58,6 +58,8 @@ export interface CandidateProfileData {
   score?: number | null;
   integrity_flags?: number;
   partner_route?: string;
+  plan_tier?: string;
+  selected_plan?: string;
   updated_at?: string;
   [key: string]: unknown;
 }

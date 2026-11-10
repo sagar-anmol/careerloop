@@ -125,9 +125,56 @@ export function MuiHeader({
                   size="small"
                   onClick={onOpenProfile}
                   startIcon={
-                    <Avatar sx={{ bgcolor: "primary.main", color: "white", width: 24, height: 24, fontSize: "0.75rem" }}>
-                      {currentUser.full_name ? currentUser.full_name.charAt(0).toUpperCase() : <PersonIcon sx={{ fontSize: 14 }} />}
-                    </Avatar>
+                    <Box sx={{ position: "relative", display: "inline-flex" }}>
+                      <Avatar
+                        src={typeof currentUser.photo_url === "string" ? currentUser.photo_url : undefined}
+                        sx={{
+                          bgcolor: "primary.main",
+                          color: "white",
+                          width: 26,
+                          height: 26,
+                          fontSize: "0.75rem",
+                          border:
+                            currentUser.partner_route?.includes("4,999") ||
+                            currentUser.selected_plan === "pro_all_access" ||
+                            currentUser.partner_route?.includes("Pro")
+                              ? "2px solid #f59e0b"
+                              : "none",
+                          boxShadow:
+                            currentUser.partner_route?.includes("4,999") ||
+                            currentUser.selected_plan === "pro_all_access" ||
+                            currentUser.partner_route?.includes("Pro")
+                              ? "0 0 8px rgba(245, 158, 11, 0.7)"
+                              : "none",
+                        }}
+                      >
+                        {currentUser.full_name ? currentUser.full_name.charAt(0).toUpperCase() : <PersonIcon sx={{ fontSize: 14 }} />}
+                      </Avatar>
+                      {(currentUser.partner_route?.includes("4,999") ||
+                        currentUser.selected_plan === "pro_all_access" ||
+                        currentUser.partner_route?.includes("Pro")) && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: -4,
+                            right: -5,
+                            bgcolor: "#f59e0b",
+                            color: "#000",
+                            fontSize: "8px",
+                            fontWeight: 900,
+                            lineHeight: 1,
+                            px: "3px",
+                            py: "1px",
+                            borderRadius: "4px",
+                            border: "1px solid #ffffff",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                            letterSpacing: "0.02em",
+                          }}
+                        >
+                          PRO
+                        </Box>
+                      )}
+                    </Box>
                   }
                   sx={{
                     borderRadius: 2,

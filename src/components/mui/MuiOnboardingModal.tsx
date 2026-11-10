@@ -277,6 +277,7 @@ export function MuiOnboardingModal({
         candidateId: newId,
         photoBase64: capturedPhoto,
         resumeFile: resumeFile,
+        selectedPlan,
       });
       setActiveStep(3);
     } catch (err: unknown) {
@@ -295,6 +296,8 @@ export function MuiOnboardingModal({
       candidateId,
       photo: capturedPhoto,
       resumeName: resumeFile ? resumeFile.name : "Resume.pdf",
+      partner_route: selectedPlan === "pro_all_access" ? "CareerLoop Pro (₹4,999)" : "Starter Practice (₹1,999)",
+      selected_plan: selectedPlan,
     };
     onCompleteSignup(finalData);
   };

@@ -11,6 +11,7 @@ export interface CandidateRegistrationInput {
   candidateId: string;
   photoBase64?: string | null;
   resumeFile?: File | null;
+  selectedPlan?: string;
 }
 
 export interface AssessmentResultInput {
@@ -165,6 +166,7 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     photo_url: photoUrl,
     resume_url: resumeUrl,
     resume_name: resumeName,
+    partner_route: input.selectedPlan === "pro_all_access" ? "CareerLoop Pro (₹4,999)" : "Starter Practice (₹1,999)",
     updated_at: new Date().toISOString(),
   };
 

@@ -59,6 +59,24 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
       buttonVariant: "contained" as const,
     },
     {
+      name: "1-on-1 Intensive Mentorship Track",
+      badge: "1-on-1 Mentorship",
+      badgeColor: "warning" as const,
+      isFeatured: false,
+      price: "₹8,999",
+      billingSubtitle: "Dedicated Placement Advisory Track",
+      description: "For specialists, graduates, and professionals seeking dedicated 1-on-1 interview drills, custom company targeting, and executive resume overhaul.",
+      deliverables: [
+        "Everything in CareerLoop Pro All-Access Pass",
+        "Dedicated 1-on-1 Senior Industry Mock Interviews",
+        "Tailored ATS Resume Customization for Target Companies",
+        "Priority Fast-Track Dispatch to Enterprise HR Recruiters",
+        "Post-Interview Debrief & Offer Negotiation Guidance",
+      ],
+      buttonLabel: "Join 1-on-1 Track",
+      buttonVariant: "outlined" as const,
+    },
+    {
       name: "For Placement Cells & Organisations",
       badge: "Colleges & Companies",
       badgeColor: "success" as const,
@@ -105,10 +123,10 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
           </Typography>
         </Box>
 
-        {/* 3 Pricing Cards Grid */}
+        {/* 4 Pricing Cards Grid */}
         <Grid container spacing={3} sx={{ mb: 5, alignItems: "stretch" }}>
           {plans.map((plan, idx) => (
-            <Grid size={{ xs: 12, md: 4 }} key={idx} sx={{ display: "flex" }}>
+            <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={idx} sx={{ display: "flex" }}>
               <Paper
                 variant="outlined"
                 sx={{
