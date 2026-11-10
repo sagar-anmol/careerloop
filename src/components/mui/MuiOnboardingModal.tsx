@@ -360,7 +360,7 @@ export function MuiOnboardingModal({
         {activeStep === 0 && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Alert severity="info" variant="outlined" sx={{ mb: 1, py: 0.5 }}>
-              Enter your real details. Verified scores are routed to 450+ hiring partners.
+              Please ensure that your information here matches exactly with your matriculation (10th) marksheet.
             </Alert>
 
             <TextField
