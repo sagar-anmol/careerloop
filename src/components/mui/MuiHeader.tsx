@@ -42,7 +42,6 @@ export function MuiHeader({
 
   const navItems = [
     { label: "Program Features", href: "#features" },
-    { label: "Weekly Roadmap", href: "#roadmap" },
     { label: "Pricing & Pass", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
   ];

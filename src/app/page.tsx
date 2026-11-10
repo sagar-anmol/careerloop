@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
 import { MuiProgramFeatures } from "@/components/mui/MuiProgramFeatures";
-import { MuiHowItWorks } from "@/components/mui/MuiHowItWorks";
 import { MuiPricingSection } from "@/components/mui/MuiPricingSection";
 import { MuiFaq } from "@/components/mui/MuiFaq";
 import { MuiFooter } from "@/components/mui/MuiFooter";
@@ -122,9 +121,6 @@ export default function HomePage() {
 
         {/* All-In-One Program Features */}
         <MuiProgramFeatures />
-
-        {/* 4-Step Execution Workflow Roadmap */}
-        <MuiHowItWorks onStartVerification={handleOpenSignup} />
 
         {/* Pricing & Pro All-Access Pass */}
         <MuiPricingSection onEnroll={handleOpenSignup} />

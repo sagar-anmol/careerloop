@@ -107,7 +107,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               variant="outlined"
               size="large"
               component="a"
-              href="#roadmap"
+              href="#pricing"
               sx={{
                 py: 1.5,
                 px: 3.5,
@@ -123,7 +123,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 },
               }}
             >
-              Explore Weekly Schedule
+              Explore Program Pass
             </Button>
           </Box>
         </Box>

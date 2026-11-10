@@ -53,8 +53,8 @@ export function MuiFooter() {
               CANDIDATES
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Link href="#roadmap" underline="hover" color="text.secondary" variant="body2">
-                Program Roadmap
+              <Link href="#features" underline="hover" color="text.secondary" variant="body2">
+                Program Features
               </Link>
               <Link href="#pricing" underline="hover" color="text.secondary" variant="body2">
                 Pricing Pass
