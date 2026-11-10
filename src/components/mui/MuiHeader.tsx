@@ -166,7 +166,18 @@ export function MuiHeader({
                     variant="text"
                     color="inherit"
                     onClick={onOpenSignIn}
-                    sx={{ fontWeight: 600, color: "text.secondary", textTransform: "none" }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "text.secondary",
+                      textTransform: "none",
+                      fontSize: "0.9rem",
+                      px: 1.5,
+                      borderRadius: 2,
+                      "&:hover": {
+                        color: "text.primary",
+                        bgcolor: "rgba(0, 0, 0, 0.04)",
+                      },
+                    }}
                   >
                     Candidate Login
                   </Button>
@@ -176,19 +187,24 @@ export function MuiHeader({
                     variant="contained"
                     color="primary"
                     onClick={onOpenSignup}
-                    sx={{ fontWeight: 700, textTransform: "none", px: 2, borderRadius: 2 }}
+                    sx={{
+                      fontWeight: 700,
+                      textTransform: "none",
+                      fontSize: "0.9rem",
+                      px: 2.8,
+                      py: 0.9,
+                      borderRadius: 2,
+                      bgcolor: "#405FE2",
+                      boxShadow: "0 4px 14px rgba(64, 95, 226, 0.35)",
+                      "&:hover": {
+                        bgcolor: "#2843be",
+                        boxShadow: "0 6px 18px rgba(64, 95, 226, 0.5)",
+                      },
+                    }}
                   >
                     Get CareerLoop Pro
                   </Button>
                 )}
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={onStartAssessment}
-                  sx={{ fontWeight: 600, px: 2, textTransform: "none", borderRadius: 2 }}
-                >
-                  View Fast-Hiring Partners
-                </Button>
               </Box>
             )}
           </Box>
@@ -258,23 +274,9 @@ export function MuiHeader({
                       {currentUser.full_name ? currentUser.full_name.charAt(0).toUpperCase() : <PersonIcon sx={{ fontSize: 14 }} />}
                     </Avatar>
                   }
-                  sx={{ fontWeight: 700, textTransform: "none" }}
+                  sx={{ fontWeight: 700, textTransform: "none", py: 1 }}
                 >
                   My Profile ({currentUser.full_name || "Candidate"})
-                </Button>
-              </ListItem>
-              <ListItem disablePadding sx={{ mt: 1 }}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    onStartAssessment();
-                  }}
-                  sx={{ fontWeight: 700, textTransform: "none" }}
-                >
-                  Take Free Baseline Test
                 </Button>
               </ListItem>
               <ListItem disablePadding sx={{ mt: 1 }}>
@@ -304,7 +306,7 @@ export function MuiHeader({
                       setMobileOpen(false);
                       onOpenSignIn();
                     }}
-                    sx={{ textTransform: "none", fontWeight: 600 }}
+                    sx={{ textTransform: "none", fontWeight: 600, py: 1 }}
                   >
                     Candidate Login
                   </Button>
@@ -314,32 +316,18 @@ export function MuiHeader({
                 <ListItem disablePadding sx={{ mt: 1 }}>
                   <Button
                     fullWidth
-                    variant="outlined"
+                    variant="contained"
                     color="primary"
                     onClick={() => {
                       setMobileOpen(false);
                       onOpenSignup();
                     }}
-                    sx={{ textTransform: "none", fontWeight: 600 }}
+                    sx={{ textTransform: "none", fontWeight: 700, py: 1 }}
                   >
-                    Sign Up Free
+                    Get CareerLoop Pro
                   </Button>
                 </ListItem>
               )}
-              <ListItem disablePadding sx={{ mt: 1 }}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    onStartAssessment();
-                  }}
-                  sx={{ textTransform: "none", fontWeight: 700 }}
-                >
-                  Take Assessment
-                </Button>
-              </ListItem>
             </>
           )}
         </List>
