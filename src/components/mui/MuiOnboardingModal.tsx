@@ -82,7 +82,7 @@ export function MuiOnboardingModal({
   const [faceResult, setFaceResult] = useState<FaceDetectionResult | null>(null);
 
   // Program & Consent State
-  const [selectedPlan, setSelectedPlan] = useState<"free_baseline" | "pro_certification">("pro_certification");
+  const [selectedPlan, setSelectedPlan] = useState<"starter_practice" | "pro_all_access">("starter_practice");
   const [consentAgreed, setConsentAgreed] = useState(false);
   const [step2Submitted, setStep2Submitted] = useState(false);
 
@@ -658,50 +658,50 @@ export function MuiOnboardingModal({
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
               <Paper
                 variant="outlined"
-                onClick={() => setSelectedPlan("free_baseline")}
+                onClick={() => setSelectedPlan("starter_practice")}
                 sx={{
                   p: 2,
                   borderRadius: 2,
                   cursor: "pointer",
                   border: "2px solid",
-                  borderColor: selectedPlan === "free_baseline" ? "primary.main" : "divider",
-                  bgcolor: selectedPlan === "free_baseline" ? "rgba(37, 99, 235, 0.05)" : "background.paper",
+                  borderColor: selectedPlan === "starter_practice" ? "primary.main" : "divider",
+                  bgcolor: selectedPlan === "starter_practice" ? "rgba(37, 99, 235, 0.05)" : "background.paper",
                   transition: "all 0.2s",
                 }}
               >
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    Free Baseline Test
+                    Starter Practice Pass
                   </Typography>
-                  <Chip label="₹0 Free" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
+                  <Chip label="₹1,999" size="small" color="primary" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
                 </Box>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                  1 single proctored baseline diagnostic to benchmark your starting score before upgrading.
+                  Weekly mock tests, score tracking, standard resume check &amp; baseline readiness evaluation.
                 </Typography>
               </Paper>
 
               <Paper
                 variant="outlined"
-                onClick={() => setSelectedPlan("pro_certification")}
+                onClick={() => setSelectedPlan("pro_all_access")}
                 sx={{
                   p: 2,
                   borderRadius: 2,
                   cursor: "pointer",
                   border: "2px solid",
-                  borderColor: selectedPlan === "pro_certification" ? "#10b981" : "divider",
-                  bgcolor: selectedPlan === "pro_certification" ? "rgba(16, 185, 129, 0.05)" : "background.paper",
+                  borderColor: selectedPlan === "pro_all_access" ? "#10b981" : "divider",
+                  bgcolor: selectedPlan === "pro_all_access" ? "rgba(16, 185, 129, 0.05)" : "background.paper",
                   transition: "all 0.2s",
                   position: "relative",
                 }}
               >
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    CareerLoop Pro All-Access Pass
+                    CareerLoop Pro All-Access
                   </Typography>
                   <Chip label="₹4,999" size="small" color="success" sx={{ fontWeight: 700, fontSize: "0.7rem" }} />
                 </Box>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                  Unlimited weekly mock tests, live mentorship, resume curation &amp; complimentary fast-hiring HR referrals.
+                  Unlimited weekly mocks, live expert mentorship, ATS resume curation &amp; direct 450+ agency referrals.
                 </Typography>
               </Paper>
             </Box>
@@ -945,7 +945,11 @@ export function MuiOnboardingModal({
             }}
             endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
-            {isSaving ? "Saving to Database..." : selectedPlan === "pro_certification" ? "Enroll in Pro & Complete" : "Start Free Baseline"}
+            {isSaving
+              ? "Saving to Database..."
+              : selectedPlan === "pro_all_access"
+              ? "Enroll in Pro All-Access (₹4,999)"
+              : "Enroll in Starter Pass (₹1,999)"}
           </Button>
         )}
 
