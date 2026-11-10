@@ -225,14 +225,16 @@ export function MuiOnboardingModal({
   // Step 1 validation
   const handleValidateStep0 = () => {
     const errors: Record<string, string> = {};
-    if (!formData.fullName.trim()) errors.fullName = "Full name is required";
+    if (!formData.fullName.trim()) errors.fullName = "Full name is required (as per matriculation marksheet)";
     if (!formData.email.trim() || !formData.email.includes("@"))
-      errors.email = "Valid email is required";
+      errors.email = "Valid email address is required";
     if (!formData.password || formData.password.length < 6)
       errors.password = "Password must be at least 6 characters";
     if (!formData.phone.trim() || formData.phone.length < 10)
       errors.phone = "Valid 10-digit mobile number required";
-    if (!formData.city.trim()) errors.city = "Current city is required";
+    if (!formData.city.trim()) errors.city = "Current city/location is required";
+    if (!formData.domain.trim()) errors.domain = "Educational qualification is required";
+    if (!formData.experience.trim()) errors.experience = "Passing / experience status is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -245,7 +247,7 @@ export function MuiOnboardingModal({
   // Step 2 validation
   const handleValidateStep1 = () => {
     if (!capturedPhoto) {
-      setCameraError("Please capture your live photo ID before proceeding.");
+      setCameraError("Live photo ID verification is compulsory before proceeding.");
       return;
     }
     setActiveStep(2);
@@ -253,14 +255,15 @@ export function MuiOnboardingModal({
 
   // Step 3 validation (Resume) -> Register in Supabase
   const handleValidateStep2 = async () => {
-    let currentResume = resumeFile;
-    if (!currentResume) {
-      // Mock dummy resume for seamless test experience
-      currentResume = new File(["Candidate Resume Content"], `${formData.fullName.replace(/\s+/g, "_")}_Resume.pdf`, {
-        type: "application/pdf",
-      });
-      setResumeFile(currentResume);
+    if (!resumeFile) {
+      setSaveError("Uploading your resume (PDF/DOCX) is compulsory to complete registration.");
+      return;
     }
+    if (!consentAgreed) {
+      setSaveError("You must agree to the data processing consent before proceeding.");
+      return;
+    }
+
     const newId = `CL-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     setCandidateId(newId);
 
@@ -271,7 +274,7 @@ export function MuiOnboardingModal({
         ...formData,
         candidateId: newId,
         photoBase64: capturedPhoto,
-        resumeFile: currentResume,
+        resumeFile: resumeFile,
       });
       setActiveStep(3);
     } catch (err: unknown) {
@@ -435,6 +438,9 @@ export function MuiOnboardingModal({
                 fullWidth
                 value={formData.domain}
                 onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
+                error={Boolean(formErrors.domain)}
+                helperText={formErrors.domain}
+                required
               >
                 <MenuItem value="Diploma (Mechanical / Automobile / Tech)">Diploma (Mechanical / Automobile / Tech)</MenuItem>
                 <MenuItem value="Diploma (Electrical / Electronics)">Diploma (Electrical / Electronics)</MenuItem>
@@ -451,6 +457,9 @@ export function MuiOnboardingModal({
                 fullWidth
                 value={formData.experience}
                 onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                error={Boolean(formErrors.experience)}
+                helperText={formErrors.experience}
+                required
               >
                 <MenuItem value="Fresher / Apprentice Cohort">Fresher / Apprentice Cohort</MenuItem>
                 <MenuItem value="1 Year Technical Experience">1 Year Technical Experience</MenuItem>
@@ -741,10 +750,10 @@ export function MuiOnboardingModal({
                   ) : (
                     <>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "text.primary", fontSize: "0.85rem" }}>
-                        Attach Resume (PDF / DOCX)
+                        Attach Resume (PDF / DOCX) *
                       </Typography>
                       <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                        Click to browse or drop file here (Optional for baseline)
+                        Compulsory for verified candidate dossier registration
                       </Typography>
                     </>
                   )}
@@ -905,7 +914,7 @@ export function MuiOnboardingModal({
             variant="contained"
             color="primary"
             onClick={handleValidateStep2}
-            disabled={isSaving || !consentAgreed}
+            disabled={isSaving || !consentAgreed || !resumeFile}
             endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
             {isSaving ? "Saving to Database..." : selectedPlan === "pro_certification" ? "Enroll in Pro & Complete" : "Start Free Baseline"}
