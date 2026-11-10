@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 
@@ -22,6 +23,17 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
         />
+        <Script
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-W7L22656"
+          strategy="afterInteractive"
+        />
+        <Script id="gtm-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+          `}
+        </Script>
       </head>
       <body suppressHydrationWarning>
         <ThemeRegistry>{children}</ThemeRegistry>
