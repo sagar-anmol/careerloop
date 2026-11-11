@@ -104,7 +104,7 @@ export async function detectFaces(
       // Check overall brightness via quick 10x10 sampling
       const brightness = sampleBrightness(source, width, height);
 
-      if (brightness < 12) {
+      if (brightness < 8) {
         return {
           faceCount: 0,
           faces: [],
@@ -145,16 +145,16 @@ export async function detectFaces(
       const dy = (faceCenterY - frameCenterY) / height;
       const coverage = (f.width * f.height) / (width * height);
 
-      // Centered tolerance: within ±15% of frame horizontal center & ±18% vertical center
-      const isCentered = Math.abs(dx) <= 0.15 && Math.abs(dy) <= 0.18;
-      // Size check: face should occupy between 10% and 55% of the frame
-      const isGoodSize = coverage >= 0.08 && coverage <= 0.60;
+      // Centered tolerance: within ±22% of frame horizontal center & ±25% vertical center
+      const isCentered = Math.abs(dx) <= 0.22 && Math.abs(dy) <= 0.25;
+      // Size check: face should occupy between 5% and 70% of the frame
+      const isGoodSize = coverage >= 0.05 && coverage <= 0.70;
 
       const isAligned = isCentered && isGoodSize;
 
-      let alignMessage = "Face perfectly aligned";
+      let alignMessage = "Face detected and aligned";
       if (!isGoodSize) {
-        alignMessage = coverage < 0.08 ? "Move closer to the camera" : "Step slightly back from camera";
+        alignMessage = coverage < 0.05 ? "Move a little closer to the camera" : "Step slightly back from the camera";
       } else if (!isCentered) {
         alignMessage = dx < -0.12 ? "Move slightly to your right" : dx > 0.12 ? "Move slightly to your left" : "Center your face in circle";
       }
@@ -273,17 +273,19 @@ function detectFacesViaCanvasCV(
       const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
 
       // Human skin color tone clusters universally across ethnicities in:
-      // Cb: ~77 to 127 and Cr: ~133 to 173, with r > g > b heuristics
+      // Cb: ~72 to 138 and Cr: ~126 to 182, with r > g heuristics. Ranges are
+      // deliberately wide: a webcam on a dim desk or a warm bulb shifts these
+      // values a lot, and a false "no face" is worse than a false positive.
       const isSkin =
-        cb >= 75 &&
-        cb <= 130 &&
-        cr >= 130 &&
-        cr <= 175 &&
-        r > 50 &&
-        g > 35 &&
-        b > 20 &&
+        cb >= 72 &&
+        cb <= 138 &&
+        cr >= 126 &&
+        cr <= 182 &&
+        r > 45 &&
+        g > 30 &&
+        b > 18 &&
         r > g &&
-        Math.abs(r - g) > 12;
+        r - g > 8;
 
       if (isSkin) {
         skinMask[y * sampleW + x] = 1;
@@ -294,7 +296,7 @@ function detectFacesViaCanvasCV(
 
   const avgBrightness = totalLuma / (sampleW * sampleH);
 
-  if (avgBrightness < 12) {
+  if (avgBrightness < 8) {
     return {
       faceCount: 0,
       faces: [],
@@ -304,14 +306,15 @@ function detectFacesViaCanvasCV(
     };
   }
 
-  // Minimum face threshold: at least ~3.5% of pixels in the frame must match facial tones
-  const minFacePixels = (sampleW * sampleH) * 0.035;
+  // Minimum face presence: ~1.2% of the frame must match facial tones. This is
+  // intentionally forgiving — a face at normal webcam distance is ~5-8%.
+  const minFacePixels = (sampleW * sampleH) * 0.012;
   if (totalSkinPixels < minFacePixels) {
     return {
       faceCount: 0,
       faces: [],
       status: "no_face",
-      message: "No face detected in camera view",
+      message: "No face detected — move into the frame and improve lighting",
       brightness: avgBrightness,
     };
   }
@@ -333,44 +336,47 @@ function detectFacesViaCanvasCV(
     }
   }
 
-  const significantColumnThreshold = (sampleW * sampleH) * 0.055;
-  let activeRegions = 0;
-  const faces: DetectedFaceBox[] = [];
+  const framePixels = sampleW * sampleH;
+  const strongColumnThreshold = framePixels * 0.10;
+  const leftStrong = leftSkin > strongColumnThreshold;
+  const centerStrong = centerSkin > strongColumnThreshold;
+  const rightStrong = rightSkin > strongColumnThreshold;
 
-  if (leftSkin > significantColumnThreshold) {
-    activeRegions++;
-    faces.push({
-      x: 0,
-      y: Math.floor(srcHeight * 0.15),
-      width: Math.floor(srcWidth * 0.35),
-      height: Math.floor(srcHeight * 0.6),
-    });
-  }
+  // Multiple people only when both outer thirds carry real face-sized skin mass
+  // and the middle is not the dominant blob. The old "left + right" rule fired
+  // on hands, sleeves and beige walls during a normal one-person selfie.
+  const middleIsNotDominant = centerSkin < Math.min(leftSkin, rightSkin) * 0.6;
+  const threeColumnsActive = leftStrong && centerStrong && rightStrong;
+  const twoSidesNoMiddle = leftStrong && rightStrong && middleIsNotDominant;
 
-  if (centerSkin > significantColumnThreshold) {
-    activeRegions++;
-    faces.push({
-      x: Math.floor(srcWidth * 0.3),
-      y: Math.floor(srcHeight * 0.1),
-      width: Math.floor(srcWidth * 0.4),
-      height: Math.floor(srcHeight * 0.65),
-    });
-  }
-
-  if (rightSkin > significantColumnThreshold) {
-    activeRegions++;
-    faces.push({
-      x: Math.floor(srcWidth * 0.65),
-      y: Math.floor(srcHeight * 0.15),
-      width: Math.floor(srcWidth * 0.35),
-      height: Math.floor(srcHeight * 0.6),
-    });
-  }
-
-  // If left and right are both active with a gap, or 3 regions active -> Multiple people
-  if ((leftSkin > significantColumnThreshold && rightSkin > significantColumnThreshold) || activeRegions >= 3) {
+  if (threeColumnsActive || twoSidesNoMiddle) {
+    const faces: DetectedFaceBox[] = [];
+    if (leftStrong) {
+      faces.push({
+        x: 0,
+        y: Math.floor(srcHeight * 0.15),
+        width: Math.floor(srcWidth * 0.35),
+        height: Math.floor(srcHeight * 0.6),
+      });
+    }
+    if (centerStrong) {
+      faces.push({
+        x: Math.floor(srcWidth * 0.3),
+        y: Math.floor(srcHeight * 0.1),
+        width: Math.floor(srcWidth * 0.4),
+        height: Math.floor(srcHeight * 0.65),
+      });
+    }
+    if (rightStrong) {
+      faces.push({
+        x: Math.floor(srcWidth * 0.65),
+        y: Math.floor(srcHeight * 0.15),
+        width: Math.floor(srcWidth * 0.35),
+        height: Math.floor(srcHeight * 0.6),
+      });
+    }
     return {
-      faceCount: Math.max(2, activeRegions),
+      faceCount: Math.max(2, faces.length),
       faces,
       status: "multiple_faces",
       message: "Multiple persons detected in camera frame",
@@ -378,18 +384,21 @@ function detectFacesViaCanvasCV(
     };
   }
 
-  // Alignment evaluation for Canvas CV:
-  // Center is active and represents the bulk of the skin mass
+  // Alignment evaluation for Canvas CV: the centre third must hold the bulk of
+  // the skin mass, but the tolerance is wide enough to survive a normal lean.
   const totalSkin = leftSkin + centerSkin + rightSkin;
   const centerRatio = centerSkin / (totalSkin || 1);
-  const isCentered = centerRatio >= 0.45 && Math.abs(leftSkin - rightSkin) < significantColumnThreshold * 1.8;
-  const isGoodSize = totalSkinPixels >= minFacePixels * 1.5 && totalSkinPixels <= (sampleW * sampleH) * 0.55;
+  const isCentered = centerRatio >= 0.28 && Math.abs(leftSkin - rightSkin) <= framePixels * 0.16;
+  const smallFace = totalSkinPixels < minFacePixels * 1.8;
+  const isGoodSize = !smallFace && totalSkinPixels <= framePixels * 0.65;
 
   const isAligned = isCentered && isGoodSize;
 
-  let alignMsg = "1 Face Verified & Aligned";
-  if (!isGoodSize) {
-    alignMsg = totalSkinPixels < minFacePixels * 1.5 ? "Move closer to center within circle" : "Step slightly back from camera";
+  let alignMsg = "Face detected and aligned";
+  if (smallFace) {
+    alignMsg = "Move a little closer to the camera";
+  } else if (!isGoodSize) {
+    alignMsg = "Step slightly back from the camera";
   } else if (!isCentered) {
     alignMsg = leftSkin > rightSkin ? "Move slightly to your right" : "Move slightly to your left";
   }

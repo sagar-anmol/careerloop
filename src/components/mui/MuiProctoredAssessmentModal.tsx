@@ -167,24 +167,27 @@ export function MuiProctoredAssessmentModal({
         const result = await detectFaces(videoPipRef.current);
         setFaceResult(result);
 
-        // 1. Flag Missing Face (>2 consecutive checks ~3.0s)
+        // 1. Flag Missing Face (~5.6 s of continuous absence). Brief glances
+        //    away, a blink or a single dark frame must not raise an alert.
         if (result.status === "no_face" || result.status === "camera_blocked") {
           missingCounterRef.current += 1;
-          if (missingCounterRef.current === 2) {
+          if (missingCounterRef.current === 4) {
             triggerWarning("Face missing from camera frame! Please remain seated in front of your screen.");
-          } else if (missingCounterRef.current > 2 && missingCounterRef.current % 4 === 0) {
+          } else if (missingCounterRef.current > 4 && missingCounterRef.current % 6 === 0) {
             triggerWarning("Integrity Alert: Candidate face still not detected in proctored camera view.");
           }
         } else {
           missingCounterRef.current = 0;
         }
 
-        // 2. Flag Multiple Persons (>1 consecutive check ~2.5s)
+        // 2. Flag Multiple Persons (~4.2 s of continuous detection), so a
+        //    reflection or a person walking past the background does not
+        //    immediately flag the attempt.
         if (result.status === "multiple_faces") {
           multipleCounterRef.current += 1;
-          if (multipleCounterRef.current === 2) {
+          if (multipleCounterRef.current === 3) {
             triggerWarning(`Multiple persons detected (${result.faceCount}) in camera view! Unauthorized assistance flagged.`);
-          } else if (multipleCounterRef.current > 2 && multipleCounterRef.current % 4 === 0) {
+          } else if (multipleCounterRef.current > 3 && multipleCounterRef.current % 6 === 0) {
             triggerWarning("Integrity Alert: Multiple individuals remain visible in proctored camera view.");
           }
         } else {

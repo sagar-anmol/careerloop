@@ -80,6 +80,11 @@ export function MuiOnboardingModal({
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [faceResult, setFaceResult] = useState<FaceDetectionResult | null>(null);
+  // Grace window: one flaky frame from the detector (a blink, a head turn, a
+  // dim frame) must not disable the capture button mid-onboarding.
+  const lastGoodFaceAtRef = useRef(0);
+  const faceGraceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [faceGraceActive, setFaceGraceActive] = useState(false);
 
   // Program & Consent State
   const [selectedPlan, setSelectedPlan] = useState<"starter_practice" | "pro_all_access" | "mentorship_1on1">("pro_all_access");
@@ -147,13 +152,25 @@ export function MuiOnboardingModal({
         try {
           const res = await detectFaces(videoRef.current);
           setFaceResult(res);
+          // A verified or merely off-centre face still proves a person is
+          // there, so both extend the grace window.
+          if (res.status === "verified" || res.status === "misaligned") {
+            lastGoodFaceAtRef.current = Date.now();
+            setFaceGraceActive(true);
+            if (faceGraceTimerRef.current) clearTimeout(faceGraceTimerRef.current);
+            faceGraceTimerRef.current = setTimeout(() => setFaceGraceActive(false), 3000);
+          }
         } catch (e) {
           console.debug("Onboarding face tracking error:", e);
         }
       }
     }, 600);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (faceGraceTimerRef.current) clearTimeout(faceGraceTimerRef.current);
+      setFaceGraceActive(false);
+    };
   }, [isOpen, activeStep, stream, capturedPhoto]);
 
   const stopCamera = () => {
@@ -195,18 +212,22 @@ export function MuiOnboardingModal({
         const detectRes = await detectFaces(canvas);
         setFaceResult(detectRes);
 
-        if (detectRes.status === "no_face" || detectRes.status === "camera_blocked") {
-          setCameraError("Cannot capture: No face detected. Please position your face directly in front of the camera.");
-          return;
-        }
+        const withinGrace = Date.now() - lastGoodFaceAtRef.current < 3000;
 
+        // Only hard-block conditions stop capture. A momentary "no_face" or an
+        // off-centre face is accepted while the 3 s grace window is open.
         if (detectRes.status === "multiple_faces") {
           setCameraError("Cannot capture: Multiple persons detected. Only one candidate is allowed in the verified photo ID.");
           return;
         }
 
-        if (detectRes.status === "misaligned") {
-          setCameraError(`Cannot capture: ${detectRes.message}. Please center your face inside the green guide.`);
+        if (detectRes.status === "camera_blocked") {
+          setCameraError("Cannot capture: The camera appears covered or the room is too dark. Improve lighting and try again.");
+          return;
+        }
+
+        if (detectRes.status === "no_face" && !withinGrace) {
+          setCameraError("Cannot capture: No face detected. Please position your face directly in front of the camera.");
           return;
         }
 
@@ -220,6 +241,9 @@ export function MuiOnboardingModal({
 
   const retakePhoto = () => {
     setCapturedPhoto(null);
+    lastGoodFaceAtRef.current = 0;
+    if (faceGraceTimerRef.current) clearTimeout(faceGraceTimerRef.current);
+    setFaceGraceActive(false);
     startCamera();
   };
 
@@ -311,6 +335,16 @@ export function MuiOnboardingModal({
     stopCamera();
     onClose();
   };
+
+  // Capture gating. Anything except a hard block is allowed to capture:
+  //  - multiple_faces / camera_blocked are genuine problems
+  //  - no_face is allowed while the 3 s grace window from the last good reading
+  //    is still open (the live loop re-reads every 600 ms)
+  //  - misaligned is a hint, not a blocker
+  const faceHardBlocked =
+    faceResult?.status === "multiple_faces" || faceResult?.status === "camera_blocked";
+  const canCapture =
+    Boolean(faceResult) && !faceHardBlocked && (faceResult?.status !== "no_face" || faceGraceActive);
 
   return (
     <Dialog
@@ -553,17 +587,16 @@ export function MuiOnboardingModal({
                       height: "75%",
                       border: "3px solid",
                       borderColor:
-                        faceResult?.status === "verified"
-                          ? "#10b981"
-                          : faceResult?.status === "multiple_faces"
+                        faceResult?.status === "multiple_faces"
                           ? "#ef4444"
+                          : canCapture
+                          ? "#10b981"
                           : "#f59e0b",
                       borderRadius: "50%",
                       pointerEvents: "none",
-                      boxShadow:
-                        faceResult?.status === "verified"
-                          ? "0 0 24px rgba(16, 185, 129, 0.6), inset 0 0 16px rgba(16, 185, 129, 0.2)"
-                          : "0 0 12px rgba(245, 158, 11, 0.3)",
+                      boxShadow: canCapture
+                        ? "0 0 24px rgba(16, 185, 129, 0.6), inset 0 0 16px rgba(16, 185, 129, 0.2)"
+                        : "0 0 12px rgba(245, 158, 11, 0.3)",
                       transition: "all 0.25s ease",
                     }}
                   />
@@ -571,29 +604,29 @@ export function MuiOnboardingModal({
                   {/* Live Face Detection Status Chip */}
                   <Chip
                     icon={
-                      faceResult?.status === "verified" ? (
+                      canCapture ? (
                         <CheckCircleIcon style={{ fontSize: 14, color: "#ffffff" }} />
                       ) : (
                         <WarningAmberIcon style={{ fontSize: 14, color: "#ffffff" }} />
                       )
                     }
                     label={
-                      faceResult?.status === "verified"
-                        ? "Face Perfectly Aligned & Verified"
-                        : faceResult?.status === "multiple_faces"
+                      faceResult?.status === "multiple_faces"
                         ? `Alert: ${faceResult.faceCount} Faces Detected`
-                        : faceResult?.status === "misaligned"
-                        ? (faceResult.message || "Align Face Inside Green Circle")
                         : faceResult?.status === "camera_blocked"
                         ? "Camera Obstructed / Too Dark"
-                        : "Align Face Inside Green Circle"
+                        : faceResult?.status === "verified"
+                        ? "Face Verified — Ready to Capture"
+                        : canCapture
+                        ? "Face Detected — Ready to Capture"
+                        : "Align Face Inside the Guide"
                     }
                     size="small"
                     color={
-                      faceResult?.status === "verified"
-                        ? "success"
-                        : faceResult?.status === "multiple_faces"
+                      faceResult?.status === "multiple_faces"
                         ? "error"
+                        : canCapture
+                        ? "success"
                         : "warning"
                     }
                     sx={{
@@ -620,18 +653,24 @@ export function MuiOnboardingModal({
               {!capturedPhoto ? (
                 <Button
                   variant="contained"
-                  color={faceResult?.status === "verified" ? "success" : "primary"}
+                  color={canCapture ? "success" : "primary"}
                   startIcon={<PhotoCameraIcon />}
                   onClick={capturePhoto}
-                  disabled={faceResult?.status !== "verified"}
+                  disabled={!canCapture}
                   sx={{
                     px: 3.5,
                     py: 1,
                     fontWeight: 700,
-                    boxShadow: faceResult?.status === "verified" ? "0 4px 14px rgba(16, 185, 129, 0.4)" : "none",
+                    boxShadow: canCapture ? "0 4px 14px rgba(16, 185, 129, 0.4)" : "none",
                   }}
                 >
-                  {faceResult?.status === "verified" ? "Capture Verified Photo" : "Align Face to Capture"}
+                  {faceResult?.status === "multiple_faces"
+                    ? "Multiple Faces Detected"
+                    : faceResult?.status === "camera_blocked"
+                    ? "Camera Obstructed"
+                    : canCapture
+                    ? "Capture Photo"
+                    : "Align Face to Capture"}
                 </Button>
               ) : (
                 <Button
