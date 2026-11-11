@@ -1,0 +1,487 @@
+{
+  "id": "careerloop-aptitude-01",
+  "title": "CareerLoop Aptitude & Reasoning — Set 01",
+  "examType": "careerloop_aptitude",
+  "patternNote": "CareerLoop placement pattern: a quant-and-reasoning heavy paper with short English and General Awareness modules. 30 original questions written for CareerLoop / 40 minutes / +1 per correct / −0.25 per wrong.",
+  "durationSeconds": 2400,
+  "marksPerQuestion": 1,
+  "negativeMarks": 0.25,
+  "attemptCap": 2,
+  "reviewPolicy": "after_submit",
+  "sections": [
+    {
+      "id": "quant",
+      "title": "Quantitative Aptitude",
+      "questions": [
+        {
+          "id": "cl-apt-q-01",
+          "subject": "Quantitative Aptitude",
+          "stem": "What is 20% of 250?",
+          "options": [
+            "40",
+            "45",
+            "50",
+            "55"
+          ],
+          "correctIndex": 2,
+          "explanation": "20% of 250 = (20 ÷ 100) × 250 = 50.",
+          "difficulty": "easy",
+          "topic": "Percentage"
+        },
+        {
+          "id": "cl-apt-q-02",
+          "subject": "Quantitative Aptitude",
+          "stem": "Find the compound interest on ₹1,000 at 10% per annum for 2 years.",
+          "options": [
+            "₹200",
+            "₹210",
+            "₹220",
+            "₹240"
+          ],
+          "correctIndex": 1,
+          "explanation": "Amount = 1000 × (1.1)² = ₹1,210. Compound interest = 1,210 − 1,000 = ₹210.",
+          "difficulty": "medium",
+          "topic": "Compound interest"
+        },
+        {
+          "id": "cl-apt-q-03",
+          "subject": "Quantitative Aptitude",
+          "stem": "A train 180 m long crosses a 120 m platform in 20 seconds. What is its speed?",
+          "options": [
+            "36 km/h",
+            "45 km/h",
+            "54 km/h",
+            "60 km/h"
+          ],
+          "correctIndex": 2,
+          "explanation": "Total distance = 180 + 120 = 300 m in 20 s, so speed = 15 m/s. 15 × 18/5 = 54 km/h.",
+          "difficulty": "medium",
+          "topic": "Speed and distance"
+        },
+        {
+          "id": "cl-apt-q-04",
+          "subject": "Quantitative Aptitude",
+          "stem": "Six men complete a job in 8 days. How long will four men take?",
+          "options": [
+            "10 days",
+            "12 days",
+            "14 days",
+            "16 days"
+          ],
+          "correctIndex": 1,
+          "explanation": "Total work = 6 × 8 = 48 man-days. At 4 men, time = 48 ÷ 4 = 12 days.",
+          "difficulty": "medium",
+          "topic": "Time and work"
+        },
+        {
+          "id": "cl-apt-q-05",
+          "subject": "Quantitative Aptitude",
+          "stem": "Find the simple interest on ₹8,000 at 5% per annum for 4 years.",
+          "options": [
+            "₹1,400",
+            "₹1,500",
+            "₹1,600",
+            "₹1,800"
+          ],
+          "correctIndex": 2,
+          "explanation": "SI = 8000 × 5 × 4 / 100 = ₹1,600.",
+          "difficulty": "easy",
+          "topic": "Simple interest"
+        },
+        {
+          "id": "cl-apt-q-06",
+          "subject": "Quantitative Aptitude",
+          "stem": "An article is sold for ₹720 at a profit of 20%. What was its cost price?",
+          "options": [
+            "₹560",
+            "₹600",
+            "₹640",
+            "₹680"
+          ],
+          "correctIndex": 1,
+          "explanation": "Selling price = 120% of cost price. Cost price = 720 × 100/120 = ₹600.",
+          "difficulty": "medium",
+          "topic": "Profit and loss"
+        },
+        {
+          "id": "cl-apt-q-07",
+          "subject": "Quantitative Aptitude",
+          "stem": "The average of four numbers is 45. Three of them are 40, 42 and 50. What is the fourth number?",
+          "options": [
+            "46",
+            "48",
+            "50",
+            "52"
+          ],
+          "correctIndex": 1,
+          "explanation": "Total = 4 × 45 = 180. The three known numbers add to 132, so the fourth is 180 − 132 = 48.",
+          "difficulty": "easy",
+          "topic": "Average"
+        },
+        {
+          "id": "cl-apt-q-08",
+          "subject": "Quantitative Aptitude",
+          "stem": "Three numbers are in the ratio 3 : 4 : 5 and their sum is 72. What is the largest number?",
+          "options": [
+            "24",
+            "28",
+            "30",
+            "36"
+          ],
+          "correctIndex": 2,
+          "explanation": "The ratio parts total 12, so one part is 72 ÷ 12 = 6. The largest number is 5 × 6 = 30.",
+          "difficulty": "easy",
+          "topic": "Ratio and proportion"
+        },
+        {
+          "id": "cl-apt-q-09",
+          "subject": "Quantitative Aptitude",
+          "stem": "A car travels at 60 km/h for 2.5 hours. What distance does it cover?",
+          "options": [
+            "120 km",
+            "140 km",
+            "150 km",
+            "160 km"
+          ],
+          "correctIndex": 2,
+          "explanation": "Distance = speed × time = 60 × 2.5 = 150 km.",
+          "difficulty": "easy",
+          "topic": "Speed and distance"
+        },
+        {
+          "id": "cl-apt-q-10",
+          "subject": "Quantitative Aptitude",
+          "stem": "If x/5 = 12/20, what is the value of x?",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "correctIndex": 1,
+          "explanation": "12/20 simplifies to 3/5, so x = 3. Cross-multiplying also gives 20x = 60, hence x = 3.",
+          "difficulty": "easy",
+          "topic": "Algebra"
+        }
+      ]
+    },
+    {
+      "id": "reasoning",
+      "title": "Logical Reasoning",
+      "questions": [
+        {
+          "id": "cl-apt-r-01",
+          "subject": "Reasoning",
+          "stem": "Find the next number: 5, 10, 20, 40, ?",
+          "options": [
+            "60",
+            "70",
+            "80",
+            "90"
+          ],
+          "correctIndex": 2,
+          "explanation": "Each term is double the previous one, so the next term is 40 × 2 = 80.",
+          "difficulty": "easy",
+          "topic": "Number series"
+        },
+        {
+          "id": "cl-apt-r-02",
+          "subject": "Reasoning",
+          "stem": "Find the next number: 3, 6, 11, 18, 27, ?",
+          "options": [
+            "36",
+            "38",
+            "40",
+            "42"
+          ],
+          "correctIndex": 1,
+          "explanation": "The differences are 3, 5, 7, 9 — consecutive odd numbers. The next difference is 11, so 27 + 11 = 38.",
+          "difficulty": "medium",
+          "topic": "Number series"
+        },
+        {
+          "id": "cl-apt-r-03",
+          "subject": "Reasoning",
+          "stem": "If SUN = 54 by adding letter positions (S = 19, U = 21, N = 14), what is MOON?",
+          "options": [
+            "55",
+            "56",
+            "57",
+            "58"
+          ],
+          "correctIndex": 2,
+          "explanation": "M = 13, O = 15, O = 15, N = 14. Their sum is 13 + 15 + 15 + 14 = 57.",
+          "difficulty": "easy",
+          "topic": "Coding-decoding"
+        },
+        {
+          "id": "cl-apt-r-04",
+          "subject": "Reasoning",
+          "stem": "Find the odd one out: 2, 3, 5, 7, 9",
+          "options": [
+            "2",
+            "3",
+            "5",
+            "9"
+          ],
+          "correctIndex": 3,
+          "explanation": "2, 3, 5 and 7 are prime numbers. 9 is composite (3 × 3).",
+          "difficulty": "easy",
+          "topic": "Odd one out"
+        },
+        {
+          "id": "cl-apt-r-05",
+          "subject": "Reasoning",
+          "stem": "A person walks 4 km east and then 3 km north. How far is he from the starting point?",
+          "options": [
+            "4 km",
+            "5 km",
+            "7 km",
+            "9 km"
+          ],
+          "correctIndex": 1,
+          "explanation": "The path forms a right triangle with legs 4 and 3. Distance = √(4² + 3²) = √25 = 5 km.",
+          "difficulty": "easy",
+          "topic": "Direction sense"
+        },
+        {
+          "id": "cl-apt-r-06",
+          "subject": "Reasoning",
+          "stem": "Doctor : Hospital :: Teacher : ?",
+          "options": [
+            "Book",
+            "Student",
+            "School",
+            "Class"
+          ],
+          "correctIndex": 2,
+          "explanation": "A doctor works in a hospital; a teacher works in a school. The pair is professional and workplace.",
+          "difficulty": "easy",
+          "topic": "Analogy"
+        },
+        {
+          "id": "cl-apt-r-07",
+          "subject": "Reasoning",
+          "stem": "'My mother's brother's son' is related to me as my:",
+          "options": [
+            "Brother",
+            "Uncle",
+            "Cousin",
+            "Nephew"
+          ],
+          "correctIndex": 2,
+          "explanation": "My mother's brother is my uncle, and his son is my cousin.",
+          "difficulty": "easy",
+          "topic": "Blood relations"
+        },
+        {
+          "id": "cl-apt-r-08",
+          "subject": "Reasoning",
+          "stem": "Statements: All cats are animals. No animal is a stone. Conclusions: I. No cat is a stone. II. Some stones are cats. Which follows?",
+          "options": [
+            "Only I follows",
+            "Only II follows",
+            "Both follow",
+            "Neither follows"
+          ],
+          "correctIndex": 0,
+          "explanation": "Since every cat is an animal and no animal is a stone, no cat can be a stone. Conclusion II contradicts the statements.",
+          "difficulty": "medium",
+          "topic": "Syllogism"
+        },
+        {
+          "id": "cl-apt-r-09",
+          "subject": "Reasoning",
+          "stem": "Complete the series: B, D, G, K, ?",
+          "options": [
+            "N",
+            "O",
+            "P",
+            "Q"
+          ],
+          "correctIndex": 2,
+          "explanation": "The gaps between letters are 2, 3, 4. The next gap is 5, and K + 5 = P.",
+          "difficulty": "medium",
+          "topic": "Letter series"
+        },
+        {
+          "id": "cl-apt-r-10",
+          "subject": "Reasoning",
+          "stem": "4 : 16 :: 7 : ?",
+          "options": [
+            "42",
+            "49",
+            "56",
+            "64"
+          ],
+          "correctIndex": 1,
+          "explanation": "The second term is the square of the first: 4² = 16, so 7² = 49.",
+          "difficulty": "easy",
+          "topic": "Number analogy"
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "title": "English Language",
+      "questions": [
+        {
+          "id": "cl-apt-e-01",
+          "subject": "English",
+          "stem": "Choose the word closest in meaning to 'diligent'.",
+          "options": [
+            "Lazy",
+            "Hardworking",
+            "Careless",
+            "Slow"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Diligent' means showing steady, careful effort, so 'hardworking' is the synonym.",
+          "difficulty": "easy",
+          "topic": "Synonyms"
+        },
+        {
+          "id": "cl-apt-e-02",
+          "subject": "English",
+          "stem": "Choose the word most opposite in meaning to 'ancient'.",
+          "options": [
+            "Old",
+            "Modern",
+            "Historic",
+            "Antique"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Ancient' means very old; its opposite is 'modern'.",
+          "difficulty": "easy",
+          "topic": "Antonyms"
+        },
+        {
+          "id": "cl-apt-e-03",
+          "subject": "English",
+          "stem": "Fill in the blank: She has been waiting ______ the bus stop since morning.",
+          "options": [
+            "in",
+            "at",
+            "on",
+            "by"
+          ],
+          "correctIndex": 1,
+          "explanation": "The standard preposition for a specific point such as a bus stop is 'at'.",
+          "difficulty": "easy",
+          "topic": "Prepositions"
+        },
+        {
+          "id": "cl-apt-e-04",
+          "subject": "English",
+          "stem": "Identify the grammatically incorrect part: (A) He (B) do not like (C) tea (D) No error",
+          "options": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "correctIndex": 1,
+          "explanation": "With the third-person singular subject 'He', the correct form is 'does not like'.",
+          "difficulty": "easy",
+          "topic": "Error spotting"
+        },
+        {
+          "id": "cl-apt-e-05",
+          "subject": "English",
+          "stem": "What does the idiom 'once in a blue moon' mean?",
+          "options": [
+            "Very often",
+            "Very rarely",
+            "Always",
+            "Never"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Once in a blue moon' means something that happens very rarely.",
+          "difficulty": "easy",
+          "topic": "Idioms"
+        }
+      ]
+    },
+    {
+      "id": "general-awareness",
+      "title": "General Awareness",
+      "questions": [
+        {
+          "id": "cl-apt-g-01",
+          "subject": "General Awareness",
+          "stem": "Which is the largest ocean in the world?",
+          "options": [
+            "Atlantic Ocean",
+            "Indian Ocean",
+            "Pacific Ocean",
+            "Arctic Ocean"
+          ],
+          "correctIndex": 2,
+          "explanation": "The Pacific Ocean is the largest and deepest ocean, covering about one-third of the Earth's surface.",
+          "difficulty": "easy",
+          "topic": "World geography"
+        },
+        {
+          "id": "cl-apt-g-02",
+          "subject": "General Awareness",
+          "stem": "Fundamental Duties were added to the Indian Constitution by which Article?",
+          "options": [
+            "Article 51A",
+            "Article 50",
+            "Article 52",
+            "Article 53"
+          ],
+          "correctIndex": 0,
+          "explanation": "Fundamental Duties are listed under Article 51A, added by the 42nd Amendment Act in 1976.",
+          "difficulty": "medium",
+          "topic": "Indian polity"
+        },
+        {
+          "id": "cl-apt-g-03",
+          "subject": "General Awareness",
+          "stem": "Which planet is known as the Red Planet?",
+          "options": [
+            "Venus",
+            "Mars",
+            "Jupiter",
+            "Saturn"
+          ],
+          "correctIndex": 1,
+          "explanation": "Mars appears red because of iron oxide (rust) on its surface.",
+          "difficulty": "easy",
+          "topic": "Science awareness"
+        },
+        {
+          "id": "cl-apt-g-04",
+          "subject": "General Awareness",
+          "stem": "What is the currency of the United Kingdom?",
+          "options": [
+            "Euro",
+            "Dollar",
+            "Pound sterling",
+            "Franc"
+          ],
+          "correctIndex": 2,
+          "explanation": "The United Kingdom uses the pound sterling (£).",
+          "difficulty": "easy",
+          "topic": "World GK"
+        },
+        {
+          "id": "cl-apt-g-05",
+          "subject": "General Awareness",
+          "stem": "Who was the first Prime Minister of India?",
+          "options": [
+            "Jawaharlal Nehru",
+            "Sardar Patel",
+            "Mahatma Gandhi",
+            "Rajendra Prasad"
+          ],
+          "correctIndex": 0,
+          "explanation": "Jawaharlal Nehru served as the first Prime Minister of India from 1947 to 1964.",
+          "difficulty": "easy",
+          "topic": "Indian history"
+        }
+      ]
+    }
+  ]
+}

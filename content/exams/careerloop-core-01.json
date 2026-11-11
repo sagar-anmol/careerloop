@@ -1,0 +1,493 @@
+{
+  "id": "careerloop-core-01",
+  "title": "CareerLoop Core Mock — Set 01",
+  "examType": "careerloop_core",
+  "patternNote": "CareerLoop core mock covering Mathematics, General Intelligence & Reasoning, General Science, English Language and General Awareness. 30 original questions written for CareerLoop / 30 minutes / +1 per correct / −0.33 per wrong.",
+  "durationSeconds": 1800,
+  "marksPerQuestion": 1,
+  "negativeMarks": 0.33,
+  "attemptCap": 2,
+  "reviewPolicy": "after_submit",
+  "sections": [
+    {
+      "id": "mathematics",
+      "title": "Mathematics",
+      "questions": [
+        {
+          "id": "cl-core-m-01",
+          "subject": "Mathematics",
+          "stem": "What is the LCM of 12 and 18?",
+          "options": [
+            "24",
+            "36",
+            "48",
+            "72"
+          ],
+          "correctIndex": 1,
+          "explanation": "12 = 2² × 3 and 18 = 2 × 3². The LCM takes the highest power of each prime: 2² × 3² = 36.",
+          "difficulty": "easy",
+          "topic": "LCM and HCF"
+        },
+        {
+          "id": "cl-core-m-02",
+          "subject": "Mathematics",
+          "stem": "A shopkeeper marks an item at ₹800 and gives a 25% discount. What is the selling price?",
+          "options": [
+            "₹600",
+            "₹625",
+            "₹650",
+            "₹700"
+          ],
+          "correctIndex": 0,
+          "explanation": "Discount = 25% of 800 = ₹200. Selling price = 800 − 200 = ₹600.",
+          "difficulty": "easy",
+          "topic": "Discount"
+        },
+        {
+          "id": "cl-core-m-03",
+          "subject": "Mathematics",
+          "stem": "Two numbers are in the ratio 5 : 7 and their difference is 12. What is the smaller number?",
+          "options": [
+            "30",
+            "35",
+            "42",
+            "45"
+          ],
+          "correctIndex": 0,
+          "explanation": "The difference of the ratio parts is 2, so one part is 12 ÷ 2 = 6. The smaller number is 5 × 6 = 30.",
+          "difficulty": "medium",
+          "topic": "Ratio and proportion"
+        },
+        {
+          "id": "cl-core-m-04",
+          "subject": "Mathematics",
+          "stem": "What is the average of the first ten natural numbers?",
+          "options": [
+            "5",
+            "5.5",
+            "6",
+            "6.5"
+          ],
+          "correctIndex": 1,
+          "explanation": "The sum of 1 to 10 is 55, and 55 ÷ 10 = 5.5. Equivalently, the average of the first n natural numbers is (n + 1)/2.",
+          "difficulty": "easy",
+          "topic": "Average"
+        },
+        {
+          "id": "cl-core-m-05",
+          "subject": "Mathematics",
+          "stem": "If two-fifths of a number is 48, what is the number?",
+          "options": [
+            "100",
+            "110",
+            "120",
+            "130"
+          ],
+          "correctIndex": 2,
+          "explanation": "If 2/5 of the number is 48, then 1/5 is 24 and the whole number is 24 × 5 = 120.",
+          "difficulty": "easy",
+          "topic": "Fractions"
+        },
+        {
+          "id": "cl-core-m-06",
+          "subject": "Mathematics",
+          "stem": "One pipe can fill a tank in 6 hours and another in 12 hours. Working together, how long will they take?",
+          "options": [
+            "3 hours",
+            "4 hours",
+            "5 hours",
+            "6 hours"
+          ],
+          "correctIndex": 1,
+          "explanation": "Combined rate = 1/6 + 1/12 = 2/12 + 1/12 = 3/12 = 1/4 tank per hour. Time = 4 hours.",
+          "difficulty": "medium",
+          "topic": "Pipes and cisterns"
+        },
+        {
+          "id": "cl-core-m-07",
+          "subject": "Mathematics",
+          "stem": "An article bought for ₹500 is sold for ₹600. What is the profit percentage?",
+          "options": [
+            "10%",
+            "15%",
+            "20%",
+            "25%"
+          ],
+          "correctIndex": 2,
+          "explanation": "Profit = ₹100. Profit % = (100 ÷ 500) × 100 = 20%.",
+          "difficulty": "easy",
+          "topic": "Profit and loss"
+        },
+        {
+          "id": "cl-core-m-08",
+          "subject": "Mathematics",
+          "stem": "The perimeter of a rectangle is 60 m and its length is 18 m. What is its area?",
+          "options": [
+            "180 m²",
+            "200 m²",
+            "216 m²",
+            "240 m²"
+          ],
+          "correctIndex": 2,
+          "explanation": "Perimeter = 2(l + b), so 60 = 2(18 + b) and b = 12 m. Area = 18 × 12 = 216 m².",
+          "difficulty": "medium",
+          "topic": "Mensuration"
+        }
+      ]
+    },
+    {
+      "id": "reasoning",
+      "title": "General Intelligence & Reasoning",
+      "questions": [
+        {
+          "id": "cl-core-r-01",
+          "subject": "Reasoning",
+          "stem": "Find the next number: 2, 6, 12, 20, 30, ?",
+          "options": [
+            "36",
+            "40",
+            "42",
+            "46"
+          ],
+          "correctIndex": 2,
+          "explanation": "The differences are 4, 6, 8, 10 — consecutive even numbers. The next difference is 12, so 30 + 12 = 42.",
+          "difficulty": "easy",
+          "topic": "Number series"
+        },
+        {
+          "id": "cl-core-r-02",
+          "subject": "Reasoning",
+          "stem": "Find the odd one out: 8, 27, 64, 100",
+          "options": [
+            "8",
+            "27",
+            "64",
+            "100"
+          ],
+          "correctIndex": 3,
+          "explanation": "8 = 2³, 27 = 3³ and 64 = 4³ are perfect cubes. 100 is a perfect square, not a cube.",
+          "difficulty": "easy",
+          "topic": "Odd one out"
+        },
+        {
+          "id": "cl-core-r-03",
+          "subject": "Reasoning",
+          "stem": "If CAT = 24 by adding letter positions (C = 3, A = 1, T = 20), what is DOG?",
+          "options": [
+            "24",
+            "25",
+            "26",
+            "27"
+          ],
+          "correctIndex": 2,
+          "explanation": "D = 4, O = 15, G = 7. Their sum is 4 + 15 + 7 = 26.",
+          "difficulty": "easy",
+          "topic": "Coding-decoding"
+        },
+        {
+          "id": "cl-core-r-04",
+          "subject": "Reasoning",
+          "stem": "A person facing north turns 90° clockwise. Which direction is he facing now?",
+          "options": [
+            "North",
+            "South",
+            "East",
+            "West"
+          ],
+          "correctIndex": 2,
+          "explanation": "From north, a clockwise (right) turn of 90° points east.",
+          "difficulty": "easy",
+          "topic": "Direction sense"
+        },
+        {
+          "id": "cl-core-r-05",
+          "subject": "Reasoning",
+          "stem": "A is B's sister and C is B's mother. How is A related to C?",
+          "options": [
+            "Mother",
+            "Sister",
+            "Daughter",
+            "Aunt"
+          ],
+          "correctIndex": 2,
+          "explanation": "If C is B's mother, then C is also the mother of A, who is B's sister. So A is C's daughter.",
+          "difficulty": "easy",
+          "topic": "Blood relations"
+        },
+        {
+          "id": "cl-core-r-06",
+          "subject": "Reasoning",
+          "stem": "Hand : Fingers :: Foot : ?",
+          "options": [
+            "Heel",
+            "Shoes",
+            "Toes",
+            "Legs"
+          ],
+          "correctIndex": 2,
+          "explanation": "Fingers are the digits of the hand; toes are the digits of the foot.",
+          "difficulty": "easy",
+          "topic": "Analogy"
+        },
+        {
+          "id": "cl-core-r-07",
+          "subject": "Reasoning",
+          "stem": "Complete the series: 1, 4, 9, 16, ?",
+          "options": [
+            "20",
+            "24",
+            "25",
+            "36"
+          ],
+          "correctIndex": 2,
+          "explanation": "The terms are the squares of 1, 2, 3, 4. The next term is 5² = 25.",
+          "difficulty": "easy",
+          "topic": "Number series"
+        },
+        {
+          "id": "cl-core-r-08",
+          "subject": "Reasoning",
+          "stem": "Which letter is fifth to the right of the tenth letter from the left in the English alphabet?",
+          "options": [
+            "N",
+            "O",
+            "P",
+            "Q"
+          ],
+          "correctIndex": 1,
+          "explanation": "The tenth letter from the left is J. Moving five places right gives O (10 + 5 = 15th letter).",
+          "difficulty": "medium",
+          "topic": "Alphabet test"
+        }
+      ]
+    },
+    {
+      "id": "general-science",
+      "title": "General Science",
+      "questions": [
+        {
+          "id": "cl-core-s-01",
+          "subject": "General Science",
+          "stem": "What is the SI unit of force?",
+          "options": [
+            "Joule",
+            "Watt",
+            "Newton",
+            "Pascal"
+          ],
+          "correctIndex": 2,
+          "explanation": "Force is measured in newtons (N). Joule is energy, watt is power and pascal is pressure.",
+          "difficulty": "easy",
+          "topic": "Physics"
+        },
+        {
+          "id": "cl-core-s-02",
+          "subject": "General Science",
+          "stem": "What is the chemical formula of water?",
+          "options": [
+            "CO₂",
+            "H₂O",
+            "NaCl",
+            "O₂"
+          ],
+          "correctIndex": 1,
+          "explanation": "A water molecule has two hydrogen atoms and one oxygen atom, written H₂O.",
+          "difficulty": "easy",
+          "topic": "Chemistry"
+        },
+        {
+          "id": "cl-core-s-03",
+          "subject": "General Science",
+          "stem": "Which cell organelle is known as the powerhouse of the cell?",
+          "options": [
+            "Nucleus",
+            "Ribosome",
+            "Mitochondria",
+            "Cytoplasm"
+          ],
+          "correctIndex": 2,
+          "explanation": "Mitochondria produce most of the cell's ATP through respiration, hence 'powerhouse of the cell'.",
+          "difficulty": "easy",
+          "topic": "Biology"
+        },
+        {
+          "id": "cl-core-s-04",
+          "subject": "General Science",
+          "stem": "Which gas do plants absorb from the atmosphere during photosynthesis?",
+          "options": [
+            "Oxygen",
+            "Carbon dioxide",
+            "Nitrogen",
+            "Hydrogen"
+          ],
+          "correctIndex": 1,
+          "explanation": "Plants take in carbon dioxide and release oxygen during photosynthesis.",
+          "difficulty": "easy",
+          "topic": "Biology"
+        },
+        {
+          "id": "cl-core-s-05",
+          "subject": "General Science",
+          "stem": "The speed of light in vacuum is approximately:",
+          "options": [
+            "3 × 10⁶ m/s",
+            "3 × 10⁷ m/s",
+            "3 × 10⁸ m/s",
+            "3 × 10⁹ m/s"
+          ],
+          "correctIndex": 2,
+          "explanation": "Light travels at about 3 × 10⁸ metres per second in vacuum, roughly 300,000 km/s.",
+          "difficulty": "medium",
+          "topic": "Physics"
+        },
+        {
+          "id": "cl-core-s-06",
+          "subject": "General Science",
+          "stem": "Deficiency of vitamin C causes which disease?",
+          "options": [
+            "Rickets",
+            "Scurvy",
+            "Beri-beri",
+            "Night blindness"
+          ],
+          "correctIndex": 1,
+          "explanation": "Vitamin C deficiency causes scurvy. Rickets is caused by vitamin D deficiency and night blindness by vitamin A deficiency.",
+          "difficulty": "easy",
+          "topic": "Nutrition"
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "title": "English Language (CareerLoop module)",
+      "questions": [
+        {
+          "id": "cl-core-e-01",
+          "subject": "English",
+          "stem": "Choose the word closest in meaning to 'brave'.",
+          "options": [
+            "Timid",
+            "Courageous",
+            "Weak",
+            "Afraid"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Brave' means showing courage, so 'courageous' is the synonym. The other options mean the opposite.",
+          "difficulty": "easy",
+          "topic": "Synonyms"
+        },
+        {
+          "id": "cl-core-e-02",
+          "subject": "English",
+          "stem": "Choose the word most opposite in meaning to 'victory'.",
+          "options": [
+            "Success",
+            "Win",
+            "Defeat",
+            "Triumph"
+          ],
+          "correctIndex": 2,
+          "explanation": "'Victory' means a win; its opposite is 'defeat'. 'Success', 'win' and 'triumph' are synonyms.",
+          "difficulty": "easy",
+          "topic": "Antonyms"
+        },
+        {
+          "id": "cl-core-e-03",
+          "subject": "English",
+          "stem": "Fill in the blank: He is good ______ mathematics.",
+          "options": [
+            "in",
+            "at",
+            "on",
+            "for"
+          ],
+          "correctIndex": 1,
+          "explanation": "The correct preposition after 'good' when describing a skill is 'at': good at mathematics.",
+          "difficulty": "easy",
+          "topic": "Prepositions"
+        },
+        {
+          "id": "cl-core-e-04",
+          "subject": "English",
+          "stem": "Choose the correctly spelt word.",
+          "options": [
+            "Neccessary",
+            "Necessery",
+            "Necessary",
+            "Necesary"
+          ],
+          "correctIndex": 2,
+          "explanation": "The correct spelling is 'necessary' — one c, double s, and 'ary' at the end.",
+          "difficulty": "easy",
+          "topic": "Spelling"
+        },
+        {
+          "id": "cl-core-e-05",
+          "subject": "English",
+          "stem": "What does the idiom 'a piece of cake' mean?",
+          "options": [
+            "A difficult task",
+            "A very easy task",
+            "An expensive item",
+            "A delicious meal"
+          ],
+          "correctIndex": 1,
+          "explanation": "'A piece of cake' means something very easy to do.",
+          "difficulty": "easy",
+          "topic": "Idioms"
+        }
+      ]
+    },
+    {
+      "id": "general-awareness",
+      "title": "General Awareness",
+      "questions": [
+        {
+          "id": "cl-core-g-01",
+          "subject": "General Awareness",
+          "stem": "What is the national bird of India?",
+          "options": [
+            "Parrot",
+            "Peacock",
+            "Eagle",
+            "Sparrow"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Indian peacock was declared the national bird of India in 1963.",
+          "difficulty": "easy",
+          "topic": "Static GK"
+        },
+        {
+          "id": "cl-core-g-02",
+          "subject": "General Awareness",
+          "stem": "What is the currency of Japan?",
+          "options": [
+            "Won",
+            "Yuan",
+            "Yen",
+            "Ringgit"
+          ],
+          "correctIndex": 2,
+          "explanation": "Japan uses the yen. Won is Korea, yuan is China and ringgit is Malaysia.",
+          "difficulty": "easy",
+          "topic": "World GK"
+        },
+        {
+          "id": "cl-core-g-03",
+          "subject": "General Awareness",
+          "stem": "Who is known as the 'Missile Man of India'?",
+          "options": [
+            "Homi Bhabha",
+            "C. V. Raman",
+            "A. P. J. Abdul Kalam",
+            "Vikram Sarabhai"
+          ],
+          "correctIndex": 2,
+          "explanation": "A. P. J. Abdul Kalam is known as the Missile Man of India for his work on India's missile programmes.",
+          "difficulty": "easy",
+          "topic": "Static GK"
+        }
+      ]
+    }
+  ]
+}

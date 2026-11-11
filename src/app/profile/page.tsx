@@ -8,8 +8,6 @@ import {
   Shield,
   FileText,
   PlayCircle,
-  Clock,
-  CheckCircle2,
   LogOut,
   Building2,
   Mail,
@@ -23,13 +21,11 @@ import {
   Menu,
   ExternalLink,
   Lock,
+  School,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -45,30 +41,50 @@ import {
 import { supabase } from "@/lib/supabaseClient";
 import {
   fetchCandidateProfile,
-  fetchCandidateAssessmentHistory,
   signOutCandidate,
-  TestAttempt,
 } from "@/lib/candidateService";
 import { CandidateProfileData } from "@/components/mui/MuiProfileModal";
-import { MuiProctoredAssessmentModal } from "@/components/mui/MuiProctoredAssessmentModal";
+import { MuiDemoAssessmentModal } from "@/components/mui/MuiDemoAssessmentModal";
+import { MainsExamPanel, OFFICIAL_MAINS_SET_ID } from "@/components/exam/MainsExamPanel";
+import {
+  completeDemo,
+  fetchDemoStatus,
+  fetchHistory,
+  type HistoryItem,
+} from "@/lib/exams/client";
 
 export default function CandidateProfileDashboardPage() {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
-  const [activeTab, setActiveTab] = useState<"overview" | "mock_tests" | "assessments" | "dossier" | "partners" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "mains_exam" | "mock_tests" | "assessments" | "dossier" | "partners" | "settings">("overview");
   const [currentUser, setCurrentUser] = useState<CandidateProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [history, setHistory] = useState<TestAttempt[]>([]);
-  const [averageScore, setAverageScore] = useState(0);
-  const [totalTests, setTotalTests] = useState(0);
-  const [passRate, setPassRate] = useState(0);
-  const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
+  const [, setLoading] = useState(true);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [demoCompleted, setDemoCompleted] = useState(false);
+  const [demoStatusLoaded, setDemoStatusLoaded] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Load candidate profile from Supabase Auth & public.candidates table
   useEffect(() => {
     let isMounted = true;
+
+    // Server-verified facts: demo gate status + scored attempt history.
+    async function loadServerData() {
+      try {
+        const [demo, historyResponse] = await Promise.all([fetchDemoStatus(), fetchHistory()]);
+        if (isMounted) {
+          setDemoCompleted(demo.completed);
+          setHistory(historyResponse.attempts);
+        }
+      } catch (err) {
+        // Not signed in yet (or the session expired): leave the gate closed.
+        console.debug("Server exam data unavailable:", err);
+      } finally {
+        if (isMounted) setDemoStatusLoaded(true);
+      }
+    }
 
     async function loadCandidate() {
       try {
@@ -80,8 +96,6 @@ export default function CandidateProfileDashboardPage() {
             cachedParsed = JSON.parse(cached);
             if (isMounted && cachedParsed) {
               setCurrentUser(cachedParsed);
-              const cid = cachedParsed.candidateId || cachedParsed.candidate_id;
-              if (cid) loadHistory(cid);
             }
           } catch (e) {
             console.debug("Failed parsing cached candidate:", e);
@@ -105,35 +119,20 @@ export default function CandidateProfileDashboardPage() {
             if (typeof window !== "undefined" && profile) {
               localStorage.setItem("cl_candidate", JSON.stringify(loadedUser));
             }
-            const cid = loadedUser.candidateId || loadedUser.candidate_id;
-            if (cid) {
-              loadHistory(cid);
-            }
           }
         } else {
-          // If no active auth session, look up by cached candidate email, or most recent candidate record
+          // No session: only a cached email can identify a profile. Never fall
+          // back to "most recent row" — that shows another account's data.
           const targetEmail = cachedParsed?.email || undefined;
-          let profile = null;
-          if (targetEmail) {
-            profile = await fetchCandidateProfile(undefined, undefined, targetEmail);
-          }
-          if (!profile) {
-            const { data: recentCandidate } = await supabase
-              .from("candidates")
-              .select("*")
-              .order("created_at", { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            profile = recentCandidate;
-          }
+          const profile = targetEmail
+            ? await fetchCandidateProfile(undefined, undefined, targetEmail)
+            : null;
 
           if (isMounted && profile) {
             setCurrentUser(profile);
             if (typeof window !== "undefined") {
               localStorage.setItem("cl_candidate", JSON.stringify(profile));
             }
-            const cid = profile.candidate_id || profile.candidateId;
-            if (cid) loadHistory(cid);
           }
         }
       } catch (err) {
@@ -143,26 +142,21 @@ export default function CandidateProfileDashboardPage() {
       }
     }
 
-    async function loadHistory(cid: string) {
-      const res = await fetchCandidateAssessmentHistory(cid);
-      if (isMounted) {
-        setHistory(res.history);
-        setAverageScore(res.averageScore);
-        setTotalTests(res.totalTests);
-        setPassRate(res.passRate);
-      }
-    }
-
     loadCandidate();
+    loadServerData();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user && isMounted) {
         const p = await fetchCandidateProfile(session.user.id, undefined, session.user.email);
         if (isMounted && p) {
           setCurrentUser(p);
-          const cid = p.candidate_id || p.candidateId;
-          if (cid) loadHistory(cid);
         }
+        loadServerData();
+      }
+      if (!session?.user && isMounted) {
+        // Signed out: close the gate and drop cached scores.
+        setDemoCompleted(false);
+        setHistory([]);
       }
     });
 
@@ -201,7 +195,56 @@ export default function CandidateProfileDashboardPage() {
       : undefined;
   const resumeUrl = currentUser?.resume_url;
   const resumeName = currentUser?.resumeName || currentUser?.resume_name || `${fullName.replace(/\s+/g, "_")}_Resume.pdf`;
-  const attemptsLeft = Math.max(0, 2 - totalTests);
+
+  // The demo gate is a server fact (public.demo_completions), never localStorage.
+  const isDemoCompleted = demoCompleted;
+
+  const scoredHistory = history.filter(
+    (attempt) => attempt.status !== "in_progress" && attempt.score !== null
+  );
+
+  // "Weekly Mock Average" = average percentage across scored practice sets only.
+  const practiceScored = scoredHistory.filter((attempt) => attempt.setId !== OFFICIAL_MAINS_SET_ID);
+  const weeklyMockAverage =
+    practiceScored.length > 0
+      ? Math.round(
+          practiceScored.reduce((total, attempt) => total + (attempt.percentage ?? 0), 0) /
+            practiceScored.length
+        )
+      : null;
+  const totalTests = practiceScored.length;
+
+  // Official mains attempts come from the server attempt table, not the legacy
+  // candidate_assessments table.
+  const mainsAttemptsUsed = history.filter(
+    (attempt) => attempt.setId === OFFICIAL_MAINS_SET_ID && attempt.status !== "in_progress"
+  ).length;
+  const mainsAttemptsLeft = Math.max(0, 2 - mainsAttemptsUsed);
+
+  const handleStartMainsExam = () => {
+    if (!isDemoCompleted) {
+      setIsDemoModalOpen(true);
+      return;
+    }
+    // Real, server-verified runner (fullscreen, mark-for-review, server clock).
+    router.push(`/exam/${OFFICIAL_MAINS_SET_ID}`);
+  };
+
+  const handleCompleteDemo = async () => {
+    try {
+      await completeDemo();
+      setDemoCompleted(true);
+      setIsDemoModalOpen(false);
+      setActiveTab("mains_exam");
+    } catch (error) {
+      // Never unlock optimistically: the server is the source of truth.
+      console.error("Could not record demo completion:", error);
+      if (typeof window !== "undefined") {
+        window.alert("Could not save your demo completion. Check your connection and try again.");
+      }
+    }
+  };
+
   const is1on1User =
     Boolean(currentUser?.partner_route?.includes("8,999")) ||
     Boolean(currentUser?.partner_route?.includes("1-on-1")) ||
@@ -236,16 +279,33 @@ export default function CandidateProfileDashboardPage() {
             {/* Quick Action: Take/Retake Test */}
             <Button
               size="sm"
-              onClick={() => setIsAssessmentOpen(true)}
-              disabled={totalTests >= 2}
+              onClick={handleStartMainsExam}
+              disabled={!demoStatusLoaded || (isDemoCompleted && mainsAttemptsUsed >= 2)}
               className={`text-xs font-medium h-8 px-3 ${
-                totalTests >= 2
+                !isDemoCompleted
+                  ? "bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold shadow-sm"
+                  : mainsAttemptsUsed >= 2
                   ? "bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100 border border-slate-200"
                   : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
-              <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
-              {totalTests >= 2 ? "Test Completed (2/2)" : totalTests === 1 ? "Retake Test (2/2)" : "Take Assessment"}
+              {!demoStatusLoaded ? (
+                "Checking access…"
+              ) : !isDemoCompleted ? (
+                <>
+                  <School className="w-3.5 h-3.5 mr-1.5" />
+                  Take Demo Set (Required)
+                </>
+              ) : (
+                <>
+                  <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
+                  {mainsAttemptsUsed >= 2
+                    ? "Mains Completed (2/2)"
+                    : mainsAttemptsUsed === 1
+                    ? "Retake Mains Exam (2/2)"
+                    : "Take Mains Exam"}
+                </>
+              )}
             </Button>
 
             {/* User Avatar & Menu */}
@@ -328,13 +388,19 @@ export default function CandidateProfileDashboardPage() {
                   <div className="space-y-1">
                     {[
                       { id: "overview", label: "Dashboard", icon: Layers },
+                      {
+                        id: "mains_exam",
+                        label: "Mains Exam",
+                        icon: Award,
+                        badge: "Server-verified",
+                      },
                       { id: "mock_tests", label: "Mock Test Series", icon: FileText },
-                      { id: "assessments", label: "Proctored Final Attempts", icon: Shield },
                       { id: "dossier", label: "Verified Dossier", icon: FileText },
                       { id: "partners", label: "Recruiter Pipeline", icon: Building2 },
                       { id: "settings", label: "Account Settings", icon: Settings },
                     ].map((item) => {
                       const Icon = item.icon;
+                      const isSelected = activeTab === item.id || (item.id === "mains_exam" && activeTab === "assessments");
                       return (
                         <button
                           key={item.id}
@@ -342,14 +408,29 @@ export default function CandidateProfileDashboardPage() {
                             setActiveTab(item.id as typeof activeTab);
                             setMobileMenuOpen(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
-                            activeTab === item.id
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-colors ${
+                            isSelected
                               ? "bg-slate-900 text-white"
                               : "text-slate-600 hover:bg-slate-100"
                           }`}
                         >
-                          <Icon className="w-4 h-4" />
-                          {item.label}
+                          <div className="flex items-center gap-3">
+                            <Icon className="w-4 h-4" />
+                            <span>{item.label}</span>
+                          </div>
+                          {item.badge && (
+                            <span
+                              className={`text-[10px] font-medium px-1.5 py-0.2 rounded ${
+                                isSelected
+                                  ? "bg-white/20 text-white"
+                                  : isDemoCompleted
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : "bg-amber-50 text-amber-700"
+                              }`}
+                            >
+                              {item.badge}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -424,6 +505,12 @@ export default function CandidateProfileDashboardPage() {
             <CardContent className="p-2 space-y-0.5">
               {[
                 { id: "overview", label: "Overview", icon: Layers },
+                {
+                  id: "mains_exam",
+                  label: "Mains Exam",
+                  icon: Award,
+                  badge: "Server-verified",
+                },
                 { id: "mock_tests", label: "Weekly Mocks & Scores", icon: FileText, badge: "Weekly" },
                 { id: "dossier", label: "Resume & Dossier Audit", icon: FileText, badge: "Verified" },
                 { id: "mentorship", label: "Mentorship Sessions", icon: Shield, badge: "Live" },
@@ -431,7 +518,7 @@ export default function CandidateProfileDashboardPage() {
                 { id: "settings", label: "Account Settings", icon: Settings },
               ].map((item) => {
                 const Icon = item.icon;
-                const isSelected = activeTab === item.id;
+                const isSelected = activeTab === item.id || (item.id === "mains_exam" && activeTab === "assessments");
                 return (
                   <button
                     key={item.id}
@@ -466,17 +553,19 @@ export default function CandidateProfileDashboardPage() {
 
             <div className="p-3 bg-slate-50 rounded-b-lg">
               <div className="flex items-center justify-between text-xs mb-1.5 text-slate-600">
-                <span className="font-medium">Final Test Attempts</span>
-                <span className="font-mono text-slate-800">{totalTests} / 2</span>
+                <span className="font-medium">Proctored Assessment Attempts</span>
+                <span className="font-mono text-slate-800">{mainsAttemptsUsed} / 2</span>
               </div>
               <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                 <div
                   className="bg-blue-600 h-full rounded-full transition-all"
-                  style={{ width: `${(totalTests / 2) * 100}%` }}
+                  style={{ width: `${(mainsAttemptsUsed / 2) * 100}%` }}
                 />
               </div>
               <p className="text-[11px] text-slate-400 mt-1.5">
-                Multiple final proctored attempts allowed; highest score automatically populates your verified dossier.
+                {!isDemoCompleted
+                  ? "🔒 Complete Demo Set first to unlock your 2 proctored Mains attempts."
+                  : "Highest score automatically populates your verified dossier."}
               </p>
             </div>
           </Card>
@@ -508,20 +597,69 @@ export default function CandidateProfileDashboardPage() {
                     <div className="flex flex-col sm:items-end gap-1.5 shrink-0">
                       <Button
                         size="sm"
-                        onClick={() => setIsAssessmentOpen(true)}
-                        disabled={totalTests >= 2}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 px-4"
+                        onClick={handleStartMainsExam}
+                        disabled={!demoStatusLoaded || (isDemoCompleted && mainsAttemptsUsed >= 2)}
+                        className={`font-medium text-xs h-9 px-4 ${
+                          !isDemoCompleted
+                            ? "bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold shadow-sm"
+                            : "bg-blue-600 hover:bg-blue-700 text-white"
+                        }`}
                       >
-                        <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
-                        {totalTests >= 2 ? "2/2 Attempts Used" : totalTests === 1 ? "Retake Assessment" : "Take Assessment"}
+                        {!demoStatusLoaded ? (
+                          "Checking access…"
+                        ) : !isDemoCompleted ? (
+                          <>
+                            <School className="w-3.5 h-3.5 mr-1.5" />
+                            Take Demo Set (Unlock Mains)
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
+                            {mainsAttemptsUsed >= 2
+                              ? "2/2 Attempts Used"
+                              : mainsAttemptsUsed === 1
+                              ? "Retake Mains Exam"
+                              : "Take Mains Exam"}
+                          </>
+                        )}
                       </Button>
                       <span className="text-[11px] text-slate-400">
-                        {attemptsLeft} attempts remaining
+                        {!demoStatusLoaded
+                          ? "Checking your access…"
+                          : !isDemoCompleted
+                          ? "Required before Mains Exam"
+                          : `${mainsAttemptsLeft} attempts remaining`}
                       </span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Locked Demo Prerequisite Notice if demo not yet completed */}
+              {!isDemoCompleted && (
+                <div className="p-4 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-300 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900">
+                        Mains Examination Locked — Demo Set Required
+                      </h4>
+                      <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                        To preserve your official attempts, all candidates must complete the 3-minute interactive Demo Walkthrough to calibrate AI proctoring and exam navigation before taking the scored Mains Exam.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => setIsDemoModalOpen(true)}
+                    className="bg-slate-950 hover:bg-slate-800 text-amber-400 font-bold text-xs h-8 px-4 shrink-0 shadow-sm"
+                  >
+                    Start Demo Set
+                  </Button>
+                </div>
+              )}
 
               {/* 3 Real Metric Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -529,10 +667,12 @@ export default function CandidateProfileDashboardPage() {
                   <CardContent className="p-4">
                     <p className="text-xs font-medium text-slate-500">Weekly Mock Average</p>
                     <div className="text-2xl font-bold text-slate-900 mt-1">
-                      {totalTests > 0 ? `${averageScore}%` : "84% (Peak)"}
+                      {weeklyMockAverage !== null ? `${weeklyMockAverage}%` : "—"}
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Tracked by internal assessment team
+                      {totalTests > 0
+                        ? `Average of ${totalTests} scored practice ${totalTests === 1 ? "mock" : "mocks"}`
+                        : "No scored practice mocks yet"}
                     </p>
                   </CardContent>
                 </Card>
@@ -541,10 +681,10 @@ export default function CandidateProfileDashboardPage() {
                   <CardContent className="p-4">
                     <p className="text-xs font-medium text-slate-500">Resume Status</p>
                     <div className="text-2xl font-bold text-emerald-600 mt-1">
-                      Optimized
+                      Processing
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Optimized &amp; Ready for Dispatch
+                      Pending Verification 
                     </p>
                   </CardContent>
                 </Card>
@@ -584,7 +724,7 @@ export default function CandidateProfileDashboardPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setActiveTab("assessments")}
+                    onClick={() => setActiveTab("mains_exam")}
                     className="text-xs font-medium text-blue-600 hover:text-blue-700 h-8"
                   >
                     View All
@@ -596,15 +736,30 @@ export default function CandidateProfileDashboardPage() {
                       <Shield className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                       <p className="font-medium text-xs text-slate-700">No Assessment Records Yet</p>
                       <p className="text-xs text-slate-400 max-w-sm mx-auto mt-0.5 mb-3">
-                        Take the 5-question evaluation to record your score.
+                        {!isDemoCompleted
+                          ? "Take the interactive Demo Set to unlock your official Mains Exam."
+                          : "Take a scored test to record your first server-verified score."}
                       </p>
                       <Button
                         size="sm"
-                        onClick={() => setIsAssessmentOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8"
+                        onClick={handleStartMainsExam}
+                        className={`font-medium text-xs h-8 ${
+                          !isDemoCompleted
+                            ? "bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold"
+                            : "bg-blue-600 hover:bg-blue-700 text-white"
+                        }`}
                       >
-                        <PlayCircle className="w-3.5 h-3.5 mr-1" />
-                        Start Test
+                        {!isDemoCompleted ? (
+                          <>
+                            <School className="w-3.5 h-3.5 mr-1" />
+                            Start Demo Set
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="w-3.5 h-3.5 mr-1" />
+                            Start Mains Exam
+                          </>
+                        )}
                       </Button>
                     </div>
                   ) : (
@@ -619,27 +774,37 @@ export default function CandidateProfileDashboardPage() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {history.slice(0, 3).map((item, idx) => (
-                            <TableRow key={item.id || idx} className="border-slate-100">
+                          {history.slice(0, 3).map((item) => (
+                            <TableRow key={item.attemptId} className="border-slate-100">
                               <TableCell className="text-xs text-slate-500 font-mono py-2.5">
-                                {new Date(item.completed_at).toLocaleDateString("en-IN", {
+                                {new Date(item.submittedAt ?? item.startedAt).toLocaleDateString("en-IN", {
                                   day: "2-digit",
                                   month: "short",
                                   year: "numeric",
                                 })}
                               </TableCell>
                               <TableCell className="text-xs text-slate-800 py-2.5">
-                                {item.test_title}
+                                {item.setTitle}
                               </TableCell>
                               <TableCell className="text-xs text-center py-2.5">
-                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
-                                  item.score >= 60 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold tabular-nums ${
+                                  item.passed === true
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : item.passed === false
+                                    ? "bg-amber-50 text-amber-700"
+                                    : "bg-slate-50 text-slate-500"
                                 }`}>
-                                  {item.score} / {item.total_score || 100}
+                                  {item.score === null ? "—" : `${item.score} / ${item.maxMarks}`}
                                 </span>
                               </TableCell>
                               <TableCell className="text-xs text-slate-600 py-2.5">
-                                {item.score >= 60 ? "Passed" : "Needs Review"}
+                                {item.status === "in_progress"
+                                  ? "In progress"
+                                  : item.status === "expired"
+                                  ? "Time expired"
+                                  : item.passed === true
+                                  ? "Passed"
+                                  : "Needs practice"}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -652,155 +817,14 @@ export default function CandidateProfileDashboardPage() {
             </div>
           )}
 
-          {/* TAB: MOCK TESTS */}
+          {/* TAB: WEEKLY MOCKS — real practice sets + their verified scores */}
           {activeTab === "mock_tests" && (
-            <div className="space-y-5">
-              <Card className="border-slate-200 shadow-none bg-white">
-                <CardHeader className="p-4 sm:p-5 border-b border-slate-100">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
-                        CareerLoop Pro Mock Test Series
-                      </CardTitle>
-                      <CardDescription className="text-xs text-slate-500">
-                        Practice modules tailored to enterprise engineering &amp; industrial criteria
-                      </CardDescription>
-                    </div>
-                    <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-emerald-50 text-emerald-700 border-emerald-300">
-                      Pro Access Active
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4 sm:p-5 space-y-3">
-                  {[
-                    { title: "Metrology & Mechanical Inspection Mock Test", questions: "15 Questions", duration: "20 Mins", status: "Ready" },
-                    { title: "Industrial Safety & 5S Operational Readiness", questions: "15 Questions", duration: "20 Mins", status: "Ready" },
-                    { title: "Electrical Circuits & EV Battery Packaging Practice", questions: "15 Questions", duration: "20 Mins", status: "Ready" },
-                    { title: "Full-Length Proctored Simulation Mock", questions: "30 Questions", duration: "45 Mins", status: "Ready" },
-                  ].map((mock, i) => (
-                    <div key={i} className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <h4 className="font-semibold text-xs text-slate-900">{mock.title}</h4>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{mock.questions} • {mock.duration} • Domain Specific</p>
-                      </div>
-                      <Button
-                        size="sm"
-                        onClick={() => setIsAssessmentOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8 px-4 self-start sm:self-center"
-                      >
-                        Start Practice
-                      </Button>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
+            <MainsExamPanel scope="practice" onStartDemo={() => setIsDemoModalOpen(true)} />
           )}
 
-          {/* TAB 2: ASSESSMENTS & LOGS */}
-          {activeTab === "assessments" && (
-            <div className="space-y-5">
-              <Card className="border-slate-200 shadow-none bg-white">
-                <CardHeader className="p-4 sm:p-5 border-b border-slate-100">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <CardTitle className="text-sm sm:text-base font-semibold text-slate-900">
-                        Assessment Records
-                      </CardTitle>
-                      <CardDescription className="text-xs text-slate-500">
-                        History of proctored evaluations and recorded results
-                      </CardDescription>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs px-2 py-1 rounded bg-slate-100 text-slate-600 font-medium">
-                        Attempts: {totalTests} / 2
-                      </span>
-                      <Button
-                        size="sm"
-                        onClick={() => setIsAssessmentOpen(true)}
-                        disabled={totalTests >= 2}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8"
-                      >
-                        <PlayCircle className="w-3.5 h-3.5 mr-1.5" />
-                        {totalTests >= 2 ? "Completed" : totalTests === 1 ? "Retake Test" : "Take Assessment"}
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="p-4 sm:p-5 space-y-4">
-                  {totalTests >= 2 && (
-                    <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
-                      <Lock className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="font-medium text-xs text-slate-800">Attempt Limit Reached</h4>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          Both permitted attempts have been completed. Your highest verified score ({averageScore}%) is recorded.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="border-slate-100 bg-slate-50/50">
-                          <TableHead className="text-xs font-medium text-slate-600">Timestamp</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Evaluation</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600 text-center">Score</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Status</TableHead>
-                          <TableHead className="text-xs font-medium text-slate-600">Integrity</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {history.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={5} className="text-center py-8 text-xs text-slate-400">
-                              No assessment records logged. Click "Take Assessment" to begin.
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          history.map((test, index) => (
-                            <TableRow key={test.id || index} className="border-slate-100 hover:bg-slate-50/50">
-                              <TableCell className="text-xs font-mono text-slate-500 py-3">
-                                {new Date(test.completed_at).toLocaleString("en-IN", {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
-                              </TableCell>
-                              <TableCell className="text-xs font-medium text-slate-800 py-3">
-                                {test.test_title}
-                              </TableCell>
-                              <TableCell className="text-center py-3">
-                                <span
-                                  className={`inline-block px-2.5 py-0.5 rounded text-xs font-semibold ${
-                                    test.score >= 60 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                                  }`}
-                                >
-                                  {test.score} / {test.total_score || 100}
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-xs font-medium py-3 text-slate-700">
-                                {test.score >= 60 ? "Passed" : "Under Review"}
-                              </TableCell>
-                              <TableCell className="py-3">
-                                <span className="text-xs text-slate-500 font-mono">
-                                  {test.integrity_flags || 0} flags
-                                </span>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          {/* TAB 2: MAINS EXAM — REAL SERVER-VERIFIED RUNNER */}
+          {(activeTab === "mains_exam" || activeTab === "assessments") && (
+            <MainsExamPanel scope="mains" onStartDemo={() => setIsDemoModalOpen(true)} />
           )}
 
           {/* TAB 3: CANDIDATE DOSSIER */}
@@ -943,7 +967,7 @@ export default function CandidateProfileDashboardPage() {
                   <div className="mt-4 flex gap-2">
                     <Button
                       size="sm"
-                      onClick={() => setActiveTab("assessments")}
+                      onClick={() => setActiveTab("mains_exam")}
                       className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-8 px-4"
                     >
                       View Best Score Dossier
@@ -989,12 +1013,12 @@ export default function CandidateProfileDashboardPage() {
         </main>
       </div>
 
-      {/* Embedded Proctored Assessment Room */}
-      <MuiProctoredAssessmentModal
-        isOpen={isAssessmentOpen}
-        onClose={() => setIsAssessmentOpen(false)}
-        candidateData={currentUser}
-        onViewProfile={() => setIsAssessmentOpen(false)}
+      {/* Mandatory Demo Orientation Walkthrough */}
+      <MuiDemoAssessmentModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+        onComplete={handleCompleteDemo}
+        candidateName={fullName}
       />
     </div>
   );

@@ -1,0 +1,487 @@
+{
+  "id": "careerloop-english-01",
+  "title": "CareerLoop English & Comprehension — Set 01",
+  "examType": "careerloop_english",
+  "patternNote": "CareerLoop placement pattern: an English-heavy paper with short reasoning, quant and General Awareness modules. 30 original questions written for CareerLoop / 30 minutes / +1 per correct / −0.25 per wrong.",
+  "durationSeconds": 1800,
+  "marksPerQuestion": 1,
+  "negativeMarks": 0.25,
+  "attemptCap": 2,
+  "reviewPolicy": "after_submit",
+  "sections": [
+    {
+      "id": "english",
+      "title": "English Language",
+      "questions": [
+        {
+          "id": "cl-eng-e-01",
+          "subject": "English",
+          "stem": "Choose the word closest in meaning to 'candid'.",
+          "options": [
+            "Secretive",
+            "Frank",
+            "Rude",
+            "Shy"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Candid' means honest and direct, so 'frank' is the closest synonym.",
+          "difficulty": "medium",
+          "topic": "Synonyms"
+        },
+        {
+          "id": "cl-eng-e-02",
+          "subject": "English",
+          "stem": "Choose the word most opposite in meaning to 'scarce'.",
+          "options": [
+            "Rare",
+            "Limited",
+            "Abundant",
+            "Insufficient"
+          ],
+          "correctIndex": 2,
+          "explanation": "'Scarce' means in short supply; its opposite is 'abundant'.",
+          "difficulty": "easy",
+          "topic": "Antonyms"
+        },
+        {
+          "id": "cl-eng-e-03",
+          "subject": "English",
+          "stem": "Choose the word closest in meaning to 'meticulous'.",
+          "options": [
+            "Careless",
+            "Careful",
+            "Quick",
+            "Rude"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Meticulous' means showing great attention to detail, so 'careful' is the synonym.",
+          "difficulty": "medium",
+          "topic": "Synonyms"
+        },
+        {
+          "id": "cl-eng-e-04",
+          "subject": "English",
+          "stem": "Choose the word most opposite in meaning to 'obscure'.",
+          "options": [
+            "Unclear",
+            "Hidden",
+            "Clear",
+            "Vague"
+          ],
+          "correctIndex": 2,
+          "explanation": "'Obscure' means unclear or hard to understand; its antonym is 'clear'.",
+          "difficulty": "easy",
+          "topic": "Antonyms"
+        },
+        {
+          "id": "cl-eng-e-05",
+          "subject": "English",
+          "stem": "What does the idiom 'to burn the midnight oil' mean?",
+          "options": [
+            "To sleep early",
+            "To waste time",
+            "To work late into the night",
+            "To travel at night"
+          ],
+          "correctIndex": 2,
+          "explanation": "The idiom refers to studying or working late into the night, from the days of oil lamps.",
+          "difficulty": "easy",
+          "topic": "Idioms"
+        },
+        {
+          "id": "cl-eng-e-06",
+          "subject": "English",
+          "stem": "One word for 'a speech made without preparation' is:",
+          "options": [
+            "Oration",
+            "Extempore",
+            "Eulogy",
+            "Debate"
+          ],
+          "correctIndex": 1,
+          "explanation": "An 'extempore' speech is delivered without prior preparation.",
+          "difficulty": "medium",
+          "topic": "One-word substitution"
+        },
+        {
+          "id": "cl-eng-e-07",
+          "subject": "English",
+          "stem": "Fill in the blank: Neither of the boys ______ present.",
+          "options": [
+            "were",
+            "was",
+            "have",
+            "are"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Neither of' takes a singular verb, so 'was' is correct.",
+          "difficulty": "medium",
+          "topic": "Subject-verb agreement"
+        },
+        {
+          "id": "cl-eng-e-08",
+          "subject": "English",
+          "stem": "Fill in the blank: He is senior ______ me.",
+          "options": [
+            "than",
+            "to",
+            "from",
+            "with"
+          ],
+          "correctIndex": 1,
+          "explanation": "Adjectives such as senior, junior, superior and inferior take 'to', not 'than'.",
+          "difficulty": "medium",
+          "topic": "Prepositions"
+        },
+        {
+          "id": "cl-eng-e-09",
+          "subject": "English",
+          "stem": "Identify the grammatically incorrect part: (A) She is one of the best (B) singer (C) in the class (D) No error",
+          "options": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "correctIndex": 1,
+          "explanation": "After 'one of the best' a plural noun is required: 'one of the best singers in the class'.",
+          "difficulty": "medium",
+          "topic": "Error spotting"
+        },
+        {
+          "id": "cl-eng-e-10",
+          "subject": "English",
+          "stem": "Choose the correct passive form of: 'The teacher praised him.'",
+          "options": [
+            "He praised the teacher.",
+            "He was praised by the teacher.",
+            "He is praised the teacher.",
+            "He was praising the teacher."
+          ],
+          "correctIndex": 1,
+          "explanation": "The past-tense active sentence becomes 'He was praised by the teacher' in the passive voice.",
+          "difficulty": "easy",
+          "topic": "Active and passive voice"
+        },
+        {
+          "id": "cl-eng-e-11",
+          "subject": "English",
+          "stem": "Choose the correctly spelt word.",
+          "options": [
+            "Occurence",
+            "Ocurrence",
+            "Occurrence",
+            "Occurrance"
+          ],
+          "correctIndex": 2,
+          "explanation": "The correct spelling is 'occurrence' — double c, double r, and 'ence' at the end.",
+          "difficulty": "medium",
+          "topic": "Spelling"
+        },
+        {
+          "id": "cl-eng-e-12",
+          "subject": "English",
+          "stem": "Choose the correct indirect speech: He said, 'I am busy.'",
+          "options": [
+            "He said that he is busy.",
+            "He said that he was busy.",
+            "He says that he was busy.",
+            "He said that I am busy."
+          ],
+          "correctIndex": 1,
+          "explanation": "In indirect speech the present tense of the quoted sentence shifts to the past: 'He said that he was busy.'",
+          "difficulty": "medium",
+          "topic": "Direct and indirect speech"
+        },
+        {
+          "id": "cl-eng-e-13",
+          "subject": "English",
+          "stem": "Choose the word most opposite in meaning to 'generous'.",
+          "options": [
+            "Kind",
+            "Liberal",
+            "Miserly",
+            "Helpful"
+          ],
+          "correctIndex": 2,
+          "explanation": "'Generous' means willing to give freely; its opposite is 'miserly'. 'Kind' and 'liberal' are synonyms.",
+          "difficulty": "medium",
+          "topic": "Antonyms"
+        },
+        {
+          "id": "cl-eng-e-14",
+          "subject": "English",
+          "stem": "Fill in the blank: Hardly had I reached the station ______ the train left.",
+          "options": [
+            "than",
+            "when",
+            "then",
+            "that"
+          ],
+          "correctIndex": 1,
+          "explanation": "The fixed pair is 'hardly had ... when'. 'No sooner' is the construction that takes 'than'.",
+          "difficulty": "medium",
+          "topic": "Sentence connectors"
+        }
+      ]
+    },
+    {
+      "id": "reasoning",
+      "title": "Logical Reasoning",
+      "questions": [
+        {
+          "id": "cl-eng-r-01",
+          "subject": "Reasoning",
+          "stem": "Find the next number: 11, 13, 17, 19, ?",
+          "options": [
+            "21",
+            "23",
+            "25",
+            "27"
+          ],
+          "correctIndex": 1,
+          "explanation": "The series lists consecutive prime numbers, so the next prime after 19 is 23.",
+          "difficulty": "easy",
+          "topic": "Number series"
+        },
+        {
+          "id": "cl-eng-r-02",
+          "subject": "Reasoning",
+          "stem": "Find the odd one out: 16, 25, 36, 49, 60",
+          "options": [
+            "16",
+            "25",
+            "36",
+            "60"
+          ],
+          "correctIndex": 3,
+          "explanation": "16, 25, 36 and 49 are perfect squares (4², 5², 6², 7²). 60 is not a perfect square.",
+          "difficulty": "easy",
+          "topic": "Odd one out"
+        },
+        {
+          "id": "cl-eng-r-03",
+          "subject": "Reasoning",
+          "stem": "If PEN is coded as QFO, how is BOOK coded in the same code?",
+          "options": [
+            "CPPL",
+            "CPPM",
+            "CQPL",
+            "BPPL"
+          ],
+          "correctIndex": 0,
+          "explanation": "Each letter moves one place forward: B→C, O→P, O→P, K→L, giving CPPL.",
+          "difficulty": "easy",
+          "topic": "Coding-decoding"
+        },
+        {
+          "id": "cl-eng-r-04",
+          "subject": "Reasoning",
+          "stem": "A person facing south turns left. Which direction is he facing now?",
+          "options": [
+            "North",
+            "South",
+            "East",
+            "West"
+          ],
+          "correctIndex": 2,
+          "explanation": "Facing south, a left turn (anti-clockwise) points east.",
+          "difficulty": "easy",
+          "topic": "Direction sense"
+        },
+        {
+          "id": "cl-eng-r-05",
+          "subject": "Reasoning",
+          "stem": "Bird : Nest :: Bee : ?",
+          "options": [
+            "Web",
+            "Hive",
+            "Burrow",
+            "Cave"
+          ],
+          "correctIndex": 1,
+          "explanation": "A bird lives in a nest and a bee lives in a hive.",
+          "difficulty": "easy",
+          "topic": "Analogy"
+        },
+        {
+          "id": "cl-eng-r-06",
+          "subject": "Reasoning",
+          "stem": "'The son of my father's sister' is related to me as my:",
+          "options": [
+            "Brother",
+            "Cousin",
+            "Uncle",
+            "Nephew"
+          ],
+          "correctIndex": 1,
+          "explanation": "My father's sister is my aunt, and her son is my cousin.",
+          "difficulty": "easy",
+          "topic": "Blood relations"
+        }
+      ]
+    },
+    {
+      "id": "quant",
+      "title": "Quantitative Aptitude",
+      "questions": [
+        {
+          "id": "cl-eng-q-01",
+          "subject": "Quantitative Aptitude",
+          "stem": "What is 12.5% of 800?",
+          "options": [
+            "80",
+            "90",
+            "100",
+            "120"
+          ],
+          "correctIndex": 2,
+          "explanation": "12.5% is one-eighth, and 800 ÷ 8 = 100.",
+          "difficulty": "easy",
+          "topic": "Percentage"
+        },
+        {
+          "id": "cl-eng-q-02",
+          "subject": "Quantitative Aptitude",
+          "stem": "Two numbers are in the ratio 2 : 3 and their sum is 45. What is the smaller number?",
+          "options": [
+            "15",
+            "18",
+            "21",
+            "27"
+          ],
+          "correctIndex": 1,
+          "explanation": "The ratio parts total 5, so one part is 45 ÷ 5 = 9. The smaller number is 2 × 9 = 18.",
+          "difficulty": "easy",
+          "topic": "Ratio and proportion"
+        },
+        {
+          "id": "cl-eng-q-03",
+          "subject": "Quantitative Aptitude",
+          "stem": "The average of six numbers is 20. When a seventh number is added, the average becomes 22. What is the seventh number?",
+          "options": [
+            "30",
+            "32",
+            "34",
+            "36"
+          ],
+          "correctIndex": 2,
+          "explanation": "The original total is 6 × 20 = 120. The new total is 7 × 22 = 154, so the added number is 34.",
+          "difficulty": "medium",
+          "topic": "Average"
+        },
+        {
+          "id": "cl-eng-q-04",
+          "subject": "Quantitative Aptitude",
+          "stem": "A 90 m long train running at 36 km/h passes a pole. How long does it take?",
+          "options": [
+            "6 seconds",
+            "8 seconds",
+            "9 seconds",
+            "10 seconds"
+          ],
+          "correctIndex": 2,
+          "explanation": "36 km/h = 10 m/s. Time = 90 ÷ 10 = 9 seconds.",
+          "difficulty": "medium",
+          "topic": "Speed and distance"
+        },
+        {
+          "id": "cl-eng-q-05",
+          "subject": "Quantitative Aptitude",
+          "stem": "An article costing ₹250 is sold for ₹300. What is the profit percentage?",
+          "options": [
+            "15%",
+            "18%",
+            "20%",
+            "25%"
+          ],
+          "correctIndex": 2,
+          "explanation": "Profit = ₹50. Profit % = (50 ÷ 250) × 100 = 20%.",
+          "difficulty": "easy",
+          "topic": "Profit and loss"
+        }
+      ]
+    },
+    {
+      "id": "general-awareness",
+      "title": "General Awareness",
+      "questions": [
+        {
+          "id": "cl-eng-g-01",
+          "subject": "General Awareness",
+          "stem": "What is the capital of Canada?",
+          "options": [
+            "Toronto",
+            "Vancouver",
+            "Ottawa",
+            "Montreal"
+          ],
+          "correctIndex": 2,
+          "explanation": "Ottawa is the capital of Canada, although Toronto is its largest city.",
+          "difficulty": "easy",
+          "topic": "World geography"
+        },
+        {
+          "id": "cl-eng-g-02",
+          "subject": "General Awareness",
+          "stem": "Which is the smallest prime number?",
+          "options": [
+            "0",
+            "1",
+            "2",
+            "3"
+          ],
+          "correctIndex": 2,
+          "explanation": "2 is the smallest prime number and the only even prime. 1 is not prime and 0 is not prime.",
+          "difficulty": "easy",
+          "topic": "Basic mathematics"
+        },
+        {
+          "id": "cl-eng-g-03",
+          "subject": "General Awareness",
+          "stem": "How many bones are there in the adult human body?",
+          "options": [
+            "200",
+            "206",
+            "210",
+            "216"
+          ],
+          "correctIndex": 1,
+          "explanation": "An adult human skeleton has 206 bones. Babies are born with more, some of which fuse during growth.",
+          "difficulty": "easy",
+          "topic": "Human biology"
+        },
+        {
+          "id": "cl-eng-g-04",
+          "subject": "General Awareness",
+          "stem": "Who is credited with inventing the telephone?",
+          "options": [
+            "Thomas Edison",
+            "Alexander Graham Bell",
+            "Nikola Tesla",
+            "Guglielmo Marconi"
+          ],
+          "correctIndex": 1,
+          "explanation": "Alexander Graham Bell is credited with inventing the telephone and received the first patent for it in 1876.",
+          "difficulty": "easy",
+          "topic": "Science awareness"
+        },
+        {
+          "id": "cl-eng-g-05",
+          "subject": "General Awareness",
+          "stem": "Which gas is most abundant in the Earth's atmosphere?",
+          "options": [
+            "Oxygen",
+            "Carbon dioxide",
+            "Nitrogen",
+            "Hydrogen"
+          ],
+          "correctIndex": 2,
+          "explanation": "Nitrogen makes up about 78% of the atmosphere, while oxygen is about 21%.",
+          "difficulty": "easy",
+          "topic": "Science awareness"
+        }
+      ]
+    }
+  ]
+}

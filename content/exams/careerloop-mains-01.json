@@ -1,0 +1,487 @@
+{
+  "id": "careerloop-mains-01",
+  "title": "CareerLoop Mains Exam — Set 01",
+  "examType": "careerloop_mains",
+  "patternNote": "CareerLoop mains paper covering General Intelligence & Reasoning, Quantitative Aptitude, English Language and General Awareness. 30 original questions written for CareerLoop / 40 minutes / +2 per correct / −0.5 per wrong.",
+  "durationSeconds": 2400,
+  "marksPerQuestion": 2,
+  "negativeMarks": 0.5,
+  "attemptCap": 2,
+  "reviewPolicy": "after_submit",
+  "sections": [
+    {
+      "id": "reasoning",
+      "title": "General Intelligence & Reasoning",
+      "questions": [
+        {
+          "id": "cl-mains-r-01",
+          "subject": "Reasoning",
+          "stem": "Find the next number in the series: 3, 8, 15, 24, 35, ?",
+          "options": [
+            "44",
+            "46",
+            "48",
+            "50"
+          ],
+          "correctIndex": 2,
+          "explanation": "The differences are 5, 7, 9, 11 — consecutive odd numbers. The next difference is 13, so 35 + 13 = 48.",
+          "difficulty": "easy",
+          "topic": "Number series"
+        },
+        {
+          "id": "cl-mains-r-02",
+          "subject": "Reasoning",
+          "stem": "ACE : GIK :: MOQ : ?",
+          "options": [
+            "SUW",
+            "STV",
+            "RTW",
+            "SUV"
+          ],
+          "correctIndex": 0,
+          "explanation": "Each letter of the first group is moved six places forward: A→G, C→I, E→K. Applying the same shift to MOQ gives S, U, W.",
+          "difficulty": "easy",
+          "topic": "Letter analogy"
+        },
+        {
+          "id": "cl-mains-r-03",
+          "subject": "Reasoning",
+          "stem": "In a certain code TRAIN is written as USBJO. How is PLANE written in that code?",
+          "options": [
+            "QMBOF",
+            "QMBNF",
+            "QNBOF",
+            "PMBOF"
+          ],
+          "correctIndex": 0,
+          "explanation": "Every letter is replaced by the next letter of the alphabet (T→U, R→S, A→B, I→J, N→O). So P→Q, L→M, A→B, N→O, E→F, giving QMBOF.",
+          "difficulty": "easy",
+          "topic": "Coding-decoding"
+        },
+        {
+          "id": "cl-mains-r-04",
+          "subject": "Reasoning",
+          "stem": "A man walks 5 km north, turns right and walks 3 km, then turns right again and walks 5 km. How far is he from his starting point?",
+          "options": [
+            "3 km",
+            "5 km",
+            "8 km",
+            "13 km"
+          ],
+          "correctIndex": 0,
+          "explanation": "Walking 5 km north then 5 km south cancels the north-south movement. He is left 3 km to the east of the start, so the distance is 3 km.",
+          "difficulty": "medium",
+          "topic": "Direction sense"
+        },
+        {
+          "id": "cl-mains-r-05",
+          "subject": "Reasoning",
+          "stem": "Pointing to a photograph, Ravi said, 'She is the daughter of my grandfather's only son.' How is the girl in the photograph related to Ravi?",
+          "options": [
+            "Sister",
+            "Mother",
+            "Aunt",
+            "Cousin"
+          ],
+          "correctIndex": 0,
+          "explanation": "Ravi's grandfather's only son is Ravi's father. The daughter of Ravi's father is Ravi's sister.",
+          "difficulty": "medium",
+          "topic": "Blood relations"
+        },
+        {
+          "id": "cl-mains-r-06",
+          "subject": "Reasoning",
+          "stem": "Statements: All pens are books. Some books are red. Conclusions: I. Some pens are red. II. Some books are pens. Which conclusion follows?",
+          "options": [
+            "Only I follows",
+            "Only II follows",
+            "Both follow",
+            "Neither follows"
+          ],
+          "correctIndex": 1,
+          "explanation": "Conclusion II is the direct converse of 'All pens are books' and always holds. The red books need not include any pen, so conclusion I does not follow.",
+          "difficulty": "medium",
+          "topic": "Syllogism"
+        },
+        {
+          "id": "cl-mains-r-07",
+          "subject": "Reasoning",
+          "stem": "Find the odd one out: 121, 144, 169, 200",
+          "options": [
+            "121",
+            "144",
+            "169",
+            "200"
+          ],
+          "correctIndex": 3,
+          "explanation": "121 = 11², 144 = 12² and 169 = 13² are perfect squares. 200 is not a perfect square.",
+          "difficulty": "easy",
+          "topic": "Odd one out"
+        },
+        {
+          "id": "cl-mains-r-08",
+          "subject": "Reasoning",
+          "stem": "Complete the series: AZ, BY, CX, ?",
+          "options": [
+            "DW",
+            "DV",
+            "EW",
+            "CW"
+          ],
+          "correctIndex": 0,
+          "explanation": "The first letter moves forward (A, B, C, D) while the second moves backward (Z, Y, X, W). The next pair is DW.",
+          "difficulty": "easy",
+          "topic": "Letter series"
+        }
+      ]
+    },
+    {
+      "id": "quant",
+      "title": "Quantitative Aptitude",
+      "questions": [
+        {
+          "id": "cl-mains-q-01",
+          "subject": "Quantitative Aptitude",
+          "stem": "What is 15% of 480?",
+          "options": [
+            "68",
+            "72",
+            "76",
+            "80"
+          ],
+          "correctIndex": 1,
+          "explanation": "10% of 480 = 48 and 5% = 24, so 15% = 48 + 24 = 72.",
+          "difficulty": "easy",
+          "topic": "Percentage"
+        },
+        {
+          "id": "cl-mains-q-02",
+          "subject": "Quantitative Aptitude",
+          "stem": "Two numbers are in the ratio 3 : 5 and their sum is 64. What is the larger number?",
+          "options": [
+            "32",
+            "36",
+            "40",
+            "44"
+          ],
+          "correctIndex": 2,
+          "explanation": "The total of the ratio parts is 8, so one part is 64 ÷ 8 = 8. The larger number is 5 × 8 = 40.",
+          "difficulty": "easy",
+          "topic": "Ratio and proportion"
+        },
+        {
+          "id": "cl-mains-q-03",
+          "subject": "Quantitative Aptitude",
+          "stem": "The average of five numbers is 28. If one number, 40, is removed, what is the average of the remaining numbers?",
+          "options": [
+            "24",
+            "25",
+            "26",
+            "27"
+          ],
+          "correctIndex": 1,
+          "explanation": "The total is 5 × 28 = 140. Removing 40 leaves 100, and 100 ÷ 4 = 25.",
+          "difficulty": "medium",
+          "topic": "Average"
+        },
+        {
+          "id": "cl-mains-q-04",
+          "subject": "Quantitative Aptitude",
+          "stem": "A can finish a job in 12 days and B in 18 days. Working together, in how many days will they finish it?",
+          "options": [
+            "6",
+            "7.2",
+            "7.5",
+            "8"
+          ],
+          "correctIndex": 1,
+          "explanation": "Combined rate = 1/12 + 1/18 = 3/36 + 2/36 = 5/36 of the job per day. Time = 36/5 = 7.2 days.",
+          "difficulty": "medium",
+          "topic": "Time and work"
+        },
+        {
+          "id": "cl-mains-q-05",
+          "subject": "Quantitative Aptitude",
+          "stem": "A train 120 m long is running at 54 km/h. How long does it take to pass a pole?",
+          "options": [
+            "6 seconds",
+            "8 seconds",
+            "10 seconds",
+            "12 seconds"
+          ],
+          "correctIndex": 1,
+          "explanation": "54 km/h = 54 × 5/18 = 15 m/s. Time = distance ÷ speed = 120 ÷ 15 = 8 seconds.",
+          "difficulty": "medium",
+          "topic": "Speed and distance"
+        },
+        {
+          "id": "cl-mains-q-06",
+          "subject": "Quantitative Aptitude",
+          "stem": "An article costing ₹400 is sold for ₹460. What is the profit percentage?",
+          "options": [
+            "12%",
+            "15%",
+            "18%",
+            "20%"
+          ],
+          "correctIndex": 1,
+          "explanation": "Profit = 460 − 400 = 60. Profit % = (60 ÷ 400) × 100 = 15%.",
+          "difficulty": "easy",
+          "topic": "Profit and loss"
+        },
+        {
+          "id": "cl-mains-q-07",
+          "subject": "Quantitative Aptitude",
+          "stem": "Find the simple interest on ₹5,000 at 8% per annum for 3 years.",
+          "options": [
+            "₹1,000",
+            "₹1,100",
+            "₹1,200",
+            "₹1,300"
+          ],
+          "correctIndex": 2,
+          "explanation": "SI = P × R × T / 100 = 5000 × 8 × 3 / 100 = ₹1,200.",
+          "difficulty": "easy",
+          "topic": "Simple interest"
+        },
+        {
+          "id": "cl-mains-q-08",
+          "subject": "Quantitative Aptitude",
+          "stem": "What is 25% of 320 plus 40% of 150?",
+          "options": [
+            "120",
+            "130",
+            "140",
+            "150"
+          ],
+          "correctIndex": 2,
+          "explanation": "25% of 320 = 80 and 40% of 150 = 60. Their sum is 140.",
+          "difficulty": "easy",
+          "topic": "Simplification"
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "title": "English Language",
+      "questions": [
+        {
+          "id": "cl-mains-e-01",
+          "subject": "English",
+          "stem": "Choose the word closest in meaning to 'abundant'.",
+          "options": [
+            "Scarce",
+            "Plentiful",
+            "Rare",
+            "Meagre"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Abundant' means existing in large quantities, so 'plentiful' is the synonym. The other three words mean the opposite.",
+          "difficulty": "easy",
+          "topic": "Synonyms"
+        },
+        {
+          "id": "cl-mains-e-02",
+          "subject": "English",
+          "stem": "Choose the word most opposite in meaning to 'frugal'.",
+          "options": [
+            "Thrifty",
+            "Economical",
+            "Extravagant",
+            "Careful"
+          ],
+          "correctIndex": 2,
+          "explanation": "'Frugal' means sparing with money. Its opposite is 'extravagant'. 'Thrifty' and 'economical' are synonyms, not antonyms.",
+          "difficulty": "medium",
+          "topic": "Antonyms"
+        },
+        {
+          "id": "cl-mains-e-03",
+          "subject": "English",
+          "stem": "What does the idiom 'to let the cat out of the bag' mean?",
+          "options": [
+            "To create confusion",
+            "To reveal a secret",
+            "To waste an opportunity",
+            "To escape danger"
+          ],
+          "correctIndex": 1,
+          "explanation": "The idiom means to disclose something that was meant to be kept secret.",
+          "difficulty": "easy",
+          "topic": "Idioms"
+        },
+        {
+          "id": "cl-mains-e-04",
+          "subject": "English",
+          "stem": "Identify the grammatically incorrect part: (A) Each of the students (B) have submitted (C) the assignment (D) No error",
+          "options": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Each' is singular, so the verb must be singular: 'Each of the students has submitted the assignment.'",
+          "difficulty": "medium",
+          "topic": "Error spotting"
+        },
+        {
+          "id": "cl-mains-e-05",
+          "subject": "English",
+          "stem": "Fill in the blank: She has been living here ______ 2015.",
+          "options": [
+            "for",
+            "since",
+            "from",
+            "at"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Since' is used with a point in time (2015). 'For' is used with a duration, such as 'for ten years'.",
+          "difficulty": "easy",
+          "topic": "Prepositions"
+        },
+        {
+          "id": "cl-mains-e-06",
+          "subject": "English",
+          "stem": "One word for 'a person who cannot read or write' is:",
+          "options": [
+            "Literate",
+            "Illiterate",
+            "Illegible",
+            "Eligible"
+          ],
+          "correctIndex": 1,
+          "explanation": "'Illiterate' describes someone unable to read or write. 'Illegible' describes handwriting that cannot be read.",
+          "difficulty": "easy",
+          "topic": "One-word substitution"
+        },
+        {
+          "id": "cl-mains-e-07",
+          "subject": "English",
+          "stem": "Choose the correctly spelt word.",
+          "options": [
+            "Accomodation",
+            "Accommodation",
+            "Acommodation",
+            "Accommadation"
+          ],
+          "correctIndex": 1,
+          "explanation": "The correct spelling is 'accommodation', with double c and double m.",
+          "difficulty": "easy",
+          "topic": "Spelling"
+        }
+      ]
+    },
+    {
+      "id": "general-awareness",
+      "title": "General Awareness",
+      "questions": [
+        {
+          "id": "cl-mains-g-01",
+          "subject": "General Awareness",
+          "stem": "What is the capital of Australia?",
+          "options": [
+            "Sydney",
+            "Melbourne",
+            "Canberra",
+            "Perth"
+          ],
+          "correctIndex": 2,
+          "explanation": "Canberra is the capital of Australia. Sydney and Melbourne are larger cities but not the capital.",
+          "difficulty": "easy",
+          "topic": "World geography"
+        },
+        {
+          "id": "cl-mains-g-02",
+          "subject": "General Awareness",
+          "stem": "Which Article of the Indian Constitution abolishes untouchability?",
+          "options": [
+            "Article 14",
+            "Article 15",
+            "Article 17",
+            "Article 21"
+          ],
+          "correctIndex": 2,
+          "explanation": "Article 17 abolishes untouchability and forbids its practice in any form. Article 14 guarantees equality before the law.",
+          "difficulty": "medium",
+          "topic": "Indian polity"
+        },
+        {
+          "id": "cl-mains-g-03",
+          "subject": "General Awareness",
+          "stem": "Which is the largest gland in the human body?",
+          "options": [
+            "Pancreas",
+            "Liver",
+            "Thyroid",
+            "Spleen"
+          ],
+          "correctIndex": 1,
+          "explanation": "The liver is the largest gland in the human body. It produces bile and performs many metabolic functions.",
+          "difficulty": "easy",
+          "topic": "Human biology"
+        },
+        {
+          "id": "cl-mains-g-04",
+          "subject": "General Awareness",
+          "stem": "Who wrote 'The Discovery of India'?",
+          "options": [
+            "Mahatma Gandhi",
+            "Jawaharlal Nehru",
+            "Sardar Patel",
+            "Rabindranath Tagore"
+          ],
+          "correctIndex": 1,
+          "explanation": "'The Discovery of India' was written by Jawaharlal Nehru while he was imprisoned at Ahmednagar Fort.",
+          "difficulty": "easy",
+          "topic": "Indian history"
+        },
+        {
+          "id": "cl-mains-g-05",
+          "subject": "General Awareness",
+          "stem": "Which is the longest river in India?",
+          "options": [
+            "Godavari",
+            "Ganga",
+            "Brahmaputra",
+            "Yamuna"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Ganga is the longest river flowing within India. The Godavari is the longest river of peninsular India.",
+          "difficulty": "easy",
+          "topic": "Indian geography"
+        },
+        {
+          "id": "cl-mains-g-06",
+          "subject": "General Awareness",
+          "stem": "What is the chemical symbol of sodium?",
+          "options": [
+            "S",
+            "So",
+            "Na",
+            "N"
+          ],
+          "correctIndex": 2,
+          "explanation": "The chemical symbol of sodium is Na, from its Latin name 'natrium'. 'S' is the symbol for sulphur.",
+          "difficulty": "easy",
+          "topic": "Basic science"
+        },
+        {
+          "id": "cl-mains-g-07",
+          "subject": "General Awareness",
+          "stem": "Where is the headquarters of the World Trade Organization (WTO)?",
+          "options": [
+            "New York",
+            "Geneva",
+            "Paris",
+            "Vienna"
+          ],
+          "correctIndex": 1,
+          "explanation": "The WTO is headquartered in Geneva, Switzerland. It was established in 1995.",
+          "difficulty": "medium",
+          "topic": "International organisations"
+        }
+      ]
+    }
+  ]
+}

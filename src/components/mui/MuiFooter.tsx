@@ -6,7 +6,6 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 
 export function MuiFooter() {
   return (
@@ -25,19 +24,11 @@ export function MuiFooter() {
           <Grid size={{ xs: 12, md: 4 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
               <Box
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1.5,
-                  bgcolor: "primary.main",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "white",
-                }}
-              >
-                <BusinessCenterIcon fontSize="small" />
-              </Box>
+                component="img"
+                src="/careerloop-logo.png"
+                alt="CareerLoop logo"
+                sx={{ width: 32, height: 32, objectFit: "contain" }}
+              />
               <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary" }}>
                 Career<span style={{ color: "#405FE2" }}>Loop</span>
               </Typography>

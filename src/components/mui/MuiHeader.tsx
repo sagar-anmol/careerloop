@@ -15,16 +15,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
-import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PersonIcon from "@mui/icons-material/Person";
+import type { CandidateProfileData } from "./MuiProfileModal";
 
 interface MuiHeaderProps {
   onStartAssessment: () => void;
   onOpenSignup?: () => void;
-  currentUser?: { full_name?: string; [key: string]: unknown } | null;
+  currentUser?: CandidateProfileData | null;
   onOpenSignIn?: () => void;
   onSignOut?: () => void;
   onOpenProfile?: () => void;
@@ -51,7 +51,7 @@ export function MuiHeader({
       (currentUser.partner_route?.includes("8,999") ||
         currentUser.partner_route?.includes("1-on-1") ||
         currentUser.selected_plan === "mentorship_1on1" ||
-        (currentUser as any).plan_tier === "mentorship_1on1")
+        (currentUser as CandidateProfileData & { plan_tier?: string }).plan_tier === "mentorship_1on1")
   );
 
   const isProUser = Boolean(
@@ -60,7 +60,7 @@ export function MuiHeader({
       (currentUser.partner_route?.includes("4,999") ||
         currentUser.partner_route?.includes("Pro") ||
         currentUser.selected_plan === "pro_all_access" ||
-        (currentUser as any).plan_tier === "pro_all_access")
+        (currentUser as CandidateProfileData & { plan_tier?: string }).plan_tier === "pro_all_access")
   );
 
   return (
@@ -70,19 +70,11 @@ export function MuiHeader({
           {/* Brand Logo */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 2,
-                bgcolor: "primary.main",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-              }}
-            >
-              <BusinessCenterIcon fontSize="small" />
-            </Box>
+              component="img"
+              src="/careerloop-logo.png"
+              alt="CareerLoop logo"
+              sx={{ width: 40, height: 40, objectFit: "contain" }}
+            />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography
                 variant="h6"
@@ -326,9 +318,17 @@ export function MuiHeader({
         }}
       >
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Career<span style={{ color: "#405FE2" }}>Loop</span>
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box
+              component="img"
+              src="/careerloop-logo.png"
+              alt="CareerLoop logo"
+              sx={{ width: 30, height: 30, objectFit: "contain" }}
+            />
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Career<span style={{ color: "#405FE2" }}>Loop</span>
+            </Typography>
+          </Box>
           <IconButton onClick={() => setMobileOpen(false)} size="small">
             <CloseIcon />
           </IconButton>

@@ -22,58 +22,39 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Check if user already exists in auth
-    const { data: usersData, error: listErr } = await adminSupabase.auth.admin.listUsers();
-    if (listErr) {
-      console.error("List users error:", listErr);
-    }
+    // Create the account directly. Never reset the password of an existing
+    // email: that let anyone take over an account by "signing up" again.
+    // createUser is atomic, so two concurrent signups cannot both win.
+    const { data: created, error: createErr } = await adminSupabase.auth.admin.createUser({
+      email: normalizedEmail,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: fullName,
+        phone,
+        domain,
+        candidate_id: candidateId,
+      },
+    });
 
-    const existingUser = usersData?.users?.find(
-      (u) => u.email?.toLowerCase() === normalizedEmail
-    );
-
-    let authUser = existingUser;
-
-    if (existingUser) {
-      // Update existing user's password and auto-confirm email
-      const { data: updated, error: updateErr } = await adminSupabase.auth.admin.updateUserById(
-        existingUser.id,
-        {
-          password,
-          email_confirm: true,
-          user_metadata: {
-            full_name: fullName,
-            phone,
-            domain,
-            candidate_id: candidateId,
+    if (createErr) {
+      const alreadyRegistered =
+        createErr.code === "email_exists" ||
+        /already (been )?registered|already exists/i.test(createErr.message);
+      if (alreadyRegistered) {
+        return NextResponse.json(
+          {
+            error: "An account with this email already exists. Sign in instead.",
+            code: "EMAIL_TAKEN",
           },
-        }
-      );
-      if (updateErr) {
-        console.error("Update user error:", updateErr);
-      } else {
-        authUser = updated.user;
+          { status: 409 }
+        );
       }
-    } else {
-      // Create new user with confirmed email
-      const { data: created, error: createErr } = await adminSupabase.auth.admin.createUser({
-        email: normalizedEmail,
-        password,
-        email_confirm: true,
-        user_metadata: {
-          full_name: fullName,
-          phone,
-          domain,
-          candidate_id: candidateId,
-        },
-      });
-
-      if (createErr) {
-        console.error("Create user error:", createErr);
-        return NextResponse.json({ error: createErr.message }, { status: 400 });
-      }
-      authUser = created.user;
+      console.error("Create user error:", createErr);
+      return NextResponse.json({ error: createErr.message }, { status: 400 });
     }
+
+    const authUser = created.user;
 
     return NextResponse.json({
       success: true,

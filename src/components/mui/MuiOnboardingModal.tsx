@@ -27,7 +27,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PersonIcon from "@mui/icons-material/Person";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { registerCandidateDossier, CandidateRegistrationInput } from "@/lib/candidateService";
+import { registerCandidateDossier, normalizePhone, CandidateRegistrationInput } from "@/lib/candidateService";
 import { detectFaces, FaceDetectionResult } from "@/lib/faceDetectionService";
 
 export interface CandidateOnboardingData extends Partial<CandidateRegistrationInput> {
@@ -231,8 +231,8 @@ export function MuiOnboardingModal({
       errors.email = "Valid email address is required";
     if (!formData.password || formData.password.length < 6)
       errors.password = "Password must be at least 6 characters";
-    if (!formData.phone.trim() || formData.phone.length < 10)
-      errors.phone = "Valid 10-digit mobile number required";
+    if (!/^\d{10}$/.test(formData.phone))
+      errors.phone = "Enter a valid 10-digit mobile number";
     if (!formData.city.trim()) errors.city = "Current city/location is required";
     if (!formData.domain.trim()) errors.domain = "Educational qualification is required";
     if (!formData.experience.trim()) errors.experience = "Passing / experience status is required";
@@ -421,10 +421,15 @@ export function MuiOnboardingModal({
                 size="small"
                 fullWidth
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "");
+                  const next = digits.length > 10 ? normalizePhone(digits) : digits;
+                  setFormData({ ...formData, phone: next.slice(0, 10) });
+                }}
                 error={Boolean(formErrors.phone)}
-                helperText={formErrors.phone}
+                helperText={formErrors.phone || "10 digits, digits only"}
                 placeholder="10-digit number"
+                slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 10, autoComplete: "tel" } }}
                 required
               />
               <TextField
@@ -451,11 +456,7 @@ export function MuiOnboardingModal({
                 error={Boolean(formErrors.domain)}
                 helperText={formErrors.domain}
                 required
-                displayEmpty
               >
-                <MenuItem value="" disabled>
-                  <em>Select Educational Qualification</em>
-                </MenuItem>
                 <MenuItem value="Diploma (Mechanical / Automobile / Tech)">Diploma (Mechanical / Automobile / Tech)</MenuItem>
                 <MenuItem value="Diploma (Electrical / Electronics)">Diploma (Electrical / Electronics)</MenuItem>
                 <MenuItem value="ITI (Fitter / Turner / Machinist / CNC)">ITI (Fitter / Turner / Machinist / CNC)</MenuItem>
@@ -474,11 +475,7 @@ export function MuiOnboardingModal({
                 error={Boolean(formErrors.experience)}
                 helperText={formErrors.experience}
                 required
-                displayEmpty
               >
-                <MenuItem value="" disabled>
-                  <em>Select Passing / Experience Status</em>
-                </MenuItem>
                 <MenuItem value="Fresher / Apprentice Cohort">Fresher / Apprentice Cohort</MenuItem>
                 <MenuItem value="1 Year Technical Experience">1 Year Technical Experience</MenuItem>
                 <MenuItem value="2-3 Years Industrial Experience">2-3 Years Industrial Experience</MenuItem>

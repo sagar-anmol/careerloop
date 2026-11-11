@@ -39,13 +39,32 @@ export interface TestAttempt {
 }
 
 /**
+ * Normalise an Indian mobile number to 10 digits.
+ * Accepts pasted formats like "+91 98765 43210", "098765-43210", "9876543210".
+ */
+export function normalizePhone(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length === 10) return digits;
+  if (digits.length === 11 && digits.startsWith("0")) return digits.slice(1);
+  if (digits.length === 12 && digits.startsWith("91")) return digits.slice(2);
+  return digits;
+}
+
+/**
  * Register candidate account with Supabase Auth and save profile + files into Postgres / Storage
  */
 export async function registerCandidateDossier(input: CandidateRegistrationInput) {
+  const normalizedPhone = normalizePhone(input.phone);
+  if (!/^\d{10}$/.test(normalizedPhone)) {
+    throw new Error("Enter a valid 10-digit mobile number.");
+  }
+
   let authUserId: string | null = null;
 
-  // 1. If password provided, register / update through API route for auto email confirmation & password set
+  // 1. If a password was provided, create the account through the API route
+  // (auto-confirmed) and then sign in with the credentials the user typed.
   if (input.password && input.password.length >= 6) {
+    let apiError: string | null = null;
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -65,26 +84,42 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
         if (json?.user?.id) {
           authUserId = json.user.id;
         }
-      }
-
-      // Immediately sign in with the credentials so client has an active authenticated session
-      const { data: signInData } = await supabase.auth.signInWithPassword({
-        email: input.email.trim(),
-        password: input.password,
-      });
-
-      if (signInData?.user) {
-        authUserId = signInData.user.id;
+      } else {
+        const json = await res.json().catch(() => null);
+        apiError =
+          typeof json?.error === "string"
+            ? json.error
+            : res.status === 409
+            ? "An account with this email already exists. Sign in instead."
+            : "Could not create your account.";
       }
     } catch (e) {
-      console.warn("API registration fallback:", e);
-      // Fallback to client signup if fetch fails
-      const { data: authData } = await supabase.auth.signUp({
-        email: input.email.trim(),
-        password: input.password,
-      });
-      if (authData?.user) authUserId = authData.user.id;
+      console.warn("API registration failed:", e);
+      apiError = "Could not reach the signup service. Check your connection and try again.";
     }
+
+    // For a new account this establishes the session. For an existing email it
+    // only succeeds with the correct password — the API never resets one.
+    const { data: signInData } = await supabase.auth.signInWithPassword({
+      email: input.email.trim(),
+      password: input.password,
+    });
+
+    if (signInData?.user) {
+      authUserId = signInData.user.id;
+    } else if (apiError) {
+      throw new Error(apiError);
+    }
+  }
+
+  // 1b. Fall back to the existing session (profile edit / onboarding retry).
+  if (!authUserId) {
+    const { data: sessionData } = await supabase.auth.getUser();
+    if (sessionData?.user) authUserId = sessionData.user.id;
+  }
+
+  if (!authUserId) {
+    throw new Error("Sign in first so your profile can be linked to your account.");
   }
 
   // 2. Upload Photo to Supabase Storage if available
@@ -142,24 +177,22 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     }
   }
 
-  // 4. Check if candidate with this email already exists to update existing record rather than duplicating
+  // 4. One profile per account: look up our own row, then upsert on
+  // auth_user_id. The unique index makes a duplicate impossible even if two
+  // tabs submit at the same moment.
   const normalizedEmail = input.email.trim().toLowerCase();
   const { data: existingCandidate } = await supabase
     .from("candidates")
-    .select("id, candidate_id")
-    .eq("email", normalizedEmail)
-    .order("created_at", { ascending: false })
-    .limit(1)
+    .select("candidate_id")
+    .eq("auth_user_id", authUserId)
     .maybeSingle();
-
-  const activeCandidateId = existingCandidate?.candidate_id || input.candidateId;
 
   const payload = {
     auth_user_id: authUserId,
-    candidate_id: activeCandidateId,
+    candidate_id: existingCandidate?.candidate_id || input.candidateId,
     full_name: input.fullName,
     email: normalizedEmail,
-    phone: input.phone,
+    phone: normalizedPhone,
     domain: input.domain,
     experience: input.experience,
     city: input.city,
@@ -175,24 +208,25 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     updated_at: new Date().toISOString(),
   };
 
-  let candidateDataResult;
-  if (existingCandidate?.id) {
-    const { data: updated, error: updateErr } = await supabase
-      .from("candidates")
-      .update(payload)
-      .eq("id", existingCandidate.id)
-      .select()
-      .single();
-    if (updateErr) throw new Error(updateErr.message);
-    candidateDataResult = updated;
-  } else {
-    const { data: inserted, error: insertErr } = await supabase
-      .from("candidates")
-      .insert(payload)
-      .select()
-      .single();
-    if (insertErr) throw new Error(insertErr.message);
-    candidateDataResult = inserted;
+  const { data: candidateDataResult, error: saveErr } = await supabase
+    .from("candidates")
+    .upsert(payload, { onConflict: "auth_user_id" })
+    .select()
+    .single();
+
+  if (saveErr) {
+    const detail = `${saveErr.message} ${saveErr.details ?? ""} ${saveErr.code ?? ""}`;
+    const isDuplicate = /duplicate key|23505|already exists/i.test(detail);
+    if (isDuplicate && /phone/i.test(detail)) {
+      throw new Error("This mobile number is already registered with another account.");
+    }
+    if (isDuplicate && /email/i.test(detail)) {
+      throw new Error("This email is already registered with another account.");
+    }
+    if (/23514|candidates_phone_10_digits/i.test(detail)) {
+      throw new Error("Enter a valid 10-digit mobile number.");
+    }
+    throw new Error(saveErr.message);
   }
 
   // Cache in localStorage for immediate profile navigation
@@ -309,48 +343,42 @@ export async function signOutCandidate() {
 }
 
 /**
- * Fetch candidate profile by auth user ID, candidate ID, or email
+ * Fetch the signed-in candidate's profile.
+ *
+ * Always scoped to a specific identity. There is deliberately no "newest row"
+ * fallback: that used to hand the dashboard whichever profile was created
+ * last, which is how one account ended up displaying another account's email.
  */
 export async function fetchCandidateProfile(authUserId?: string, candidateId?: string, email?: string) {
-  let query = supabase.from("candidates").select("*").order("created_at", { ascending: false }).limit(1);
   if (authUserId) {
-    query = query.eq("auth_user_id", authUserId);
-  } else if (candidateId) {
-    query = query.eq("candidate_id", candidateId);
-  } else if (email) {
-    query = query.eq("email", email.trim().toLowerCase());
-  } else {
-    return null;
+    const { data, error } = await supabase
+      .from("candidates")
+      .select("*")
+      .eq("auth_user_id", authUserId)
+      .maybeSingle();
+    if (error) console.error("Error fetching candidate profile by auth user:", error);
+    if (data) return data;
   }
 
-  const { data, error } = await query.maybeSingle();
-  if (error) {
-    // If lookup fails or returns error, try looking up directly by email
-    if (email) {
-      const { data: emailData } = await supabase
-        .from("candidates")
-        .select("*")
-        .eq("email", email.trim().toLowerCase())
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (emailData) return emailData;
-    }
-    console.error("Error fetching candidate profile:", error);
-    return null;
+  if (candidateId) {
+    const { data, error } = await supabase
+      .from("candidates")
+      .select("*")
+      .eq("candidate_id", candidateId)
+      .maybeSingle();
+    if (error) console.error("Error fetching candidate profile by candidate id:", error);
+    if (data) return data;
   }
 
-  // If data is null and email exists, check by email
-  if (!data && email) {
-    const { data: emailData } = await supabase
+  if (email) {
+    const { data, error } = await supabase
       .from("candidates")
       .select("*")
       .eq("email", email.trim().toLowerCase())
-      .order("created_at", { ascending: false })
-      .limit(1)
       .maybeSingle();
-    if (emailData) return emailData;
+    if (error) console.error("Error fetching candidate profile by email:", error);
+    if (data) return data;
   }
 
-  return data;
+  return null;
 }
