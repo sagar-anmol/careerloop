@@ -25,10 +25,9 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PersonIcon from "@mui/icons-material/Person";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { registerCandidateDossier, normalizePhone, CandidateRegistrationInput } from "@/lib/candidateService";
+import LockIcon from "@mui/icons-material/Lock";
+import { startPayuCheckout, normalizePhone, CandidateRegistrationInput } from "@/lib/candidateService";
 import { detectFaces, FaceDetectionResult } from "@/lib/faceDetectionService";
 
 export interface CandidateOnboardingData extends Partial<CandidateRegistrationInput> {
@@ -47,13 +46,11 @@ export interface CandidateOnboardingData extends Partial<CandidateRegistrationIn
 interface MuiOnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCompleteSignup: (candidateData: CandidateOnboardingData) => void;
-  onCompleteAndStartTest: (candidateData: CandidateOnboardingData) => void;
   /** Pre-selects the plan (e.g. when the user clicked a pricing card). */
   initialPlan?: "starter_practice" | "pro_all_access" | "mentorship_1on1";
 }
 
-const steps = ["Candidate Info", "Live Photo ID", "Program & Consent", "Payment & UTR", "Account Ready"];
+const steps = ["Candidate Info", "Live Photo ID", "Program & Consent", "Payment"];
 
 type PlanKey = "starter_practice" | "pro_all_access" | "mentorship_1on1";
 
@@ -63,23 +60,9 @@ const PLAN_META: Record<PlanKey, { price: string; amountInr: number; name: strin
   mentorship_1on1: { price: "₹8,999", amountInr: 8999, name: "1-on-1 Intensive" },
 };
 
-interface QuoteView {
-  plan: PlanKey;
-  planName: string;
-  amountInr: number;
-  payeeName: string;
-  upiUri: string;
-  qrUrl: string;
-}
-
-/** Basic client-side UTR check (server re-validates): 12 digits, not a repeated single digit. */
-const UTR_PATTERN = /^(?!(\d)\1{11})\d{12}$/;
-
 export function MuiOnboardingModal({
   isOpen,
   onClose,
-  onCompleteSignup,
-  onCompleteAndStartTest,
   initialPlan = "pro_all_access",
 }: MuiOnboardingModalProps) {
   const [activeStep, setActiveStep] = useState(0);
@@ -115,16 +98,11 @@ export function MuiOnboardingModal({
   const [consentAgreed, setConsentAgreed] = useState(false);
   const [step2Submitted, setStep2Submitted] = useState(false);
 
-  // Payment & UTR State — the QR/payee come from the server (unauthenticated
-  // quote; no order exists until registration). UTR entry is mandatory.
-  const [utr, setUtr] = useState("");
-  const [quote, setQuote] = useState<QuoteView | null>(null);
-  const [quoteError, setQuoteError] = useState<string | null>(null);
-  const [quoteReload, setQuoteReload] = useState(0);
+  // Payment state — the actual checkout hand-off happens via a server-created
+  // PayU order; nothing money-related is computed or stored in the browser.
 
   // Resume State
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [candidateId, setCandidateId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
 
@@ -462,7 +440,7 @@ export function MuiOnboardingModal({
     setActiveStep(2);
   };
 
-  // Step 3 gate (Program & Consent): require resume + consent, then advance to Payment & UTR.
+  // Step 3 gate (Program & Consent): require resume + consent, then advance to Payment.
   const handleValidateStep2 = () => {
     setStep2Submitted(true);
     if (!resumeFile) {
@@ -477,101 +455,37 @@ export function MuiOnboardingModal({
     setActiveStep(3);
   };
 
-  // Load the payment quote (QR + payee) whenever the candidate is on the
-  // payment step. No order is created here — registration creates it.
-  useEffect(() => {
-    if (!isOpen || activeStep !== 3) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/payment/quote", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan: selectedPlan }),
-        });
-        const json = (await res.json().catch(() => ({}))) as Partial<QuoteView> & { error?: string };
-        if (cancelled) return;
-        if (!res.ok || !json || typeof json.amountInr !== "number") {
-          setQuote(null);
-          setQuoteError(json?.error || "Could not load the payment details.");
-          return;
-        }
-        setQuote({
-          plan: json.plan ?? selectedPlan,
-          planName: json.planName ?? PLAN_META[selectedPlan].name,
-          amountInr: json.amountInr,
-          payeeName: json.payeeName ?? "",
-          upiUri: json.upiUri ?? "",
-          qrUrl: json.qrUrl ?? "",
-        });
-        setQuoteError(null);
-      } catch {
-        if (!cancelled) {
-          setQuote(null);
-          setQuoteError("Could not reach the payment service. Check your connection.");
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [isOpen, activeStep, selectedPlan, quoteReload]);
 
-  const handleUtrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, "").slice(0, 12);
-    setUtr(digits);
-    if (saveError) setSaveError(null);
-  };
 
-  const utrValid = UTR_PATTERN.test(utr);
-
-  // Step 4 (Payment & UTR): account creation is gated on payment. The server
-  // validates plan + UTR, creates the auth user, the candidates row and the
-  // payment order in one go, and rolls the user back on any failure.
-  const handleFinalCreateAccount = async () => {
-    if (!utrValid) {
-      setSaveError("Enter a valid 12-digit UTR from your UPI receipt (not a repeated digit).");
-      return;
-    }
+  // Step 3 (Secure Payment): account creation is gated on payment. The server
+  // validates plan + dossier + OTP, stores the payload against a unique txnid
+  // and hands the browser to PayU. The account is created only when PayU's
+  // verified callback reaches /api/payment/callback — never before.
+  const handlePayWithPayu = async () => {
     const newId = `CL-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-    setCandidateId(newId);
     setIsSaving(true);
     setSaveError(null);
     try {
-      const outcome = await registerCandidateDossier({
-        ...formData,
+      await startPayuCheckout({
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        domain: formData.domain,
+        experience: formData.experience,
+        city: formData.city,
         candidateId: newId,
         photoBase64: capturedPhoto,
         resumeFile,
         selectedPlan,
-        utr,
       });
-      setSaveError(outcome?.warning ?? null);
-      setActiveStep(4);
+      // The page has navigated to PayU's hosted checkout — nothing else to do.
     } catch (err: unknown) {
-      console.error("Failed to register candidate:", err);
-      const msg = err instanceof Error ? err.message : "Could not create your account. Please try again.";
+      console.error("Could not start PayU checkout:", err);
+      const msg = err instanceof Error ? err.message : "Could not start payment. Please try again.";
       setSaveError(msg);
-    } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleFinishAndGoToProfile = () => {
-    const finalData = {
-      ...formData,
-      candidateId,
-      photo: capturedPhoto,
-      resumeName: resumeFile ? resumeFile.name : "Resume.pdf",
-      partner_route:
-        selectedPlan === "pro_all_access"
-          ? "CareerLoop Pro (₹4,999)"
-          : selectedPlan === "mentorship_1on1"
-          ? "1-on-1 Mentorship (₹8,999)"
-          : "Starter 7-Day Trial (₹999)",
-      selected_plan: selectedPlan,
-    };
-    onCompleteSignup(finalData);
   };
 
   const handleClose = () => {
@@ -612,7 +526,7 @@ export function MuiOnboardingModal({
             Candidate Onboarding
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            Step {activeStep + 1} of 5 • CareerLoop Enrollment
+            Step {activeStep + 1} of 4 • CareerLoop Enrollment
           </Typography>
         </Box>
         <IconButton aria-label="close" onClick={handleClose} size="small">
@@ -1228,120 +1142,77 @@ export function MuiOnboardingModal({
           </Box>
         )}
 
-        {/* STEP 3: PAYMENT & UTR — account is created only after payment is recorded */}
+        {/* STEP 3: SECURE PAYMENT — account is created only after PayU verifies the payment */}
         {activeStep === 3 && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Box sx={{ textAlign: "center", mb: 0.5 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }} gutterBottom>
-                Pay via UPI &amp; Enter Your UTR
+                Pay Securely with PayU
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                Scan the QR below with any UPI app and pay exactly the enrolled amount.
-                Account creation is not possible without a valid UTR.
+                You will be redirected to PayU&apos;s secure checkout. Your account is
+                created only after PayU confirms the payment.
               </Typography>
             </Box>
 
             {/* Amount + Selected plan */}
-            <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-              <Typography variant="body2" color="text.secondary">
-                {quote?.planName ?? PLAN_META[selectedPlan].name}
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: "primary.main" }}>
-                ₹{(quote?.amountInr ?? PLAN_META[selectedPlan].amountInr).toLocaleString("en-IN")}
-              </Typography>
-            </Box>
-
-            {quoteError ? (
-              <Alert
-                severity="error"
-                action={
-                  <Button color="inherit" size="small" onClick={() => setQuoteReload((n) => n + 1)}>
-                    Retry
-                  </Button>
-                }
-              >
-                {quoteError}
-              </Alert>
-            ) : !quote || quote.plan !== selectedPlan ? (
-              <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-                <CircularProgress size={32} />
-              </Box>
-            ) : (
-              <>
-                {/* QR */}
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                borderColor: "divider",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 2,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    p: 1.5,
-                    bgcolor: "#fff",
+                    width: 40,
+                    height: 40,
                     borderRadius: 2,
-                    border: "2px solid",
-                    borderColor: "primary.main",
-                    alignSelf: "center",
+                    bgcolor: "rgba(64, 95, 226, 0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#405FE2",
+                    flexShrink: 0,
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={quote.qrUrl}
-                    alt="UPI payment QR code"
-                    width={190}
-                    height={190}
-                    style={{ objectFit: "contain" }}
-                  />
+                  <LockIcon sx={{ fontSize: 22 }} />
                 </Box>
-
-                {/* Payee name only — the UPI id is intentionally never shown */}
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
-                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <Typography variant="caption" color="text.secondary">Payee</Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 600 }}>{quote.payeeName}</Typography>
-                  </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    {PLAN_META[selectedPlan].name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                    One-time payment · Starter activates instantly and lapses after 7 days
+                  </Typography>
                 </Box>
+              </Box>
+              <Typography variant="h5" sx={{ fontWeight: 800, color: "primary.main", whiteSpace: "nowrap" }}>
+                ₹{PLAN_META[selectedPlan].amountInr.toLocaleString("en-IN")}
+              </Typography>
+            </Paper>
 
-                {/* Mobile deep link */}
-                {quote.upiUri && (
-                  <Button
-                    href={quote.upiUri}
-                    variant="outlined"
-                    size="small"
-                    endIcon={<OpenInNewIcon />}
-                    sx={{ display: { xs: "inline-flex", sm: "none" }, alignSelf: "center" }}
-                  >
-                    Open in UPI App
-                  </Button>
-                )}
-              </>
-            )}
-
-            <TextField
-              label="12-digit UTR / Reference number"
-              placeholder="e.g. 431234567890"
-              value={utr}
-              onChange={handleUtrChange}
-              inputMode="numeric"
-              fullWidth
-              size="small"
-              error={utr.length === 12 && !utrValid}
-              helperText={
-                utr.length === 12 && !utrValid
-                  ? "That doesn't look like a valid UTR (not a bank reference). Check your receipt."
-                  : "From your UPI app's payment receipt. Account is created only after this step."
-              }
-              slotProps={{
-                htmlInput: { maxLength: 12, inputMode: "numeric", autoComplete: "off" },
-                input: {
-                  endAdornment: (
-                    <Chip
-                      size="small"
-                      label={`${utr.length}/12`}
-                      color={utrValid ? "success" : "default"}
-                      variant="outlined"
-                    />
-                  ),
-                },
-              }}
-            />
+            {/* What happens next */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {[
+                "Complete the payment on PayU — UPI, cards, net banking and wallets are supported",
+                "You return to CareerLoop automatically and your account is created from the details you entered",
+                "If anything is deducted without the account being created, write to mail@m.careerloop.co.in with your PayU transaction ID",
+              ].map((line) => (
+                <Box key={line} sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                  <CheckCircleIcon sx={{ fontSize: 16, color: "#10b981", mt: 0.2 }} />
+                  <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.5 }}>
+                    {line}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
 
             {saveError && (
               <Alert severity="error" variant="outlined" sx={{ py: 0.5, fontSize: "0.82rem" }}>
@@ -1352,93 +1223,9 @@ export function MuiOnboardingModal({
             <Box sx={{ display: "flex", alignItems: "flex-start", gap: 0.5 }}>
               <WarningAmberIcon sx={{ fontSize: 14, color: "warning.main", mt: 0.25 }} />
               <Typography variant="caption" color="text.secondary">
-                Pay exactly ₹{(quote?.amountInr ?? PLAN_META[selectedPlan].amountInr).toLocaleString("en-IN")} and keep this window open.
-                Your UTR is stored with the order and is verified by our team — enrollment activates only after verification.
+                CareerLoop never sees or stores your card or UPI PIN — payment is handled entirely by PayU India.
               </Typography>
             </Box>
-          </Box>
-        )}
-
-        {/* STEP 4: ACCOUNT CREATED READY */}
-        {activeStep === 4 && (
-          <Box sx={{ textAlign: "center", py: 1 }}>
-            <Box
-              sx={{
-                width: 56,
-                height: 56,
-                mx: "auto",
-                mb: 2,
-                borderRadius: "50%",
-                bgcolor: "rgba(16, 185, 129, 0.15)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#10b981",
-              }}
-            >
-              <CheckCircleIcon sx={{ fontSize: 36 }} />
-            </Box>
-
-            <Typography variant="h6" sx={{ fontWeight: 800 }} gutterBottom>
-              Candidate Profile Ready!
-            </Typography>
-
-            <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-              Your verified identity has been registered with our partner recruiting engine.
-            </Typography>
-
-            <Paper
-              variant="outlined"
-              sx={{
-                p: 2,
-                mb: 2.5,
-                textAlign: "left",
-                bgcolor: "#f4f7fe",
-                borderRadius: 2,
-                borderColor: "divider",
-              }}
-            >
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                  CANDIDATE ID
-                </Typography>
-                <Chip label={candidateId} size="small" color="primary" sx={{ fontWeight: 700, fontSize: "0.75rem" }} />
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                  CANDIDATE NAME
-                </Typography>
-                <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                  {formData.fullName}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                  TARGET DOMAIN
-                </Typography>
-                <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                  {formData.domain}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                  PROCTORING CLEARANCE
-                </Typography>
-                <Typography variant="caption" sx={{ color: "#34d399", fontWeight: 700 }}>
-                  Photo Verified & Ready
-                </Typography>
-              </Box>
-            </Paper>
-
-            {saveError && (
-              <Alert severity="warning" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5 }}>
-                {saveError}
-              </Alert>
-            )}
-
-            <Alert severity="success" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5 }}>
-              <strong>Registration Completed:</strong> Your profile and UPI payment reference (UTR) have been recorded. Enrollment activates after our team verifies the UTR — usually within 24–48 hours. A red banner stays on top of the site until verification is done.
-            </Alert>
           </Box>
         )}
       </DialogContent>
@@ -1504,8 +1291,8 @@ export function MuiOnboardingModal({
           <Button
             variant="contained"
             color="primary"
-            onClick={handleFinalCreateAccount}
-            disabled={isSaving || !utrValid}
+            onClick={handlePayWithPayu}
+            disabled={isSaving}
             sx={{
               bgcolor: "#405FE2",
               color: "#ffffff",
@@ -1513,27 +1300,12 @@ export function MuiOnboardingModal({
               px: 3,
               "&:hover": { bgcolor: "#2843be" },
             }}
-            endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
+            endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <LockIcon />}
           >
             {isSaving
-              ? "Recording payment & creating account..."
-              : `Pay & Create Account (${PLAN_META[selectedPlan].price})`}
+              ? "Handing off to PayU..."
+              : `Pay ₹${PLAN_META[selectedPlan].amountInr.toLocaleString("en-IN")} with PayU`}
           </Button>
-        )}
-
-        {activeStep === 4 && (
-          <Box sx={{ width: "100%" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleFinishAndGoToProfile}
-              startIcon={<PersonIcon />}
-              sx={{ py: 1.3, fontWeight: 700 }}
-            >
-              Open My Profile &amp; Dashboard
-            </Button>
-          </Box>
         )}
       </DialogActions>
     </Dialog>

@@ -11,14 +11,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import LockIcon from "@mui/icons-material/Lock";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { fetchEntitlement } from "@/lib/payments/entitlement";
-import type { PlanKey } from "@/lib/payments/upi";
+import type { PlanKey } from "@/lib/payments/plans";
 
 interface MuiTrialExpiredGateProps {
   /** When the 7-day trial lapsed (ISO string), shown to the candidate. */
   expiresAt: string | null;
-  /** Opens the UPI checkout for the chosen upgrade plan. */
+  /** Opens the PayU hosted checkout for the chosen upgrade plan. */
   onUpgrade: (plan: PlanKey) => void;
-  /** Called when the hold lifts (a fresh UTR was submitted → pending verification). */
+  /** Called when the hold lifts (a PayU-verified upgrade lands). */
   onRelease: () => void;
   onSignOut: () => void | Promise<void>;
 }
@@ -58,9 +58,9 @@ const KEPT_PERKS = [
  * computed entitlement (payment_orders is the single source of truth — nothing
  * is deleted). Not dismissible: upgrade or sign out.
  *
- * Self-releases: listens for the `careerloop:payment-utr-submitted` event
- * fired by the UPI checkout and re-checks — a fresh UTR switches my-status to
- * `pendingVerification`, which is not a hold.
+ * Self-releases: listens for the `careerloop:payment-completed` window
+ * event and re-checks entitlement — after a PayU-verified upgrade the user is
+ * no longer `trialExpired` and the gate closes on the next auth change.
  */
 export function MuiTrialExpiredGate({ expiresAt, onUpgrade, onRelease, onSignOut }: MuiTrialExpiredGateProps) {
   const [rechecking, setRechecking] = useState(false);
@@ -76,8 +76,8 @@ export function MuiTrialExpiredGate({ expiresAt, onUpgrade, onRelease, onSignOut
   }, [onRelease]);
 
   useEffect(() => {
-    window.addEventListener("careerloop:payment-utr-submitted", recheck);
-    return () => window.removeEventListener("careerloop:payment-utr-submitted", recheck);
+    window.addEventListener("careerloop:payment-completed", recheck);
+    return () => window.removeEventListener("careerloop:payment-completed", recheck);
   }, [recheck]);
 
   const expiryLabel = expiresAt
@@ -154,16 +154,16 @@ export function MuiTrialExpiredGate({ expiresAt, onUpgrade, onRelease, onSignOut
                   onClick={() => onUpgrade(p.plan)}
                   sx={{ bgcolor: p.color, fontWeight: 700, whiteSpace: "nowrap", "&:hover": { bgcolor: p.color, filter: "brightness(0.92)" } }}
                 >
-                  Pay via UPI
+                  Pay with PayU
                 </Button>
               </Paper>
             ))}
           </Box>
 
           <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 2 }}>
-            Pay via UPI and enter the UTR from your receipt — the hold lifts
-            immediately and your enrollment activates once the team verifies it
-            (usually within 24–48 hours).
+            Pay securely via PayU (UPI, cards, net banking and wallets) — the
+            hold lifts automatically the moment PayU confirms the payment and
+            returns you to CareerLoop.
           </Typography>
 
           <Box sx={{ borderTop: "1px solid", borderColor: "divider", pt: 2 }}>

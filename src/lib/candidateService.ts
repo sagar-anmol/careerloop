@@ -12,13 +12,6 @@ export interface CandidateRegistrationInput {
   photoBase64?: string | null;
   resumeFile?: File | null;
   selectedPlan?: string;
-  /** Compulsory at signup: the 12-digit UTR from the candidate's UPI receipt. */
-  utr?: string;
-}
-
-export interface CandidateRegistrationResult {
-  /** Non-fatal problems that happened AFTER the account/order were created. */
-  warning: string | null;
 }
 
 export interface AssessmentResultInput {
@@ -60,204 +53,155 @@ export function normalizePhone(raw: string): string {
 /**
  * Register candidate account with Supabase Auth and save profile + files into Postgres / Storage
  */
-export async function registerCandidateDossier(input: CandidateRegistrationInput) {
+export interface StartPayuCheckoutInput {
+  fullName: string;
+  email: string;
+  password: string;
+  phone: string;
+  domain: string;
+  experience?: string;
+  city?: string;
+  candidateId: string;
+  photoBase64?: string | null;
+  resumeFile?: File | null;
+  selectedPlan: string;
+}
+
+/** ~2.2 MB raw resume cap; base64 of that is ~3 MB, inside the request limit. */
+const MAX_RESUME_BYTES = 2_300_000;
+
+/**
+ * Pay-first signup: posts the dossier to /api/payment/initiate, then replaces
+ * the page with PayU's hosted checkout (full-page form POST). Control never
+ * returns to this function (the browser navigates); it only ever returns by
+ * throwing, with a human-readable message already mapped from the server code.
+ */
+export async function startPayuCheckout(input: StartPayuCheckoutInput): Promise<void> {
   const normalizedPhone = normalizePhone(input.phone);
   if (!/^\d{10}$/.test(normalizedPhone)) {
     throw new Error("Enter a valid 10-digit mobile number.");
   }
 
-  let authUserId: string | null = null;
-
-  // 1. If a password was provided, create the account through the API route
-  // (auto-confirmed) and then sign in with the credentials the user typed.
-  if (input.password && input.password.length >= 6) {
-    let apiError: string | null = null;
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: input.email.trim(),
-          password: input.password,
-          fullName: input.fullName,
-          phone: input.phone,
-          domain: input.domain,
-          experience: input.experience,
-          city: input.city,
-          candidateId: input.candidateId,
-          plan: input.selectedPlan,
-          utr: input.utr,
-        }),
-      });
-
-      if (res.ok) {
-        const json = await res.json();
-        if (json?.user?.id) {
-          authUserId = json.user.id;
-        }
-      } else {
-        const json = await res.json().catch(() => null);
-        const code = typeof json?.code === "string" ? json.code : "";
-        const serverMsg = typeof json?.error === "string" ? json.error : "";
-        apiError =
-          code === "EMAIL_TAKEN"
-            ? "An account with this email already exists. Sign in instead."
-            : code === "PHONE_TAKEN"
-            ? "This mobile number is already registered with another account."
-            : code === "UTR_TAKEN"
-            ? "This UTR is already used by another payment. Enter the UTR from your own UPI receipt."
-            : code === "INVALID_UTR"
-            ? "Enter a valid 12-digit UTR from your UPI receipt."
-            : code === "UNKNOWN_PLAN"
-            ? "The selected plan is not available. Pick another plan."
-            : code === "WEAK_PASSWORD"
-            ? "Password must be at least 6 characters."
-            : code === "INVALID_PHONE"
-            ? "Enter a valid 10-digit mobile number."
-            : serverMsg || (res.status === 409 ? "An account with this email already exists. Sign in instead." : "Could not create your account.");
-      }
-    } catch (e) {
-      console.warn("API registration failed:", e);
-      apiError = "Could not reach the signup service. Check your connection and try again.";
+  let resumeBase64: string | null = null;
+  let resumeName: string | null = null;
+  if (input.resumeFile) {
+    if (input.resumeFile.size > MAX_RESUME_BYTES) {
+      throw new Error("Your resume is larger than ~2.2 MB. Compress the PDF and try again — everything else you entered is kept.");
     }
+    resumeName = input.resumeFile.name;
+    resumeBase64 = await readFileAsBase64(input.resumeFile);
+  }
 
-    // For a new account this establishes the session. For an existing email it
-    // only succeeds with the correct password — the API never resets one.
-    const { data: signInData } = await supabase.auth.signInWithPassword({
+  const response = await postToInitiate({
+    plan: input.selectedPlan,
+    signup: {
+      fullName: input.fullName,
       email: input.email.trim(),
       password: input.password,
+      phone: input.phone,
+      domain: input.domain,
+      experience: input.experience,
+      city: input.city,
+      candidateId: input.candidateId,
+      photoBase64: input.photoBase64 ?? null,
+      resumeBase64,
+      resumeName,
+    },
+  });
+  if (!response.ok) {
+    const json = response.json as { code?: string; error?: string };
+    const code = json?.code ?? "";
+    const friendly =
+      code === "EMAIL_TAKEN"
+        ? "An account with this email already exists. Sign in instead."
+        : code === "PHONE_TAKEN"
+        ? "This mobile number is already registered with another account."
+        : code === "EMAIL_NOT_VERIFIED"
+        ? "Verify your email with the 6-digit code before creating the account."
+        : code === "WEAK_PASSWORD"
+        ? "Password must be at least 6 characters."
+        : code === "INVALID_PHONE"
+        ? "Enter a valid 10-digit mobile number."
+        : code === "INVALID_EMAIL"
+        ? "Enter a valid email address."
+        : code === "UNKNOWN_PLAN"
+        ? "The selected plan is not available. Pick another plan."
+        : code === "PHOTO_TOO_LARGE" || code === "RESUME_TOO_LARGE"
+        ? json?.error ?? "A file you attached is too large. Retake/compress it and try again."
+        : json?.error || "Could not start payment. Check your connection and try again.";
+    throw new Error(friendly);
+  }
+  postFormToPayu(response.action, response.fields);
+}
+
+/** Paid-upgrade checkout for signed-in users (e.g. lapsed Starter Trial). */
+export async function startPayuUpgradeCheckout(plan: string): Promise<void> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) throw new Error("Sign in again to upgrade.");
+
+  const response = await postToInitiate({ plan }, token);
+  if (!response.ok) {
+    throw new Error(response.json?.error || "Could not start payment. Check your connection and try again.");
+  }
+  postFormToPayu(response.action, response.fields);
+}
+
+async function postToInitiate(
+  body: unknown,
+  bearer?: string
+): Promise<
+  | { ok: true; action: string; fields: Record<string, string> }
+  | { ok: false; json: { code?: string; error?: string } }
+> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (bearer) headers.Authorization = `Bearer ${bearer}`;
+  try {
+    const res = await fetch("/api/payment/initiate", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
     });
-
-    if (signInData?.user) {
-      authUserId = signInData.user.id;
-    } else if (apiError) {
-      throw new Error(apiError);
-    }
-  }
-
-  // 1b. Fall back to the existing session (profile edit / onboarding retry).
-  if (!authUserId) {
-    const { data: sessionData } = await supabase.auth.getUser();
-    if (sessionData?.user) authUserId = sessionData.user.id;
-  }
-
-  if (!authUserId) {
-    throw new Error("Sign in first so your profile can be linked to your account.");
-  }
-
-  // 2. Upload Photo to Supabase Storage if available
-  let photoUrl: string | null = null;
-  if (input.photoBase64 && input.photoBase64.startsWith("data:image")) {
-    try {
-      const base64Data = input.photoBase64.split(",")[1];
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "image/jpeg" });
-      const photoPath = `photos/${input.candidateId}_${Date.now()}.jpg`;
-
-      const { error: uploadErr } = await supabase.storage
-        .from("candidate-assets")
-        .upload(photoPath, blob, { contentType: "image/jpeg", upsert: true });
-
-      if (!uploadErr) {
-        const { data: publicUrlData } = supabase.storage
-          .from("candidate-assets")
-          .getPublicUrl(photoPath);
-        photoUrl = publicUrlData.publicUrl;
-      } else {
-        // Fallback: keep base64 or null
-        photoUrl = input.photoBase64;
-      }
-    } catch (e) {
-      console.warn("Error uploading photo:", e);
-      photoUrl = input.photoBase64;
-    }
-  }
-
-  // 3. Upload Resume if available
-  let resumeUrl: string | null = null;
-  const resumeName: string = input.resumeFile ? input.resumeFile.name : "Resume.pdf";
-
-  if (input.resumeFile) {
-    try {
-      const resumePath = `resumes/${input.candidateId}_${input.resumeFile.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-      const { error: resumeUploadErr } = await supabase.storage
-        .from("candidate-assets")
-        .upload(resumePath, input.resumeFile, { upsert: true });
-
-      if (!resumeUploadErr) {
-        const { data: publicUrlData } = supabase.storage
-          .from("candidate-assets")
-          .getPublicUrl(resumePath);
-        resumeUrl = publicUrlData.publicUrl;
-      }
-    } catch (e) {
-      console.warn("Error uploading resume:", e);
-    }
-  }
-
-  // 4. One profile per account: look up our own row, then upsert on
-  // auth_user_id. The unique index makes a duplicate impossible even if two
-  // tabs submit at the same moment.
-  const normalizedEmail = input.email.trim().toLowerCase();
-  const { data: existingCandidate } = await supabase
-    .from("candidates")
-    .select("candidate_id")
-    .eq("auth_user_id", authUserId)
-    .maybeSingle();
-
-  const payload = {
-    auth_user_id: authUserId,
-    candidate_id: existingCandidate?.candidate_id || input.candidateId,
-    full_name: input.fullName,
-    email: normalizedEmail,
-    phone: normalizedPhone,
-    domain: input.domain,
-    experience: input.experience,
-    city: input.city,
-    photo_url: photoUrl,
-    resume_url: resumeUrl,
-    resume_name: resumeName,
-    partner_route:
-      input.selectedPlan === "mentorship_1on1"
-        ? "1-on-1 Mentorship (₹8,999)"
-        : input.selectedPlan === "pro_all_access"
-        ? "CareerLoop Pro (₹4,999)"
-        : "Starter 7-Day Trial (₹999)",
-    updated_at: new Date().toISOString(),
-  };
-
-  const { data: candidateDataResult, error: saveErr } = await supabase
-    .from("candidates")
-    .upsert(payload, { onConflict: "auth_user_id" })
-    .select()
-    .single();
-
-  // IMPORTANT: at this point the account AND the payment order already exist
-  // server-side (created atomically in /api/auth/register). Failing to sync
-  // the photo/resume URLs onto the profile must NOT report the registration
-  // as failed — the candidate owns the enrollment at this stage.
-  if (saveErr) {
-    console.error("Profile sync after registration failed (account is fine):", saveErr);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("cl_candidate", JSON.stringify(payload));
-    }
-    return {
-      warning:
-        "Your account and payment were recorded, but the profile photo/resume sync failed. You can complete it from your profile — your enrollment stands.",
+    const json = (await res.json().catch(() => ({}))) as {
+      action?: string;
+      fields?: Record<string, string>;
+      code?: string;
+      error?: string;
     };
+    if (!res.ok || !json.action || !json.fields) return { ok: false, json };
+    return { ok: true, action: json.action, fields: json.fields };
+  } catch {
+    return { ok: false, json: { error: "Could not reach the payment service. Check your connection and try again." } };
   }
+}
 
-  // Cache in localStorage for immediate profile navigation
-  if (typeof window !== "undefined") {
-    localStorage.setItem("cl_candidate", JSON.stringify(candidateDataResult));
+function postFormToPayu(action: string, fields: Record<string, string>) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = action;
+  form.style.display = "none";
+  for (const [name, value] of Object.entries(fields)) {
+    const el = document.createElement("input");
+    el.type = "hidden";
+    el.name = name;
+    el.value = value;
+    form.appendChild(el);
   }
+  document.body.appendChild(form);
+  form.submit();
+}
 
-  return { warning: null };
+function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result ?? "");
+      const comma = result.indexOf(",");
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(new Error("Could not read the resume file."));
+    reader.readAsDataURL(file);
+  });
 }
 
 /**

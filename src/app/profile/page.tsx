@@ -42,14 +42,15 @@ import { supabase } from "@/lib/supabaseClient";
 import {
   fetchCandidateProfile,
   signOutCandidate,
+  startPayuUpgradeCheckout,
 } from "@/lib/candidateService";
 import { CandidateProfileData } from "@/components/mui/MuiProfileModal";
 import { MuiDemoAssessmentModal } from "@/components/mui/MuiDemoAssessmentModal";
 import { MuiPaymentPendingBanner } from "@/components/mui/MuiPaymentPendingBanner";
 import { MuiTrialExpiredGate } from "@/components/mui/MuiTrialExpiredGate";
-import { MuiUpiPaymentModal } from "@/components/mui/MuiUpiPaymentModal";
+import Alert from "@mui/material/Alert";
 import { fetchEntitlement } from "@/lib/payments/entitlement";
-import type { PlanKey } from "@/lib/payments/upi";
+import type { PlanKey } from "@/lib/payments/plans";
 import { MainsExamPanel, OFFICIAL_MAINS_SET_ID } from "@/components/exam/MainsExamPanel";
 import {
   completeDemo,
@@ -71,10 +72,10 @@ export default function CandidateProfileDashboardPage() {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Trial hold: the 7-day Starter Trial lapsed with no fresh payment — the
-  // dashboard is held behind the upgrade gate until an upgrade UTR lands.
+  // dashboard is held behind the upgrade gate until an upgrade payment verifies.
   const [trialHold, setTrialHold] = useState<{ expiresAt: string | null } | null>(null);
   // UPI checkout for the upgrade chosen inside the trial gate.
-  const [payPlan, setPayPlan] = useState<PlanKey | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Load candidate profile from Supabase Auth & public.candidates table
   useEffect(() => {
@@ -187,6 +188,15 @@ export default function CandidateProfileDashboardPage() {
     };
   }, []);
 
+  // Signed-in upgrade from the trial gate: server-created PayU order, then the
+  // browser hands off to PayU's hosted checkout (full-page redirect).
+  const handleUpgrade = (plan: PlanKey) => {
+    setPaymentError(null);
+    startPayuUpgradeCheckout(plan).catch((err: unknown) => {
+      setPaymentError(err instanceof Error ? err.message : "Could not start payment. Please try again.");
+    });
+  };
+
   const handleSignOut = async () => {
     await signOutCandidate();
     if (typeof window !== "undefined") {
@@ -280,24 +290,27 @@ export default function CandidateProfileDashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-      {/* Red strip: visible only while a submitted UTR awaits team verification */}
+      {/* Amber strip: visible only while the 7-day Starter Trial is expired */}
       <MuiPaymentPendingBanner />
       {/* Trial hold: expired 7-day Starter Trial — dashboard held behind the
-          upgrade gate until an upgrade UTR is submitted. */}
+          upgrade gate until an upgrade payment verifies. */}
       {trialHold && (
         <MuiTrialExpiredGate
           expiresAt={trialHold.expiresAt}
-          onUpgrade={(plan) => setPayPlan(plan)}
+          onUpgrade={(plan) => handleUpgrade(plan)}
           onRelease={() => setTrialHold(null)}
           onSignOut={handleSignOut}
         />
       )}
-      {payPlan && (
-        <MuiUpiPaymentModal
-          isOpen
-          plan={payPlan}
-          onClose={() => setPayPlan(null)}
-        />
+      {paymentError && (
+        <Alert
+          severity="error"
+          variant="filled"
+          onClose={() => setPaymentError(null)}
+          sx={{ position: "fixed", top: 72, left: "50%", transform: "translateX(-50%)", zIndex: 2000, maxWidth: 480, width: "calc(100% - 32px)" }}
+        >
+          {paymentError}
+        </Alert>
       )}
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white">

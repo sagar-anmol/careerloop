@@ -10,18 +10,18 @@ import { MuiProgramFeatures } from "@/components/mui/MuiProgramFeatures";
 import { MuiPricingSection } from "@/components/mui/MuiPricingSection";
 import { MuiFaq } from "@/components/mui/MuiFaq";
 import { MuiFooter } from "@/components/mui/MuiFooter";
-import { MuiOnboardingModal, CandidateOnboardingData } from "@/components/mui/MuiOnboardingModal";
+import { MuiOnboardingModal } from "@/components/mui/MuiOnboardingModal";
 import { MuiProctoredAssessmentModal } from "@/components/mui/MuiProctoredAssessmentModal";
 import { MuiProfileModal, CandidateProfileData } from "@/components/mui/MuiProfileModal";
 import { MuiAuthModal } from "@/components/mui/MuiAuthModal";
-import { MuiUpiPaymentModal } from "@/components/mui/MuiUpiPaymentModal";
 import { MuiPaymentPendingBanner } from "@/components/mui/MuiPaymentPendingBanner";
 import { MuiTrialExpiredGate } from "@/components/mui/MuiTrialExpiredGate";
 import { fetchEntitlement } from "@/lib/payments/entitlement";
-import type { PlanKey } from "@/lib/payments/upi";
+import Alert from "@mui/material/Alert";
+import type { PlanKey } from "@/lib/payments/plans";
 import { MuiWhatsAppButton } from "@/components/mui/MuiWhatsAppButton";
 import { supabase } from "@/lib/supabaseClient";
-import { fetchCandidateProfile, signOutCandidate } from "@/lib/candidateService";
+import { fetchCandidateProfile, signOutCandidate, startPayuUpgradeCheckout } from "@/lib/candidateService";
 
 export default function HomePage() {
   const router = useRouter();
@@ -29,8 +29,8 @@ export default function HomePage() {
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  // Plan selected on a pricing card that needs the UPI checkout. null = no checkout.
-  const [payPlan, setPayPlan] = useState<PlanKey | null>(null);
+  // Checkout-in-flight / failed PayU handoff error (shown as a floating alert).
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   // Plan preselected on the onboarding (enrollment) flow.
   const [onboardingPlan, setOnboardingPlan] = useState<PlanKey>("pro_all_access");
   // Trial hold: the 7-day Starter Trial lapsed with no fresh payment — holds
@@ -83,16 +83,25 @@ export default function HomePage() {
   };
 
   // A paid plan was chosen on the pricing grid. Already-signed-in users go
-  // straight to the UPI checkout; signed-out visitors enroll via onboarding
-  // (which includes the payment + UTR step, preselecting this plan).
+  // straight to PayU checkout (server-created order); signed-out visitors
+  // enroll via onboarding (payment happens inside it, preselecting this plan).
   const handleSelectPlan = async (plan: PlanKey) => {
     const { data } = await supabase.auth.getSession();
     if (data.session?.user) {
-      setPayPlan(plan);
+      handleUpgrade(plan);
     } else {
       setOnboardingPlan(plan);
       setIsOnboardingOpen(true);
     }
+  };
+
+  // Signed-in upgrade (e.g. lapsed trial): server-created PayU order, then the
+  // browser hands off to PayU's hosted checkout.
+  const handleUpgrade = (plan: PlanKey) => {
+    setPaymentError(null);
+    startPayuUpgradeCheckout(plan).catch((err: unknown) => {
+      setPaymentError(err instanceof Error ? err.message : "Could not start payment. Please try again.");
+    });
   };
 
   // Candidate must login or signup to access the test.
@@ -125,25 +134,9 @@ export default function HomePage() {
     router.push("/profile");
   };
 
-  // On signup finished: go directly to dedicated profile page
-  const handleOnboardingSignupCompleted = (data: CandidateProfileData | CandidateOnboardingData) => {
-    setCurrentUser(data as CandidateProfileData);
-    setCandidateData(data as CandidateProfileData);
-    setIsOnboardingOpen(false);
-    router.push("/profile");
-  };
-
-  // If user finishes signup, route them directly to their profile page to review details before taking test
-  const handleOnboardingAndStartTest = (data: CandidateProfileData | CandidateOnboardingData) => {
-    setCurrentUser(data as CandidateProfileData);
-    setCandidateData(data as CandidateProfileData);
-    setIsOnboardingOpen(false);
-    router.push("/profile");
-  };
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
-      {/* Red strip: visible only while a submitted UTR awaits team verification */}
+      {/* Amber strip: visible only while the 7-day Starter Trial is expired */}
       <MuiPaymentPendingBanner />
       {/* Top Corporate App Bar with Profile & Auth support */}
       <MuiHeader
@@ -214,38 +207,36 @@ export default function HomePage() {
         }}
       />
 
-      {/* Onboarding Dialog: Info -> Live Photo ID -> Resume -> Payment & UTR -> Done.
+      {/* Onboarding Dialog: Info -> Live Photo ID -> Resume -> Payment (PayU) -> Done.
           Keyed by plan so picking a pricing card remounts the wizard with that plan preselected. */}
       <MuiOnboardingModal
         key={onboardingPlan}
         isOpen={isOnboardingOpen}
         onClose={() => setIsOnboardingOpen(false)}
-        onCompleteSignup={handleOnboardingSignupCompleted}
-        onCompleteAndStartTest={handleOnboardingAndStartTest}
         initialPlan={onboardingPlan}
       />
 
       {/* Trial hold: expired 7-day Starter Trial — sign-in is held until an
-          upgrade UTR is submitted (the gate self-releases via my-status). */}
+          upgrade payment completes via PayU (the gate self-releases via my-status). */}
       {trialHold && (
         <MuiTrialExpiredGate
           expiresAt={trialHold.expiresAt}
-          onUpgrade={(plan) => setPayPlan(plan)}
+          onUpgrade={(plan) => handleUpgrade(plan)}
           onRelease={() => setTrialHold(null)}
           onSignOut={handleSignOut}
         />
       )}
 
-      {/* UPI checkout — opened when a paid pricing plan is selected (or after sign-in). */}
-      {payPlan && (
-        <MuiUpiPaymentModal
-          isOpen
-          plan={payPlan}
-          onClose={() => setPayPlan(null)}
-          onSubmitted={() => {
-            /* payment reference recorded; activation happens after admin verifies the UTR */
-          }}
-        />
+      {/* Floating error for a failed PayU handoff (upgrade from pricing or gate). */}
+      {paymentError && (
+        <Alert
+          severity="error"
+          variant="filled"
+          onClose={() => setPaymentError(null)}
+          sx={{ position: "fixed", top: 72, left: "50%", transform: "translateX(-50%)", zIndex: 2000, maxWidth: 480, width: "calc(100% - 32px)" }}
+        >
+          {paymentError}
+        </Alert>
       )}
 
       {/* Strict Proctored Assessment Room: Camera PIP, Anti-Cheating & Results */}

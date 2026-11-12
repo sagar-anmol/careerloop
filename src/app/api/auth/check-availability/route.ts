@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
  * booleans only (no user data) so a wrong guess leaks nothing beyond what the
  * final signup error would reveal anyway.
  *
- * This is a convenience pre-check, not the gate: /api/auth/register still
- * re-verifies everything authoritatively (pre-checks + unique indexes) at
- * submit time.
+ * This is a convenience pre-check, not the gate: /api/payment/initiate still
+ * re-verifies everything authoritatively (pre-checks + unique indexes) before
+ * checkout starts, and the payment callback re-checks at fulfillment.
  */
 export async function POST(request: NextRequest) {
   try {

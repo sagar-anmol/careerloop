@@ -7,28 +7,24 @@ import { supabase } from "@/lib/supabaseClient";
  * table — the "flag" is computed there, never stored twice) and boils it down
  * to one question: should sign-in be held?
  *
- *   held = trialExpired AND NOT pendingVerification
+ *   held = trialExpired
  *
- * The moment the candidate submits a fresh UTR the hold releases (the team
- * still verifies it — the red banner takes over until then). On any network
- * or server error we do NOT hold: an outage must never lock people out.
+ * There is no pending-verification state anymore: PayU payments are verified
+ * server-side inside the callback before the account exists, so a paid
+ * upgrade lifts the hold the moment PayU redirects back to /payment/success.
+ * On any network or server error we do NOT hold: an outage must never lock
+ * people out.
  */
 export interface EntitlementStatus {
   /** true → render the upgrade gate and hold navigation into the dashboard. */
   held: boolean;
-  pendingVerification: boolean;
   trialExpired: boolean;
   /** When the trial lapsed (ISO), for display in the gate. */
   expiresAt: string | null;
 }
 
 export async function fetchEntitlement(): Promise<EntitlementStatus> {
-  const idle: EntitlementStatus = {
-    held: false,
-    pendingVerification: false,
-    trialExpired: false,
-    expiresAt: null,
-  };
+  const idle: EntitlementStatus = { held: false, trialExpired: false, expiresAt: null };
   try {
     const { data } = await supabase.auth.getSession();
     const token = data.session?.access_token;
@@ -41,15 +37,12 @@ export async function fetchEntitlement(): Promise<EntitlementStatus> {
     if (!res.ok) return idle;
 
     const json = (await res.json()) as {
-      pendingVerification?: boolean;
       trialExpired?: boolean;
       trial?: { expiresAt?: string | null } | null;
     };
-    const pendingVerification = Boolean(json.pendingVerification);
     const trialExpired = Boolean(json.trialExpired);
     return {
-      held: trialExpired && !pendingVerification,
-      pendingVerification,
+      held: trialExpired,
       trialExpired,
       expiresAt: json.trial?.expiresAt ?? null,
     };

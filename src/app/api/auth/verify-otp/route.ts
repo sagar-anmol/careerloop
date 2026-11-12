@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 
 /**
  * Verifies the 6-digit signup code. On success the challenge is marked
- * verified for 60 minutes — /api/auth/register requires that mark (and
- * consumes it) before an account can be created.
+ * verified for 60 minutes — /api/payment/initiate requires that mark (and
+ * the payment callback consumes it) before an account can be created.
  */
 export async function POST(request: NextRequest) {
   try {

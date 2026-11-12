@@ -6,30 +6,64 @@ import {
 import {
   DEFAULT_PLAN,
   PLAN_CATALOG,
+  TRIAL_DURATION_DAYS,
+  TRIAL_PLAN,
   type PlanKey,
   isPlanKey,
-} from "@/lib/payments/upi";
+} from "@/lib/payments/plans";
 
 /**
  * Payment order domain logic. Every rule that matters is enforced here, never
- * in the browser: the price comes from the plan, the user comes from the
- * verified access token, and the UTR is unique.
+ * in the browser: the amount comes from the server-side plan table, and an
+ * order only becomes 'completed' after PayU's callback verifies the hash.
+ *
+ * Lifecycle (pay-first, account after payment):
+ *   1. /api/payment/initiate validates the dossier + OTP + duplicates, then
+ *      inserts a 'pending' row keyed by a unique `txnid`. For guest signup the
+ *      row carries `signup_payload` (incl. the plaintext password) and a NULL
+ *      user_id; the account does not exist yet. For a signed-in upgrade the
+ *      row carries user_id and no payload.
+ *   2. PayU POSTs /api/payment/callback; on a verified success the row flips to
+ *      'completed' (starter plans get expires_at = verified_at + 7 days) and,
+ *      for guest signups, the account is created and signup_payload is wiped.
  */
+
+/** Step-0 dossier held between checkout and the callback. Wiped at fulfillment. */
+export interface SignupPayload {
+  fullName: string;
+  email: string;
+  /** Plaintext by necessity: Supabase hashes it at account creation, then this is nulled. */
+  password: string;
+  phone: string;
+  domain: string;
+  experience?: string | null;
+  city?: string | null;
+  candidateId: string;
+  /** "data:image/jpeg;base64,…" — uploaded to candidate-assets at fulfillment. */
+  photoBase64?: string | null;
+  /** Raw base64 (no data-url prefix) of the resume, if small enough to ride along. */
+  resumeBase64?: string | null;
+  resumeName?: string | null;
+}
 
 export interface PaymentOrder {
   id: string;
-  user_id: string;
+  /** NULL until the account exists (guest signup) — set at fulfillment. */
+  user_id: string | null;
   plan: PlanKey;
   amount_inr: number;
-  upi_id: string;
-  utr: string | null;
   status: "pending" | "completed" | "failed";
   created_at: string;
   verified_at: string | null;
-  /** true only after an admin confirms the UTR against the bank statement. */
-  utr_verified: boolean;
-  /** Trial plans only: when the entitlement lapses (verified_at + 7 days). Null = never expires. */
+  /** Trial plans only: entitlement lapses at this instant. Null = never expires. */
   expires_at: string | null;
+  gateway: "payu" | "legacy_upi";
+  txnid: string | null;
+  mihpayid: string | null;
+  gateway_status: string | null;
+  gateway_error: string | null;
+  signup_payload: SignupPayload | null;
+  account_created_at: string | null;
 }
 
 export interface PlanView {
@@ -65,37 +99,47 @@ export async function listActivePlans(): Promise<PlanView[]> {
   return resolved.filter((p): p is PlanView => p !== null);
 }
 
-export async function findPendingOrder(
-  userId: string,
-  plan: PlanKey
-): Promise<PaymentOrder | null> {
-  const { data, error } = await getSupabaseAdmin()
-    .from("payment_orders")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("plan", plan)
-    .eq("status", "pending")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  return (data as PaymentOrder) ?? null;
+/** Marks outstanding PayU attempts for the same buyer as superseded and scrubs their payloads. */
+export async function supersedePendingCheckouts(match: { email?: string; userId?: string }): Promise<void> {
+  const query = () =>
+    getSupabaseAdmin()
+      .from("payment_orders")
+      .update({
+        status: "failed",
+        gateway_status: "superseded",
+        gateway_error: "A newer checkout was started for this buyer.",
+        signup_payload: null,
+      })
+      .eq("gateway", "payu")
+      .eq("status", "pending");
+  try {
+    if (match.email) {
+      await query().filter("signup_payload->>email", "eq", match.email);
+    } else if (match.userId) {
+      await query().eq("user_id", match.userId);
+    }
+  } catch (err) {
+    // Hygiene only — never block checkout on it.
+    console.warn("supersedePendingCheckouts failed (non-fatal):", err);
+  }
 }
 
-export async function createOrder(
-  userId: string,
-  plan: PlanView,
-  upiId: string
-): Promise<PaymentOrder> {
+export async function createCheckoutOrder(input: {
+  userId: string | null;
+  plan: PlanView;
+  txnid: string;
+  signupPayload: SignupPayload | null;
+}): Promise<PaymentOrder> {
   const { data, error } = await getSupabaseAdmin()
     .from("payment_orders")
     .insert({
-      user_id: userId,
-      plan: plan.plan,
-      amount_inr: plan.amountInr,
-      upi_id: upiId,
+      user_id: input.userId,
+      plan: input.plan.plan,
+      amount_inr: input.plan.amountInr,
       status: "pending",
+      gateway: "payu",
+      txnid: input.txnid,
+      signup_payload: input.signupPayload,
     })
     .select("*")
     .single();
@@ -104,42 +148,88 @@ export async function createOrder(
   return data as PaymentOrder;
 }
 
-/**
- * Latest order whose UTR was submitted but never verified by an admin
- * (status 'pending' + UTR present + utr_verified false). This is what the
- * whole-site "payment pending" banner polls for.
- */
-export async function findPendingVerificationOrder(
-  userId: string
-): Promise<PaymentOrder | null> {
+export async function findOrderByTxnId(txnid: string): Promise<PaymentOrder | null> {
   const { data, error } = await getSupabaseAdmin()
     .from("payment_orders")
     .select("*")
-    .eq("user_id", userId)
-    .eq("status", "pending")
-    .eq("utr_verified", false)
-    .not("utr", "is", null)
-    .order("created_at", { ascending: false })
-    .limit(1)
+    .eq("txnid", txnid)
     .maybeSingle();
 
   if (error) throw new Error(error.message);
   return (data as PaymentOrder) ?? null;
 }
 
-export async function getOrderForUser(
-  userId: string,
-  orderId: string
-): Promise<PaymentOrder | null> {
-  const { data, error } = await getSupabaseAdmin()
+export async function markOrderFailed(
+  orderId: string,
+  gatewayStatus: string | null,
+  gatewayError: string
+): Promise<void> {
+  const { error } = await getSupabaseAdmin()
     .from("payment_orders")
-    .select("*")
-    .eq("id", orderId)
-    .eq("user_id", userId)
-    .maybeSingle();
-
+    .update({
+      status: "failed",
+      gateway_status: gatewayStatus,
+      gateway_error: gatewayError,
+      // Scrub any held credentials — the attempt is over, account never created.
+      signup_payload: null,
+    })
+    .eq("id", orderId);
   if (error) throw new Error(error.message);
-  return (data as PaymentOrder) ?? null;
+}
+
+export async function markOrderCompleted(
+  orderId: string,
+  input: { mihpayid: string | null; gatewayStatus: string | null; plan: PlanKey }
+): Promise<{ expiresAt: string | null }> {
+  const now = Date.now();
+  const expiresAt =
+    input.plan === TRIAL_PLAN
+      ? new Date(now + TRIAL_DURATION_DAYS * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+  const { error } = await getSupabaseAdmin()
+    .from("payment_orders")
+    .update({
+      status: "completed",
+      gateway_status: input.gatewayStatus,
+      gateway_error: null,
+      mihpayid: input.mihpayid,
+      verified_at: new Date(now).toISOString(),
+      expires_at: expiresAt,
+    })
+    .eq("id", orderId);
+  if (error) throw new Error(error.message);
+  return { expiresAt };
+}
+
+/**
+ * Fulfillment blew up AFTER the money was captured: keep the order
+ * 'completed' (they paid) but scrub the held credentials and leave a note
+ * for support reconciliation. Never creates or deletes accounts.
+ */
+export async function recordFulfillmentFailure(orderId: string, gatewayError: string): Promise<void> {
+  const { error } = await getSupabaseAdmin()
+    .from("payment_orders")
+    .update({ gateway_error: gatewayError, signup_payload: null })
+    .eq("id", orderId);
+  if (error) throw new Error(error.message);
+}
+
+/** After the account exists: link it, stamp fulfillment, scrub the held password. */
+export async function attachAccountToOrder(
+  orderId: string,
+  userId: string,
+  failure?: string | null
+): Promise<void> {
+  const { error } = await getSupabaseAdmin()
+    .from("payment_orders")
+    .update({
+      user_id: userId,
+      account_created_at: new Date().toISOString(),
+      signup_payload: null,
+      gateway_error: failure ?? null,
+    })
+    .eq("id", orderId);
+  if (error) throw new Error(error.message);
 }
 
 /**
@@ -159,37 +249,6 @@ export async function listCompletedOrders(userId: string): Promise<PaymentOrder[
 
   if (error) throw new Error(error.message);
   return (data as PaymentOrder[]) ?? [];
-}
-
-/**
- * Attaches the 12-digit UTR to a pending order. The unique constraint on `utr`
- * makes a reused UTR impossible even under concurrent submits; the insert
- * returns 23505 which we surface as UTR_TAKEN.
- */
-export async function attachUtr(
-  userId: string,
-  orderId: string,
-  utr: string
-): Promise<{ order: PaymentOrder } | { error: "NOT_FOUND" | "UTR_TAKEN" | "BAD_STATE" }> {
-  const existing = await getOrderForUser(userId, orderId);
-  if (!existing) return { error: "NOT_FOUND" };
-  if (existing.status !== "pending") return { error: "BAD_STATE" };
-
-  const { data, error } = await getSupabaseAdmin()
-    .from("payment_orders")
-    .update({ utr })
-    .eq("id", orderId)
-    .eq("user_id", userId)
-    .eq("status", "pending")
-    .select("*")
-    .maybeSingle();
-
-  if (error) {
-    if (error.code === "23505") return { error: "UTR_TAKEN" };
-    throw new Error(error.message);
-  }
-  if (!data) return { error: "BAD_STATE" };
-  return { order: data as PaymentOrder };
 }
 
 /**
