@@ -7,15 +7,16 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 export function MuiWhatsAppButton() {
   const handleOpenWhatsApp = () => {
-    const phoneNumber = "919876543210";
-    const text = encodeURIComponent(
-      "Hi careerloop Support, I want to know more about the proctored skill assessment and recruitment partner interview scheduling."
+    // Community group invite (was a placeholder wa.me number).
+    window.open(
+      "https://chat.whatsapp.com/Kg2SW9a4rYRIvJ8R5gFhGC",
+      "_blank",
+      "noopener,noreferrer"
     );
-    window.open(`https://wa.me/${phoneNumber}?text=${text}`, "_blank");
   };
 
   return (
-    <Tooltip title="Chat with Placement Helpdesk" placement="left" arrow>
+    <Tooltip title="Join the CareerLoop WhatsApp group" placement="left" arrow>
       <Fab
         color="success"
         aria-label="whatsapp support"

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { MuiHeader } from "@/components/mui/MuiHeader";
 import { MuiHero } from "@/components/mui/MuiHero";
@@ -176,6 +177,17 @@ export default function HomePage() {
 
       {/* Floating WhatsApp Support Action */}
       <MuiWhatsAppButton />
+
+      {/* Ethora AI assistant — lander only. Launcher sits bottom-left so it
+          cannot cover the WhatsApp CTA, which owns bottom-right. */}
+      <Script
+        id="chat-content-assistant"
+        src="https://app.chat.ethora.com/widget/assistant-80bb8ba2.js"
+        data-app-id="6af56e0f880b7097ec1e7ba0"
+        data-api-base="https://api.chat.ethora.com/v1"
+        data-position="left"
+        strategy="afterInteractive"
+      />
 
       {/* Candidate Profile Dialog: KPI Metrics, Progress Bars & All Previous Test Attempts */}
       <MuiProfileModal
