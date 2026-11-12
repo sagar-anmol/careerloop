@@ -115,7 +115,7 @@ export function MuiFooter() {
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            © 2026 CareerLoop. All rights reserved. CareerLoop Pro Subscription Model.
+            © 2026 CareerLoop. All rights reserved. Built by Sagar Kumar.
           </Typography>
           <Typography variant="caption" color="text.secondary">
             DPDP Act Compliant • Proctored Assessment Integrity
