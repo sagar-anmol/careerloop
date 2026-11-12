@@ -60,6 +60,7 @@ below:
 | `next-env.d.ts` | Next.js generated type reference. Do not edit. |
 | `eslint.config.mjs` | `eslint-config-next` flat config. |
 | `.env.local` | Local secrets (see §8). Never commit, never print values. |
+| `.env.cloudflare` | Cloudflare API token (`DNS:Edit` + `Zone:Read` on `careerloop.co.in`) with `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_ZONE_ID`. Deliberately folder-scoped — never copied to a global config or shell rc. Matched by `.env*`, so git-ignored. Used only for DNS/BIMI maintenance; the app never reads it. |
 | `.vercel/project.json` | Vercel link: project `careerloop`, id `prj_BZAs10aKy20RHC280nLI03MjKTFZ`. Hidden and git-ignored, so it is absent from a fresh clone. |
 | `.wrangler-config/`, `.wrangler/` | Isolated Wrangler auth/cache dirs used by the deploy scripts. Hidden and git-ignored. |
 | `bin/` | Empty. |
@@ -225,8 +226,11 @@ sets duplicate the same brand colours; changing one does not change the other.
 | `lint` | `eslint` | — |
 
 Three deploy surfaces are configured at once: Pages (`out/`), Worker
-(`.open-next/`), and Vercel (`careerloop`). Nothing in the repo records which one
-serves production — confirm with the owner before deploying.
+(`.open-next/`), and Vercel (`careerloop`). **Production is Vercel**: the
+`careerloop` project (deployment context `careerloop-main`) is what the
+`www.careerloop.co.in` CNAME resolves to, and it builds from `main` on push.
+The Worker and Pages scripts are unused; a second Vercel context
+(`careerloop-o2fs`) reports failure on every commit and serves nothing.
 
 `out/` exists in the working tree but is older than `next.config.ts`: the export
 was produced 2026-11-10 00:00, the config was last edited 00:37 and contains no
@@ -252,6 +256,7 @@ Names only; values live in `.env.local` (never read them into chat or commits).
 | `RESEND_FROM` | same | server only — `From` address. The key is scoped to the verified Resend domain `m.careerloop.co.in`; any other domain is rejected with `403 not authorized to send emails from <domain>` |
 | `OTP_MAIL_REPLY_TO` | same | server only — `Reply-To` shown to candidates (`mail@m.careerloop.co.in`); falls back to `BRAND.replyEmail` |
 | `OTP_PEPPER` | `lib/email/otp.ts` | server only — extra secret mixed into the OTP hash |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID` | operator scripts only (`docs/FILE_TREE.md`, BIMI/DMARC maintenance) | local only — DNS:Edit on `careerloop.co.in`, kept in `.env.cloudflare`; never read by the app, never deployed |
 
 ## 9. Runtime flow
 
