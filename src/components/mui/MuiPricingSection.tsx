@@ -18,26 +18,35 @@ import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 
 interface MuiPricingSectionProps {
   onEnroll?: () => void;
+  /** When provided, clicking a paid plan starts the UPI flow for that plan
+   *  instead of just opening the signup modal. The "Custom" plan still calls
+   *  onEnroll (its price is negotiated, not a fixed UPI amount). */
+  onSelectPlan?: (plan: "starter_practice" | "pro_all_access" | "mentorship_1on1") => void;
 }
 
-export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
+// Maps each priced card to its server plan key. "Custom" has no key by design.
+const PLAN_KEYS: Record<string, "starter_practice" | "pro_all_access" | "mentorship_1on1"> = {
+  "₹999": "starter_practice",
+  "₹4,999": "pro_all_access",
+  "₹8,999": "mentorship_1on1",
+};
+
+export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionProps) {
   const plans = [
     {
-      name: "Starter Practice Pass",
-      badge: "Foundational",
+      name: "Starter 7-Day Trial Pass",
+      badge: "Foundational • 7-Day Trial",
       badgeColor: "default" as const,
       isFeatured: false,
-      price: "₹1,999",
-      billingSubtitle: "Portal & Mock Assessment Access",
-      description: "Designed for candidates looking to benchmark core aptitude, practice domain mocks, and identify initial skill gaps.",
+      price: "₹999",
+      billingSubtitle: "7-Day Trial • Auto-Expires",
+      description: "A low-cost 7-day trial pack to experience CareerLoop before committing. Auto-expires after 7 days — upgrade to Pro or 1-on-1 anytime to continue.",
       deliverables: [
-        "Access to Weekly Mock Test Series",
-        "Automated Performance & Accuracy Analytics",
+        "Basic version of limited tests — for trial & benchmarking only",
         "Standard Resume Diagnostic Checklist",
         "Community Q&A and Knowledge Base Access",
-        "Candidate Profile Listing in General Database",
       ],
-      buttonLabel: "Enroll in Starter Pass",
+      buttonLabel: "Start 7-Day Trial (₹999)",
       buttonVariant: "outlined" as const,
     },
     {
@@ -245,7 +254,11 @@ export function MuiPricingSection({ onEnroll }: MuiPricingSectionProps) {
                   color="primary"
                   size="large"
                   fullWidth
-                  onClick={onEnroll}
+                  onClick={() => {
+                    const planKey = PLAN_KEYS[plan.price];
+                    if (planKey && onSelectPlan) onSelectPlan(planKey);
+                    else onEnroll?.();
+                  }}
                   sx={{
                     py: 1.2,
                     fontSize: "0.88rem",

@@ -12,6 +12,13 @@ export interface CandidateRegistrationInput {
   photoBase64?: string | null;
   resumeFile?: File | null;
   selectedPlan?: string;
+  /** Compulsory at signup: the 12-digit UTR from the candidate's UPI receipt. */
+  utr?: string;
+}
+
+export interface CandidateRegistrationResult {
+  /** Non-fatal problems that happened AFTER the account/order were created. */
+  warning: string | null;
 }
 
 export interface AssessmentResultInput {
@@ -75,7 +82,11 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
           fullName: input.fullName,
           phone: input.phone,
           domain: input.domain,
+          experience: input.experience,
+          city: input.city,
           candidateId: input.candidateId,
+          plan: input.selectedPlan,
+          utr: input.utr,
         }),
       });
 
@@ -86,12 +97,24 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
         }
       } else {
         const json = await res.json().catch(() => null);
+        const code = typeof json?.code === "string" ? json.code : "";
+        const serverMsg = typeof json?.error === "string" ? json.error : "";
         apiError =
-          typeof json?.error === "string"
-            ? json.error
-            : res.status === 409
+          code === "EMAIL_TAKEN"
             ? "An account with this email already exists. Sign in instead."
-            : "Could not create your account.";
+            : code === "PHONE_TAKEN"
+            ? "This mobile number is already registered with another account."
+            : code === "UTR_TAKEN"
+            ? "This UTR is already used by another payment. Enter the UTR from your own UPI receipt."
+            : code === "INVALID_UTR"
+            ? "Enter a valid 12-digit UTR from your UPI receipt."
+            : code === "UNKNOWN_PLAN"
+            ? "The selected plan is not available. Pick another plan."
+            : code === "WEAK_PASSWORD"
+            ? "Password must be at least 6 characters."
+            : code === "INVALID_PHONE"
+            ? "Enter a valid 10-digit mobile number."
+            : serverMsg || (res.status === 409 ? "An account with this email already exists. Sign in instead." : "Could not create your account.");
       }
     } catch (e) {
       console.warn("API registration failed:", e);
@@ -204,7 +227,7 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
         ? "1-on-1 Mentorship (₹8,999)"
         : input.selectedPlan === "pro_all_access"
         ? "CareerLoop Pro (₹4,999)"
-        : "Starter Practice (₹1,999)",
+        : "Starter 7-Day Trial (₹999)",
     updated_at: new Date().toISOString(),
   };
 
@@ -214,19 +237,19 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     .select()
     .single();
 
+  // IMPORTANT: at this point the account AND the payment order already exist
+  // server-side (created atomically in /api/auth/register). Failing to sync
+  // the photo/resume URLs onto the profile must NOT report the registration
+  // as failed — the candidate owns the enrollment at this stage.
   if (saveErr) {
-    const detail = `${saveErr.message} ${saveErr.details ?? ""} ${saveErr.code ?? ""}`;
-    const isDuplicate = /duplicate key|23505|already exists/i.test(detail);
-    if (isDuplicate && /phone/i.test(detail)) {
-      throw new Error("This mobile number is already registered with another account.");
+    console.error("Profile sync after registration failed (account is fine):", saveErr);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cl_candidate", JSON.stringify(payload));
     }
-    if (isDuplicate && /email/i.test(detail)) {
-      throw new Error("This email is already registered with another account.");
-    }
-    if (/23514|candidates_phone_10_digits/i.test(detail)) {
-      throw new Error("Enter a valid 10-digit mobile number.");
-    }
-    throw new Error(saveErr.message);
+    return {
+      warning:
+        "Your account and payment were recorded, but the profile photo/resume sync failed. You can complete it from your profile — your enrollment stands.",
+    };
   }
 
   // Cache in localStorage for immediate profile navigation
@@ -234,7 +257,7 @@ export async function registerCandidateDossier(input: CandidateRegistrationInput
     localStorage.setItem("cl_candidate", JSON.stringify(candidateDataResult));
   }
 
-  return candidateDataResult;
+  return { warning: null };
 }
 
 /**

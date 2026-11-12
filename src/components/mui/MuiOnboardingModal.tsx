@@ -27,6 +27,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PersonIcon from "@mui/icons-material/Person";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { registerCandidateDossier, normalizePhone, CandidateRegistrationInput } from "@/lib/candidateService";
 import { detectFaces, FaceDetectionResult } from "@/lib/faceDetectionService";
 
@@ -48,15 +49,38 @@ interface MuiOnboardingModalProps {
   onClose: () => void;
   onCompleteSignup: (candidateData: CandidateOnboardingData) => void;
   onCompleteAndStartTest: (candidateData: CandidateOnboardingData) => void;
+  /** Pre-selects the plan (e.g. when the user clicked a pricing card). */
+  initialPlan?: "starter_practice" | "pro_all_access" | "mentorship_1on1";
 }
 
-const steps = ["Candidate Info", "Live Photo ID", "Program & Consent", "Account Ready"];
+const steps = ["Candidate Info", "Live Photo ID", "Program & Consent", "Payment & UTR", "Account Ready"];
+
+type PlanKey = "starter_practice" | "pro_all_access" | "mentorship_1on1";
+
+const PLAN_META: Record<PlanKey, { price: string; amountInr: number; name: string }> = {
+  starter_practice: { price: "₹999", amountInr: 999, name: "Starter 7-Day Trial" },
+  pro_all_access: { price: "₹4,999", amountInr: 4999, name: "Pro All-Access" },
+  mentorship_1on1: { price: "₹8,999", amountInr: 8999, name: "1-on-1 Intensive" },
+};
+
+interface QuoteView {
+  plan: PlanKey;
+  planName: string;
+  amountInr: number;
+  payeeName: string;
+  upiUri: string;
+  qrUrl: string;
+}
+
+/** Basic client-side UTR check (server re-validates): 12 digits, not a repeated single digit. */
+const UTR_PATTERN = /^(?!(\d)\1{11})\d{12}$/;
 
 export function MuiOnboardingModal({
   isOpen,
   onClose,
   onCompleteSignup,
   onCompleteAndStartTest,
+  initialPlan = "pro_all_access",
 }: MuiOnboardingModalProps) {
   const [activeStep, setActiveStep] = useState(0);
 
@@ -87,14 +111,31 @@ export function MuiOnboardingModal({
   const [faceGraceActive, setFaceGraceActive] = useState(false);
 
   // Program & Consent State
-  const [selectedPlan, setSelectedPlan] = useState<"starter_practice" | "pro_all_access" | "mentorship_1on1">("pro_all_access");
+  const [selectedPlan, setSelectedPlan] = useState<PlanKey>(initialPlan);
   const [consentAgreed, setConsentAgreed] = useState(false);
   const [step2Submitted, setStep2Submitted] = useState(false);
+
+  // Payment & UTR State — the QR/payee come from the server (unauthenticated
+  // quote; no order exists until registration). UTR entry is mandatory.
+  const [utr, setUtr] = useState("");
+  const [quote, setQuote] = useState<QuoteView | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteReload, setQuoteReload] = useState(0);
 
   // Resume State
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [candidateId, setCandidateId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
+
+  // Email verification (human check): a 6-digit code is mailed the moment the
+  // candidate completes the email field. Step 0 cannot continue until the code
+  // is verified; registration consumes the verification server-side.
+  const [otpStatus, setOtpStatus] = useState<"idle" | "sending" | "sent" | "verifying" | "verified" | "error">("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [resendIn, setResendIn] = useState(0);
+  const [verifiedEmail, setVerifiedEmail] = useState("");
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // Start/Stop Camera when entering or leaving Step 1
@@ -247,8 +288,114 @@ export function MuiOnboardingModal({
     startCamera();
   };
 
-  // Step 1 validation
-  const handleValidateStep0 = () => {
+  // --- Email verification (OTP) ---
+  // Countdown for the resend button.
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setInterval(() => setResendIn((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, [resendIn]);
+
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleSendOtp = async (emailArg?: string) => {
+    const email = (emailArg ?? formData.email).trim();
+    if (!EMAIL_PATTERN.test(email)) return;
+    setOtpStatus("sending");
+    setOtpError(null);
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string; retryAfterSeconds?: number };
+      if (!res.ok) {
+        setOtpStatus("error");
+        setOtpError(json.error || "Could not send the verification code.");
+        if (typeof json.retryAfterSeconds === "number") setResendIn(json.retryAfterSeconds);
+        return;
+      }
+      setOtpStatus("sent");
+      setOtpCode("");
+      setResendIn(60);
+    } catch {
+      setOtpStatus("error");
+      setOtpError("Network problem — please try again.");
+    }
+  };
+
+  // Fires when the email field loses focus with a valid address: check for
+  // duplicates first, then mail the code.
+  const handleEmailBlur = async () => {
+    const email = formData.email.trim();
+    if (!EMAIL_PATTERN.test(email)) return;
+    if (email === verifiedEmail && otpStatus === "verified") return;
+    try {
+      const res = await fetch("/api/auth/check-availability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { emailTaken?: boolean };
+      if (json?.emailTaken) {
+        setFormErrors({ email: "An account with this email already exists. Sign in instead." });
+        return;
+      }
+    } catch {
+      /* availability check unreachable — go ahead with the code anyway */
+    }
+    await handleSendOtp(email);
+  };
+
+  const handleVerifyOtp = async (codeArg?: string) => {
+    const code = (codeArg ?? otpCode).replace(/\D/g, "");
+    if (code.length !== 6) return;
+    setOtpStatus("verifying");
+    setOtpError(null);
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email.trim(), otp: code }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      if (res.ok && json.success) {
+        setOtpStatus("verified");
+        setVerifiedEmail(formData.email.trim());
+        return;
+      }
+      setOtpStatus("sent");
+      setOtpError(json.error || "Incorrect code.");
+    } catch {
+      setOtpStatus("sent");
+      setOtpError("Network problem — please try again.");
+    }
+  };
+
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setOtpCode(digits);
+    setOtpError(null);
+    if (digits.length === 6) void handleVerifyOtp(digits);
+  };
+
+  // Editing the email invalidates any prior verification.
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData({ ...formData, email: value });
+    if (otpStatus === "verified" && value.trim() !== verifiedEmail) {
+      setOtpStatus("idle");
+      setVerifiedEmail("");
+      setOtpCode("");
+    }
+    if (saveError) setSaveError(null);
+  };
+
+  // Step 1 validation. Field checks first; then a server availability check
+  // so a duplicate email/phone errors out HERE — before the candidate wastes
+  // time on the photo and payment steps. (register re-verifies authoritatively.)
+  const handleValidateStep0 = async () => {
     const errors: Record<string, string> = {};
     if (!formData.fullName.trim()) errors.fullName = "Full name is required (as per matriculation marksheet)";
     if (!formData.email.trim() || !formData.email.includes("@"))
@@ -266,7 +413,44 @@ export function MuiOnboardingModal({
       return;
     }
     setFormErrors({});
-    setActiveStep(1);
+
+    // Human check: the email must carry a verified OTP before the photo step.
+    if (otpStatus !== "verified" || formData.email.trim() !== verifiedEmail) {
+      setFormErrors({ email: "Verify your email with the 6-digit code we sent before continuing." });
+      if (otpStatus === "idle" || otpStatus === "error") void handleSendOtp();
+      return;
+    }
+
+    setCheckingAvailability(true);
+    try {
+      const res = await fetch("/api/auth/check-availability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email.trim(), phone: formData.phone }),
+      });
+      const json = (await res.json().catch(() => null)) as
+        | { emailTaken?: boolean; phoneTaken?: boolean }
+        | null;
+      if (json?.emailTaken) {
+        setFormErrors({
+          email: "An account with this email already exists. Sign in instead.",
+        });
+        return;
+      }
+      if (json?.phoneTaken) {
+        setFormErrors({
+          phone: "This mobile number is already registered with another account.",
+        });
+        return;
+      }
+      setActiveStep(1);
+    } catch {
+      // Pre-check unreachable — let the candidate continue; the final
+      // registration still refuses duplicates.
+      setActiveStep(1);
+    } finally {
+      setCheckingAvailability(false);
+    }
   };
 
   // Step 2 validation
@@ -278,8 +462,8 @@ export function MuiOnboardingModal({
     setActiveStep(2);
   };
 
-  // Step 3 validation (Resume) -> Register in Supabase
-  const handleValidateStep2 = async () => {
+  // Step 3 gate (Program & Consent): require resume + consent, then advance to Payment & UTR.
+  const handleValidateStep2 = () => {
     setStep2Submitted(true);
     if (!resumeFile) {
       setSaveError("Uploading your resume (PDF/DOCX) is compulsory to proceed.");
@@ -289,26 +473,85 @@ export function MuiOnboardingModal({
       setSaveError("You must accept the DPDP data processing & terms consent to proceed.");
       return;
     }
+    setSaveError(null);
+    setActiveStep(3);
+  };
 
+  // Load the payment quote (QR + payee) whenever the candidate is on the
+  // payment step. No order is created here — registration creates it.
+  useEffect(() => {
+    if (!isOpen || activeStep !== 3) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/payment/quote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: selectedPlan }),
+        });
+        const json = (await res.json().catch(() => ({}))) as Partial<QuoteView> & { error?: string };
+        if (cancelled) return;
+        if (!res.ok || !json || typeof json.amountInr !== "number") {
+          setQuote(null);
+          setQuoteError(json?.error || "Could not load the payment details.");
+          return;
+        }
+        setQuote({
+          plan: json.plan ?? selectedPlan,
+          planName: json.planName ?? PLAN_META[selectedPlan].name,
+          amountInr: json.amountInr,
+          payeeName: json.payeeName ?? "",
+          upiUri: json.upiUri ?? "",
+          qrUrl: json.qrUrl ?? "",
+        });
+        setQuoteError(null);
+      } catch {
+        if (!cancelled) {
+          setQuote(null);
+          setQuoteError("Could not reach the payment service. Check your connection.");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, activeStep, selectedPlan, quoteReload]);
+
+  const handleUtrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 12);
+    setUtr(digits);
+    if (saveError) setSaveError(null);
+  };
+
+  const utrValid = UTR_PATTERN.test(utr);
+
+  // Step 4 (Payment & UTR): account creation is gated on payment. The server
+  // validates plan + UTR, creates the auth user, the candidates row and the
+  // payment order in one go, and rolls the user back on any failure.
+  const handleFinalCreateAccount = async () => {
+    if (!utrValid) {
+      setSaveError("Enter a valid 12-digit UTR from your UPI receipt (not a repeated digit).");
+      return;
+    }
     const newId = `CL-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     setCandidateId(newId);
-
     setIsSaving(true);
     setSaveError(null);
     try {
-      await registerCandidateDossier({
+      const outcome = await registerCandidateDossier({
         ...formData,
         candidateId: newId,
         photoBase64: capturedPhoto,
-        resumeFile: resumeFile,
+        resumeFile,
         selectedPlan,
+        utr,
       });
-      setActiveStep(3);
+      setSaveError(outcome?.warning ?? null);
+      setActiveStep(4);
     } catch (err: unknown) {
-      console.error("Failed to register candidate to Supabase:", err);
-      const msg = err instanceof Error ? err.message : "Saved locally; database sync failed.";
+      console.error("Failed to register candidate:", err);
+      const msg = err instanceof Error ? err.message : "Could not create your account. Please try again.";
       setSaveError(msg);
-      setActiveStep(3);
     } finally {
       setIsSaving(false);
     }
@@ -325,7 +568,7 @@ export function MuiOnboardingModal({
           ? "CareerLoop Pro (₹4,999)"
           : selectedPlan === "mentorship_1on1"
           ? "1-on-1 Mentorship (₹8,999)"
-          : "Starter Practice (₹1,999)",
+          : "Starter 7-Day Trial (₹999)",
       selected_plan: selectedPlan,
     };
     onCompleteSignup(finalData);
@@ -369,7 +612,7 @@ export function MuiOnboardingModal({
             Candidate Onboarding
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            Step {activeStep + 1} of 4 • Free Baseline or CareerLoop Pro
+            Step {activeStep + 1} of 5 • CareerLoop Enrollment
           </Typography>
         </Box>
         <IconButton aria-label="close" onClick={handleClose} size="small">
@@ -429,9 +672,13 @@ export function MuiOnboardingModal({
                 fullWidth
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={handleEmailChange}
+                onBlur={handleEmailBlur}
                 error={Boolean(formErrors.email)}
-                helperText={formErrors.email}
+                helperText={
+                  formErrors.email ||
+                  (otpStatus === "verified" ? "Email verified." : "We'll send a 6-digit code here as soon as you complete this field.")
+                }
                 placeholder="rahul@example.com"
                 required
               />
@@ -448,6 +695,95 @@ export function MuiOnboardingModal({
                 required
               />
             </Box>
+
+            {/* Email verification (OTP) — appears once the email field is completed */}
+            {EMAIL_PATTERN.test(formData.email.trim()) && otpStatus !== "verified" && (
+              <Box
+                sx={{
+                  border: "1px solid",
+                  borderColor: otpError ? "error.main" : "divider",
+                  bgcolor: "rgba(37, 99, 235, 0.04)",
+                  borderRadius: 2,
+                  p: 1.5,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                    {otpStatus === "idle"
+                      ? "A 6-digit code will be emailed to this address"
+                      : otpStatus === "sending"
+                      ? "Sending verification code..."
+                      : otpStatus === "verifying"
+                      ? "Checking code..."
+                      : otpStatus === "error"
+                      ? "Verification code could not be sent"
+                      : `6-digit code sent to ${formData.email.trim()}`}
+                  </Typography>
+                  {otpStatus === "idle" && (
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() => void handleSendOtp()}
+                      sx={{ minWidth: 0, whiteSpace: "nowrap", fontSize: "0.72rem" }}
+                    >
+                      Send code
+                    </Button>
+                  )}
+                  {otpStatus === "sent" && (
+                    <Button
+                      size="small"
+                      variant="text"
+                      disabled={resendIn > 0}
+                      onClick={() => void handleSendOtp()}
+                      sx={{ minWidth: 0, whiteSpace: "nowrap", fontSize: "0.72rem" }}
+                    >
+                      {resendIn > 0 ? `Resend in ${resendIn}s` : "Resend code"}
+                    </Button>
+                  )}
+                  {otpStatus === "error" && (
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() => void handleSendOtp()}
+                      sx={{ minWidth: 0, whiteSpace: "nowrap", fontSize: "0.72rem" }}
+                    >
+                      Try again
+                    </Button>
+                  )}
+                </Box>
+
+                {(otpStatus === "sent" || otpStatus === "verifying") && (
+                  <TextField
+                    label="6-digit verification code"
+                    value={otpCode}
+                    onChange={handleOtpChange}
+                    inputMode="numeric"
+                    placeholder="e.g. 482913"
+                    size="small"
+                    error={Boolean(otpError)}
+                    helperText={otpError || "Auto-checks when you type the 6th digit. Valid for 10 minutes."}
+                    slotProps={{
+                      htmlInput: { maxLength: 6, inputMode: "numeric", autoComplete: "one-time-code" },
+                      input: { sx: { letterSpacing: "0.4em", fontWeight: 700 } },
+                    }}
+                  />
+                )}
+                {otpStatus === "error" && (
+                  <Typography variant="caption" sx={{ color: "error.main" }}>
+                    {otpError || "Could not send the verification code. Try again."}
+                  </Typography>
+                )}
+              </Box>
+            )}
+
+            {otpStatus === "verified" && formData.email.trim() === verifiedEmail && (
+              <Alert severity="success" variant="outlined" sx={{ py: 0.5, fontSize: "0.8rem" }}>
+                Email verified — you can continue.
+              </Alert>
+            )}
 
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
               <TextField
@@ -719,12 +1055,12 @@ export function MuiOnboardingModal({
                 <div>
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: "0.85rem" }}>
-                      Starter Pass
+                      Starter 7-Day Trial
                     </Typography>
-                    <Chip label="₹1,999" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
+                    <Chip label="₹999" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
                   </Box>
                   <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "0.72rem", lineHeight: 1.35 }}>
-                    Weekly mock tests &amp; standard resume check.
+                    7-day trial: basic limited tests and resume check. Auto-expires.
                   </Typography>
                 </div>
               </Paper>
@@ -892,8 +1228,139 @@ export function MuiOnboardingModal({
           </Box>
         )}
 
-        {/* STEP 3: ACCOUNT CREATED READY */}
+        {/* STEP 3: PAYMENT & UTR — account is created only after payment is recorded */}
         {activeStep === 3 && (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ textAlign: "center", mb: 0.5 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }} gutterBottom>
+                Pay via UPI &amp; Enter Your UTR
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                Scan the QR below with any UPI app and pay exactly the enrolled amount.
+                Account creation is not possible without a valid UTR.
+              </Typography>
+            </Box>
+
+            {/* Amount + Selected plan */}
+            <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <Typography variant="body2" color="text.secondary">
+                {quote?.planName ?? PLAN_META[selectedPlan].name}
+              </Typography>
+              <Typography variant="h4" sx={{ fontWeight: 800, color: "primary.main" }}>
+                ₹{(quote?.amountInr ?? PLAN_META[selectedPlan].amountInr).toLocaleString("en-IN")}
+              </Typography>
+            </Box>
+
+            {quoteError ? (
+              <Alert
+                severity="error"
+                action={
+                  <Button color="inherit" size="small" onClick={() => setQuoteReload((n) => n + 1)}>
+                    Retry
+                  </Button>
+                }
+              >
+                {quoteError}
+              </Alert>
+            ) : !quote || quote.plan !== selectedPlan ? (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+                <CircularProgress size={32} />
+              </Box>
+            ) : (
+              <>
+                {/* QR */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    p: 1.5,
+                    bgcolor: "#fff",
+                    borderRadius: 2,
+                    border: "2px solid",
+                    borderColor: "primary.main",
+                    alignSelf: "center",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={quote.qrUrl}
+                    alt="UPI payment QR code"
+                    width={190}
+                    height={190}
+                    style={{ objectFit: "contain" }}
+                  />
+                </Box>
+
+                {/* Payee name only — the UPI id is intentionally never shown */}
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Typography variant="caption" color="text.secondary">Payee</Typography>
+                    <Typography variant="caption" sx={{ fontWeight: 600 }}>{quote.payeeName}</Typography>
+                  </Box>
+                </Box>
+
+                {/* Mobile deep link */}
+                {quote.upiUri && (
+                  <Button
+                    href={quote.upiUri}
+                    variant="outlined"
+                    size="small"
+                    endIcon={<OpenInNewIcon />}
+                    sx={{ display: { xs: "inline-flex", sm: "none" }, alignSelf: "center" }}
+                  >
+                    Open in UPI App
+                  </Button>
+                )}
+              </>
+            )}
+
+            <TextField
+              label="12-digit UTR / Reference number"
+              placeholder="e.g. 431234567890"
+              value={utr}
+              onChange={handleUtrChange}
+              inputMode="numeric"
+              fullWidth
+              size="small"
+              error={utr.length === 12 && !utrValid}
+              helperText={
+                utr.length === 12 && !utrValid
+                  ? "That doesn't look like a valid UTR (not a bank reference). Check your receipt."
+                  : "From your UPI app's payment receipt. Account is created only after this step."
+              }
+              slotProps={{
+                htmlInput: { maxLength: 12, inputMode: "numeric", autoComplete: "off" },
+                input: {
+                  endAdornment: (
+                    <Chip
+                      size="small"
+                      label={`${utr.length}/12`}
+                      color={utrValid ? "success" : "default"}
+                      variant="outlined"
+                    />
+                  ),
+                },
+              }}
+            />
+
+            {saveError && (
+              <Alert severity="error" variant="outlined" sx={{ py: 0.5, fontSize: "0.82rem" }}>
+                {saveError}
+              </Alert>
+            )}
+
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 0.5 }}>
+              <WarningAmberIcon sx={{ fontSize: 14, color: "warning.main", mt: 0.25 }} />
+              <Typography variant="caption" color="text.secondary">
+                Pay exactly ₹{(quote?.amountInr ?? PLAN_META[selectedPlan].amountInr).toLocaleString("en-IN")} and keep this window open.
+                Your UTR is stored with the order and is verified by our team — enrollment activates only after verification.
+              </Typography>
+            </Box>
+          </Box>
+        )}
+
+        {/* STEP 4: ACCOUNT CREATED READY */}
+        {activeStep === 4 && (
           <Box sx={{ textAlign: "center", py: 1 }}>
             <Box
               sx={{
@@ -970,7 +1437,7 @@ export function MuiOnboardingModal({
             )}
 
             <Alert severity="success" variant="outlined" sx={{ textAlign: "left", fontSize: "0.8rem", mb: 1.5 }}>
-              <strong>Registration Completed:</strong> Your candidate profile and credentials have been securely stored. You can now view your profile dashboard or proceed to the assessment whenever you choose.
+              <strong>Registration Completed:</strong> Your profile and UPI payment reference (UTR) have been recorded. Enrollment activates after our team verifies the UTR — usually within 24–48 hours. A red banner stays on top of the site until verification is done.
             </Alert>
           </Box>
         )}
@@ -978,11 +1445,12 @@ export function MuiOnboardingModal({
 
       {/* Dialog Actions */}
       <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, justifyContent: "space-between" }}>
-        {activeStep > 0 && activeStep < 3 ? (
+        {activeStep > 0 && activeStep < 4 ? (
           <Button
             onClick={() => setActiveStep((prev) => prev - 1)}
             variant="text"
             color="inherit"
+            disabled={isSaving}
           >
             Back
           </Button>
@@ -995,9 +1463,10 @@ export function MuiOnboardingModal({
             variant="contained"
             color="primary"
             onClick={handleValidateStep0}
-            endIcon={<ArrowForwardIcon />}
+            disabled={checkingAvailability}
+            endIcon={checkingAvailability ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
-            Next: Verify Photo ID
+            {checkingAvailability ? "Checking email & mobile..." : "Next: Verify Photo ID"}
           </Button>
         )}
 
@@ -1018,7 +1487,25 @@ export function MuiOnboardingModal({
             variant="contained"
             color="primary"
             onClick={handleValidateStep2}
-            disabled={isSaving}
+            sx={{
+              bgcolor: "#405FE2",
+              color: "#ffffff",
+              fontWeight: 700,
+              px: 3,
+              "&:hover": { bgcolor: "#2843be" },
+            }}
+            endIcon={<ArrowForwardIcon />}
+          >
+            Continue to Payment
+          </Button>
+        )}
+
+        {activeStep === 3 && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleFinalCreateAccount}
+            disabled={isSaving || !utrValid}
             sx={{
               bgcolor: "#405FE2",
               color: "#ffffff",
@@ -1029,16 +1516,12 @@ export function MuiOnboardingModal({
             endIcon={isSaving ? <CircularProgress size={18} color="inherit" /> : <ArrowForwardIcon />}
           >
             {isSaving
-              ? "Saving to Database..."
-              : selectedPlan === "pro_all_access"
-              ? "Enroll in Pro All-Access (₹4,999)"
-              : selectedPlan === "mentorship_1on1"
-              ? "Enroll in 1-on-1 Mentorship (₹8,999)"
-              : "Enroll in Starter Pass (₹1,999)"}
+              ? "Recording payment & creating account..."
+              : `Pay & Create Account (${PLAN_META[selectedPlan].price})`}
           </Button>
         )}
 
-        {activeStep === 3 && (
+        {activeStep === 4 && (
           <Box sx={{ width: "100%" }}>
             <Button
               variant="contained"
