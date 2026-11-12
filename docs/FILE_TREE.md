@@ -75,7 +75,7 @@ Naming is inconsistent on purpose of history: npm package `jobhai`, Worker
 | File | Role |
 | --- | --- |
 | `layout.tsx` | Root layout. Google Fonts (Roboto), GTM `GTM-W7L22656`, wraps children in `ThemeRegistry` (MUI). Exports site `metadata`. |
-| `page.tsx` | `/` landing. `"use client"`. Composes MUI section components + modals, syncs Supabase session via `supabase.auth.getSession` / `onAuthStateChange`. Loads the Ethora AI assistant (app `6af56e0f880b7097ec1e7ba0`) via `next/script` `afterInteractive` with `data-position="left"`, so its launcher is bottom-LEFT and the WhatsApp CTA keeps bottom-right. Lander only — not the dashboard or the exam runner. |
+| `page.tsx` | `/` landing. `"use client"`. Composes MUI section components + modals, syncs Supabase session via `supabase.auth.getSession` / `onAuthStateChange`. Loads the Ethora AI assistant (app `6af56e0f880b7097ec1e7ba0`) via `next/script` `afterInteractive`, docked bottom-right (its default). Stacked into one cluster with the WhatsApp FAB: assistant launcher at `bottom: 24` (56px, vendor `right: 24`), WhatsApp FAB above it at `bottom: 96`. Lander only — not the dashboard or the exam runner. |
 | `profile/page.tsx` | `/profile` candidate dashboard, ~1.1k lines, client component. Tab ids: `overview`, `mains_exam`, `mock_tests`, `assessments`, `dossier`, `partners`, `settings` (`mains_exam` and `assessments` render the same block, which is now `MainsExamPanel`). Reads cached profile from `localStorage`, then Supabase. Uses shadcn primitives + MUI modals. |
 | `dashboard/page.tsx` | `/dashboard`. Re-exports `profile/page.tsx` with dashboard metadata. Two URLs, one implementation. |
 | `exam/[setId]/page.tsx` | `/exam/<set-id>` mains test runner. Client page (`use(params)`); delegates to `ExamShell`. Accepts `?attempt=<id>` to deep-link a stored result. |
@@ -117,7 +117,7 @@ No middleware, no `not-found`, no `error`, no `loading` files.
 | `MuiPaymentPendingBanner.tsx` | `page.tsx`, `profile/page.tsx` | Whole-site status strip at the very top (in-flow, above both sticky headers); not dismissible. RED: submitted-but-unverified UTR (`pendingVerification`). AMBER: expired 7-day Starter Trial (`trialExpired`) with an "Upgrade now" CTA to `/#pricing`. Polls `GET /api/payment/my-status`; refreshes on auth change and the `careerloop:payment-utr-submitted` event. |
 | `MuiFaq.tsx` | `page.tsx` | FAQ accordion. |
 | `MuiFooter.tsx` | `page.tsx` | Footer. Uses the same brand mark in the brand column; bottom bar credits "Built by Sagar Kumar". |
-| `MuiWhatsAppButton.tsx` | `page.tsx` | Floating WhatsApp CTA, bottom-right (`position: fixed; bottom/right: 24`, z-index 1000). Opens the community group invite `https://chat.whatsapp.com/Kg2SW9a4rYRIvJ8R5gFhGC` (replaced the old placeholder `wa.me/919876543210` deep link). |
+| `MuiWhatsAppButton.tsx` | `page.tsx` | Floating WhatsApp CTA, fixed at `bottom: 96; right: 24` (stacked above the Ethora launcher), z-index 1000. Opens the WhatsApp channel `https://whatsapp.com/channel/0029VbDuIK30wajjaHo1IO3X`. |
 | `MuiAuthModal.tsx` | `page.tsx` | Sign-in / sign-up modal. |
 | `MuiOnboardingModal.tsx` | `page.tsx` | Multi-step paid enrollment: Candidate Info → Live Photo ID → Program & Consent → **Payment & UTR** (QR from `POST /api/payment/quote`; 12-char UTR gate; account created only on submit) → Account Ready. Accepts `initialPlan`. Owns `CandidateOnboardingData`. |
 | `MuiProfileModal.tsx` | `page.tsx`, `profile/page.tsx` | Candidate profile editor. Owns `CandidateProfileData` (imported by the dashboard). |

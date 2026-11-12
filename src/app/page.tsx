@@ -178,14 +178,15 @@ export default function HomePage() {
       {/* Floating WhatsApp Support Action */}
       <MuiWhatsAppButton />
 
-      {/* Ethora AI assistant — lander only. Launcher sits bottom-left so it
-          cannot cover the WhatsApp CTA, which owns bottom-right. */}
+      {/* Ethora AI assistant — lander only. Docked right (bottom: 24, 56px),
+          stacked below the WhatsApp FAB into one bottom-right cluster; the FAB
+          keeps right: 24 at bottom: 96. Keeps both clear of each other. */}
       <Script
         id="chat-content-assistant"
         src="https://app.chat.ethora.com/widget/assistant-80bb8ba2.js"
         data-app-id="6af56e0f880b7097ec1e7ba0"
         data-api-base="https://api.chat.ethora.com/v1"
-        data-position="left"
+        data-position="right"
         strategy="afterInteractive"
       />
 
