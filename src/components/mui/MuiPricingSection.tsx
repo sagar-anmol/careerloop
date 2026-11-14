@@ -34,19 +34,19 @@ const PLAN_KEYS: Record<string, "starter_practice" | "pro_all_access" | "mentors
 export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionProps) {
   const plans = [
     {
-      name: "Starter 7-Day Trial Pass",
-      badge: "Foundational • 7-Day Trial",
+      name: "Starter Practice Pass",
+      badge: "Foundational • No Expiry",
       badgeColor: "default" as const,
       isFeatured: false,
       price: "₹999",
-      billingSubtitle: "7-Day Trial • Auto-Expires",
-      description: "A low-cost 7-day trial pack to experience CareerLoop before committing. Auto-expires after 7 days — upgrade to Pro or 1-on-1 anytime to continue.",
+      billingSubtitle: "One-Time • No Expiry",
+      description: "A low-cost entry pack to experience CareerLoop before committing. One-time payment with no expiry — upgrade to Pro or 1-on-1 anytime for the full programme.",
       deliverables: [
-        "Basic version of limited tests — for trial & benchmarking only",
+        "Basic version of limited tests — for practice & benchmarking",
         "Standard Resume Diagnostic Checklist",
         "Community Q&A and Knowledge Base Access",
       ],
-      buttonLabel: "Start 7-Day Trial (₹999)",
+      buttonLabel: "Get Starter Pass (₹999)",
       buttonVariant: "outlined" as const,
     },
     {

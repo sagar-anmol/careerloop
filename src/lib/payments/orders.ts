@@ -6,8 +6,6 @@ import {
 import {
   DEFAULT_PLAN,
   PLAN_CATALOG,
-  TRIAL_DURATION_DAYS,
-  TRIAL_PLAN,
   type PlanKey,
   isPlanKey,
 } from "@/lib/payments/plans";
@@ -24,8 +22,8 @@ import {
  *      user_id; the account does not exist yet. For a signed-in upgrade the
  *      row carries user_id and no payload.
  *   2. PayU POSTs /api/payment/callback; on a verified success the row flips to
- *      'completed' (starter plans get expires_at = verified_at + 7 days) and,
- *      for guest signups, the account is created and signup_payload is wiped.
+ *      'completed' and, for guest signups, the account is created and
+ *      signup_payload is wiped.
  */
 
 /** Step-0 dossier held between checkout and the callback. Wiped at fulfillment. */
@@ -55,7 +53,7 @@ export interface PaymentOrder {
   status: "pending" | "completed" | "failed";
   created_at: string;
   verified_at: string | null;
-  /** Trial plans only: entitlement lapses at this instant. Null = never expires. */
+  /** Legacy column: unused now that no plan has an expiry window. */
   expires_at: string | null;
   gateway: "payu" | "legacy_upi";
   txnid: string | null;
@@ -180,12 +178,7 @@ export async function markOrderFailed(
 export async function markOrderCompleted(
   orderId: string,
   input: { mihpayid: string | null; gatewayStatus: string | null; plan: PlanKey }
-): Promise<{ expiresAt: string | null }> {
-  const now = Date.now();
-  const expiresAt =
-    input.plan === TRIAL_PLAN
-      ? new Date(now + TRIAL_DURATION_DAYS * 24 * 60 * 60 * 1000).toISOString()
-      : null;
+): Promise<void> {
   const { error } = await getSupabaseAdmin()
     .from("payment_orders")
     .update({
@@ -193,12 +186,10 @@ export async function markOrderCompleted(
       gateway_status: input.gatewayStatus,
       gateway_error: null,
       mihpayid: input.mihpayid,
-      verified_at: new Date(now).toISOString(),
-      expires_at: expiresAt,
+      verified_at: new Date().toISOString(),
     })
     .eq("id", orderId);
   if (error) throw new Error(error.message);
-  return { expiresAt };
 }
 
 /**
@@ -230,25 +221,6 @@ export async function attachAccountToOrder(
     })
     .eq("id", orderId);
   if (error) throw new Error(error.message);
-}
-
-/**
- * Every completed (verified) order of a user, newest verification first.
- * Used to compute the user's entitlement: an order without expires_at never
- * lapses; a trial order lapses expires_at days after verification. The rows
- * are kept forever — expiry is computed, never deleted — so the record that
- * someone once held a pack persists.
- */
-export async function listCompletedOrders(userId: string): Promise<PaymentOrder[]> {
-  const { data, error } = await getSupabaseAdmin()
-    .from("payment_orders")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("status", "completed")
-    .order("verified_at", { ascending: false });
-
-  if (error) throw new Error(error.message);
-  return (data as PaymentOrder[]) ?? [];
 }
 
 /**

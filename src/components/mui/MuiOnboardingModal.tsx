@@ -55,7 +55,7 @@ const steps = ["Candidate Info", "Live Photo ID", "Program & Consent", "Payment"
 type PlanKey = "starter_practice" | "pro_all_access" | "mentorship_1on1";
 
 const PLAN_META: Record<PlanKey, { price: string; amountInr: number; name: string }> = {
-  starter_practice: { price: "₹999", amountInr: 999, name: "Starter 7-Day Trial" },
+  starter_practice: { price: "₹999", amountInr: 999, name: "Starter Practice Pass" },
   pro_all_access: { price: "₹4,999", amountInr: 4999, name: "Pro All-Access" },
   mentorship_1on1: { price: "₹8,999", amountInr: 8999, name: "1-on-1 Intensive" },
 };
@@ -969,12 +969,12 @@ export function MuiOnboardingModal({
                 <div>
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: "0.85rem" }}>
-                      Starter 7-Day Trial
+                      Starter Practice Pass
                     </Typography>
                     <Chip label="₹999" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
                   </Box>
                   <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "0.72rem", lineHeight: 1.35 }}>
-                    7-day trial: basic limited tests and resume check. Auto-expires.
+                    Basic limited tests and resume check. One-time payment, no expiry.
                   </Typography>
                 </div>
               </Paper>
@@ -1189,7 +1189,7 @@ export function MuiOnboardingModal({
                     {PLAN_META[selectedPlan].name}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    One-time payment · Starter activates instantly and lapses after 7 days
+                    One-time payment · activates instantly, no expiry
                   </Typography>
                 </Box>
               </Box>

@@ -14,9 +14,6 @@ import { MuiOnboardingModal } from "@/components/mui/MuiOnboardingModal";
 import { MuiProctoredAssessmentModal } from "@/components/mui/MuiProctoredAssessmentModal";
 import { MuiProfileModal, CandidateProfileData } from "@/components/mui/MuiProfileModal";
 import { MuiAuthModal } from "@/components/mui/MuiAuthModal";
-import { MuiPaymentPendingBanner } from "@/components/mui/MuiPaymentPendingBanner";
-import { MuiTrialExpiredGate } from "@/components/mui/MuiTrialExpiredGate";
-import { fetchEntitlement } from "@/lib/payments/entitlement";
 import Alert from "@mui/material/Alert";
 import type { PlanKey } from "@/lib/payments/plans";
 import { MuiWhatsAppButton } from "@/components/mui/MuiWhatsAppButton";
@@ -33,16 +30,8 @@ export default function HomePage() {
   const [paymentError, setPaymentError] = useState<string | null>(null);
   // Plan preselected on the onboarding (enrollment) flow.
   const [onboardingPlan, setOnboardingPlan] = useState<PlanKey>("pro_all_access");
-  // Trial hold: the 7-day Starter Trial lapsed with no fresh payment — holds
-  // the account at sign-in behind the upgrade gate. null = not held.
-  const [trialHold, setTrialHold] = useState<{ expiresAt: string | null } | null>(null);
   const [candidateData, setCandidateData] = useState<CandidateProfileData | null>(null);
   const [currentUser, setCurrentUser] = useState<CandidateProfileData | null>(null);
-
-  const refreshTrialHold = async () => {
-    const status = await fetchEntitlement();
-    setTrialHold(status.held ? { expiresAt: status.expiresAt } : null);
-  };
 
   // Sync Supabase Auth session & profile
   useEffect(() => {
@@ -51,7 +40,6 @@ export default function HomePage() {
         fetchCandidateProfile(session.user.id, undefined, session.user.email).then((profile) => {
           setCurrentUser(profile || { email: session.user.email, id: session.user.id });
         });
-        void refreshTrialHold();
       }
     });
 
@@ -65,7 +53,6 @@ export default function HomePage() {
       } else {
         setCurrentUser(null);
       }
-      void refreshTrialHold();
     });
 
     return () => {
@@ -95,7 +82,7 @@ export default function HomePage() {
     }
   };
 
-  // Signed-in upgrade (e.g. lapsed trial): server-created PayU order, then the
+  // Signed-in upgrade (e.g. Starter → Pro): server-created PayU order, then the
   // browser hands off to PayU's hosted checkout.
   const handleUpgrade = (plan: PlanKey) => {
     setPaymentError(null);
@@ -120,24 +107,15 @@ export default function HomePage() {
     setCurrentUser(null);
   };
 
-  // On login: update user, close auth, go to the profile dashboard — unless
-  // the 7-day trial has lapsed, in which case hold sign-in behind the upgrade
-  // gate instead of routing.
-  const handleUserSignedIn = async (profile: CandidateProfileData | null) => {
+  // On login: update user, close auth, go to the profile dashboard.
+  const handleUserSignedIn = (profile: CandidateProfileData | null) => {
     setCurrentUser(profile);
     setIsAuthOpen(false);
-    const status = await fetchEntitlement();
-    if (status.held) {
-      setTrialHold({ expiresAt: status.expiresAt });
-      return;
-    }
     router.push("/profile");
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
-      {/* Amber strip: visible only while the 7-day Starter Trial is expired */}
-      <MuiPaymentPendingBanner />
       {/* Top Corporate App Bar with Profile & Auth support */}
       <MuiHeader
         onStartAssessment={handleOpenAssessment}
@@ -215,17 +193,6 @@ export default function HomePage() {
         onClose={() => setIsOnboardingOpen(false)}
         initialPlan={onboardingPlan}
       />
-
-      {/* Trial hold: expired 7-day Starter Trial — sign-in is held until an
-          upgrade payment completes via PayU (the gate self-releases via my-status). */}
-      {trialHold && (
-        <MuiTrialExpiredGate
-          expiresAt={trialHold.expiresAt}
-          onUpgrade={(plan) => handleUpgrade(plan)}
-          onRelease={() => setTrialHold(null)}
-          onSignOut={handleSignOut}
-        />
-      )}
 
       {/* Floating error for a failed PayU handoff (upgrade from pricing or gate). */}
       {paymentError && (

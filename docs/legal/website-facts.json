@@ -70,18 +70,19 @@
       "onboarding consent text states: fee covers weekly mock tests, live mentorship, and resume curation, with complimentary direct referrals to fast-hiring HR partner networks",
       "DPDP Act 2023 compliance asserted in footer"
     ],
-    "legal_attention": "Every quantified claim (especially '450+') needs substantiation on file or must be softened. Calling the ₹999 product a 'Trial' while charging for it is a consumer-protection risk — legal should decide whether to rename or to define 'trial' explicitly as a paid, time-boxed pass."
+    "legal_attention": "Every quantified claim (especially '450+') needs substantiation on file or must be softened. The ₹999 product was renamed from 'Starter 7-Day Trial Pass' to 'Starter Practice Pass' on 2026-11-14 and no longer has an expiry window; ensure no live copy still calls it a trial."
   },
 
   "plans": [
     {
       "plan_key": "starter_practice",
-      "display_name": "Starter 7-Day Trial Pass",
+      "display_name": "Starter Practice Pass",
       "price_inr": 999,
       "billing": "one-time payment, no auto-renewal, no subscription",
-      "entitlement_window_days": 7,
+      "entitlement_window_days": null,
+      "entitlement_window_note": "no expiry window (changed 2026-11-14 — behaves exactly like Pro and 1-on-1)",
       "entitlement_starts": "at payment verification (server timestamp), not at signup",
-      "expiry_behaviour_implemented": "after 7 days the account is held at sign-in behind a full-screen upgrade prompt; records are retained indefinitely; the user can pay for another plan to regain access",
+      "expiry_behaviour_implemented": "none — access does not lapse; records are retained indefinitely",
       "pricing_source": "authoritative row in database table payment_plans (is_active flag); code catalogue is a fallback only"
     },
     {
@@ -239,7 +240,7 @@
       "personal_data": [
         "user id (or null for guest checkout)", "plan", "amount", "status",
         "gateway = payu", "txnid (our reference)", "mihpayid (PayU's reference)",
-        "gateway_status", "gateway_error", "verified_at", "expires_at",
+        "gateway_status", "gateway_error", "verified_at", "expires_at (legacy column — no longer set, all rows cleared 2026-11-14)",
         "account_created_at",
         "signup_payload (TEMPORARY: full dossier incl. plaintext password, photo and resume, held only between checkout and payment callback; wiped on success, failure, or supersession)"
       ]
@@ -316,7 +317,7 @@
   },
 
   "retention": {
-    "payment_orders": "kept indefinitely — the product explicitly never deletes a paid record; trial expiry is computed from expires_at",
+    "payment_orders": "kept indefinitely — the product explicitly never deletes a paid record; no plan has an expiry window",
     "exam_attempts_and_responses": "kept indefinitely (history API exposes the last 50 attempts; nothing is pruned)",
     "candidates_profile": "kept until deleted by staff (see account deletion below)",
     "photos_and_resumes": "kept indefinitely in public storage until deleted by staff",
@@ -358,7 +359,7 @@
       "children's data handling (site has no age gate; DPDP requires verifiable parental consent for under-18s)"
     ],
     "consumer_protection_notes": [
-      "prices are displayed as one-time, but the 'Trial' naming may imply free — clarify",
+      "the ₹999 plan is titled 'Starter Practice Pass' (renamed 2026-11-14) — confirm no marketing copy still calls it a trial",
       "no refund policy page exists; payment-failure copy promises 5–7 day auto-reversal for declined payments only",
       "no terms page exists; checkout does not link to any terms",
       "no cancellation policy page exists (nothing to cancel, but the absence should be stated explicitly)"
@@ -372,7 +373,7 @@
     { "id": "G3", "risk": "No grievance officer designated (DPDP requirement)", "severity": "high" },
     { "id": "G4", "risk": "Photos and resumes live in a public storage bucket", "severity": "high" },
     { "id": "G5", "risk": "No age gate; DPDP requires special handling for under-18 data", "severity": "high" },
-    { "id": "G6", "risk": "Paid product named 'Trial'", "severity": "medium" },
+    { "id": "G6", "risk": "Residual 'trial' wording in any off-site marketing (product itself renamed to Starter Practice Pass, 2026-11-14)", "severity": "low" },
     { "id": "G7", "risk": "Captured-payment-without-account scenario has no written refund/activation rule (manual today)", "severity": "high" },
     { "id": "G8", "risk": "'450+ fast-hiring HR agencies' claim lacks published substantiation", "severity": "medium" },
     { "id": "G9", "risk": "No GST invoice/receipt is issued", "severity": "medium" },
@@ -384,7 +385,7 @@
 
   "open_questions_for_legal": [
     "What is the operating legal entity (proprietorship / LLP / Pvt Ltd), its registered address, and GSTIN?",
-    "Should 'Starter 7-Day Trial Pass' be renamed to avoid a 'free trial' implication?",
+    "The ₹999 plan is now 'Starter Practice Pass' with no expiry — confirm that is the name and scope to use in the Terms and on invoices.",
     "For the captured-payment-but-account-failed case: refund in full, or auto-activate the plan manually? The product currently does neither automatically.",
     "Is any discretionary refund allowed (e.g. within 48 hours if unused)? Today the answer is no — decide and write it.",
     "What is the retention period for exam records and payment records (and what should be deleted on account closure)?",
@@ -392,7 +393,7 @@
     "Do we need a separate DPDP privacy notice per data category (proctoring data vs. payment data vs. marketing analytics)?",
     "Should the 450+ partner claim be substantiated, qualified ('network of partner agencies, subject to availability'), or removed?",
     "Which courts/arbitration seat governs, and what is the dispute-resolution path?",
-    "Are refunds, cancellations and trial expiry subject to a cooling-off period required under Indian consumer protection rules for online services?",
+    "Are refunds and cancellations subject to a cooling-off period required under Indian consumer protection rules for online services (no plan expires any more)?",
     "Should third-party processors (Supabase, Vercel, PayU, Resend, Ethora) be named in the privacy policy, and do we hold signed DPAs?",
     "Do we need to publish an accessibility statement or grievance SLA as part of the terms?"
   ]

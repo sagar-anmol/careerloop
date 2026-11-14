@@ -29,7 +29,7 @@ function partnerRouteForPlan(plan: string): string {
     ? "1-on-1 Mentorship (₹8,999)"
     : plan === "pro_all_access"
     ? "CareerLoop Pro (₹4,999)"
-    : "Starter 7-Day Trial (₹999)";
+    : "Starter Practice Pass (₹999)";
 }
 
 function serverCandidateId(candidateId: string | undefined): string {

@@ -28,7 +28,7 @@ export const dynamic = "force-dynamic";
  *   callback can create the account. The password is held only until the
  *   callback (or until the attempt is superseded), service-role table only.
  *
- * Signed-in upgrade (e.g. lapsed trial):
+ * Signed-in upgrade (e.g. moving from Starter to Pro):
  *   body = { plan }   + Authorization: Bearer <supabase access token>
  *
  * Returns the PayU form action + signed fields; the browser auto-POSTs it.

@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
  *   3. verify_payment server-to-server as a second source of truth; if that
  *      API is unreachable we log and trust the hash rather than punish a user
  *      who already paid.
- * Only then: mark the order completed (starter → expires_at = verified+7d) and
+ * Only then: mark the order completed (no expiry — every plan is permanent) and
  * — for guest signups — create the account, burn the OTP, wipe signup_payload.
  */
 export async function POST(request: Request) {
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       console.warn("payment/callback: verify_payment unreachable; proceeding on hash.");
     }
 
-    // Money verified. Flip the order (starter gets its 7-day expiry here).
+    // Money verified. Flip the order to completed; every plan is permanent.
     await markOrderCompleted(order.id, {
       mihpayid: params.mihpayid ?? null,
       gatewayStatus: params.status ?? null,

@@ -39,18 +39,9 @@ import {
 } from "@/components/ui/table";
 
 import { supabase } from "@/lib/supabaseClient";
-import {
-  fetchCandidateProfile,
-  signOutCandidate,
-  startPayuUpgradeCheckout,
-} from "@/lib/candidateService";
+import { fetchCandidateProfile, signOutCandidate } from "@/lib/candidateService";
 import { CandidateProfileData } from "@/components/mui/MuiProfileModal";
 import { MuiDemoAssessmentModal } from "@/components/mui/MuiDemoAssessmentModal";
-import { MuiPaymentPendingBanner } from "@/components/mui/MuiPaymentPendingBanner";
-import { MuiTrialExpiredGate } from "@/components/mui/MuiTrialExpiredGate";
-import Alert from "@mui/material/Alert";
-import { fetchEntitlement } from "@/lib/payments/entitlement";
-import type { PlanKey } from "@/lib/payments/plans";
 import { MainsExamPanel, OFFICIAL_MAINS_SET_ID } from "@/components/exam/MainsExamPanel";
 import {
   completeDemo,
@@ -71,11 +62,6 @@ export default function CandidateProfileDashboardPage() {
   const [demoStatusLoaded, setDemoStatusLoaded] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Trial hold: the 7-day Starter Trial lapsed with no fresh payment — the
-  // dashboard is held behind the upgrade gate until an upgrade payment verifies.
-  const [trialHold, setTrialHold] = useState<{ expiresAt: string | null } | null>(null);
-  // UPI checkout for the upgrade chosen inside the trial gate.
-  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Load candidate profile from Supabase Auth & public.candidates table
   useEffect(() => {
@@ -130,11 +116,6 @@ export default function CandidateProfileDashboardPage() {
             if (typeof window !== "undefined" && profile) {
               localStorage.setItem("cl_candidate", JSON.stringify(loadedUser));
             }
-            // Hold the dashboard when the 7-day trial has lapsed.
-            const status = await fetchEntitlement();
-            if (isMounted) {
-              setTrialHold(status.held ? { expiresAt: status.expiresAt } : null);
-            }
           }
         } else {
           // No session: only a cached email can identify a profile. Never fall
@@ -168,17 +149,11 @@ export default function CandidateProfileDashboardPage() {
           setCurrentUser(p);
         }
         loadServerData();
-        // Re-evaluate the trial hold on every auth change (sign-in, sign-out).
-        const status = await fetchEntitlement();
-        if (isMounted) {
-          setTrialHold(status.held ? { expiresAt: status.expiresAt } : null);
-        }
       }
       if (!session?.user && isMounted) {
-        // Signed out: close the gate and drop cached scores.
+        // Signed out: drop cached scores.
         setDemoCompleted(false);
         setHistory([]);
-        setTrialHold(null);
       }
     });
 
@@ -187,15 +162,6 @@ export default function CandidateProfileDashboardPage() {
       subscription.unsubscribe();
     };
   }, []);
-
-  // Signed-in upgrade from the trial gate: server-created PayU order, then the
-  // browser hands off to PayU's hosted checkout (full-page redirect).
-  const handleUpgrade = (plan: PlanKey) => {
-    setPaymentError(null);
-    startPayuUpgradeCheckout(plan).catch((err: unknown) => {
-      setPaymentError(err instanceof Error ? err.message : "Could not start payment. Please try again.");
-    });
-  };
 
   const handleSignOut = async () => {
     await signOutCandidate();
@@ -290,28 +256,6 @@ export default function CandidateProfileDashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-      {/* Amber strip: visible only while the 7-day Starter Trial is expired */}
-      <MuiPaymentPendingBanner />
-      {/* Trial hold: expired 7-day Starter Trial — dashboard held behind the
-          upgrade gate until an upgrade payment verifies. */}
-      {trialHold && (
-        <MuiTrialExpiredGate
-          expiresAt={trialHold.expiresAt}
-          onUpgrade={(plan) => handleUpgrade(plan)}
-          onRelease={() => setTrialHold(null)}
-          onSignOut={handleSignOut}
-        />
-      )}
-      {paymentError && (
-        <Alert
-          severity="error"
-          variant="filled"
-          onClose={() => setPaymentError(null)}
-          sx={{ position: "fixed", top: 72, left: "50%", transform: "translateX(-50%)", zIndex: 2000, maxWidth: 480, width: "calc(100% - 32px)" }}
-        >
-          {paymentError}
-        </Alert>
-      )}
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">

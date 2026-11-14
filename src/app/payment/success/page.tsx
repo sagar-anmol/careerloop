@@ -50,7 +50,7 @@ function PaymentSuccessInner() {
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary", mb: 1 }}>
             Your payment via PayU was verified and your CareerLoop account is ready.
-            If you purchased the Starter 7-Day Trial, it is active from today.
+            Your pass is active from today with no expiry date.
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary", mb: 3 }}>
             Sign in with the email and password you used during enrollment.

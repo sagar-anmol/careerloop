@@ -134,7 +134,7 @@ export async function startPayuCheckout(input: StartPayuCheckoutInput): Promise<
   postFormToPayu(response.action, response.fields);
 }
 
-/** Paid-upgrade checkout for signed-in users (e.g. lapsed Starter Trial). */
+/** Paid-upgrade checkout for signed-in users (e.g. Starter → Pro). */
 export async function startPayuUpgradeCheckout(plan: string): Promise<void> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
