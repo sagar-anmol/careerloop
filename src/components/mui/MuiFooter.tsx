@@ -6,6 +6,8 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
+import NextLink from "next/link";
+import { LEGAL_LINKS } from "@/lib/legal/meta";
 
 export function MuiFooter() {
   return (
@@ -53,15 +55,6 @@ export function MuiFooter() {
               <Link href="#faq" underline="hover" color="text.secondary" variant="body2">
                 Candidate FAQ
               </Link>
-              <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
-                Terms &amp; Conditions
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
-                Refund Policy
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ cursor: "pointer" }}>
-                Privacy Policy
-              </Typography>
             </Box>
           </Grid>
 
@@ -92,6 +85,20 @@ export function MuiFooter() {
             <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
               Operating in: Bengaluru • Pune • Hyderabad • Gurgaon • Chennai
             </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mt: 1.5 }}>
+              {LEGAL_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  component={NextLink}
+                  href={link.href}
+                  underline="hover"
+                  variant="caption"
+                  color="text.secondary"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </Box>
           </Grid>
         </Grid>
 

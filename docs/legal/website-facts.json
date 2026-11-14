@@ -32,7 +32,7 @@
     "transactional_email_from": "hello@m.careerloop.co.in",
     "transactional_email_reply_to": "mail@m.careerloop.co.in",
     "governing_law_clause": "unknown — no governing-law, jurisdiction, or dispute-resolution text exists on the site yet",
-    "grievance_officer": "unknown — no grievance officer name, email, or address is published; required for DPDP Act 2023 compliance"
+    "grievance_officer": "Mirnal Kishore, Grievance Officer — mirnal@careerloop.co.in (postal address not yet supplied; required under the E-Commerce Rules and SPDI Rule 5(9))"
   },
 
   "contact_points": [
@@ -67,7 +67,6 @@
       "analysis of candidate performance metrics",
       "dossier routed directly to 450+ fast-hiring HR agencies and corporate employers",
       "complimentary direct referrals to 450+ fast-hiring HR agencies — listed as free on the ₹999 pricing card",
-      "candidates may alternatively submit their profile by email to support@careerloop.co.in for referral",
       "onboarding consent text states: fee covers weekly mock tests, live mentorship, and resume curation, with complimentary direct referrals to fast-hiring HR partner networks",
       "DPDP Act 2023 compliance asserted in footer"
     ],
@@ -371,7 +370,7 @@
   "gaps_and_risks": [
     { "id": "G1", "risk": "No Terms, Refund or Privacy page exists; checkout and signup never link to any contract", "severity": "high" },
     { "id": "G2", "risk": "No legal entity name, registered address, GSTIN or jurisdiction clause published", "severity": "high" },
-    { "id": "G3", "risk": "No grievance officer designated (DPDP requirement)", "severity": "high" },
+    { "id": "G3", "risk": "Grievance Officer named (Mirnal Kishore, mirnal@careerloop.co.in) but no postal address or working hours published (SPDI Rule 5(9) / E-Commerce Rules)", "severity": "medium" },
     { "id": "G4", "risk": "Photos and resumes live in a public storage bucket", "severity": "high" },
     { "id": "G5", "risk": "No age gate; DPDP requires special handling for under-18 data", "severity": "high" },
     { "id": "G6", "risk": "Residual 'trial' wording in any off-site marketing (product itself renamed to Starter Practice Pass, 2026-11-14)", "severity": "low" },
@@ -385,15 +384,15 @@
   ],
 
   "open_questions_for_legal": [
-    "What is the operating legal entity (proprietorship / LLP / Pvt Ltd), its registered address, and GSTIN?",
+    "Operating entity: answered for the published text as 'CareerLoop' (trade name), registered office Sonpur, Bihar, India, jurisdiction Patna, Bihar — no GSTIN supplied. Still open: whether the contracting party should name the underlying legal person (proprietor / LLP / Pvt Ltd) instead of the trade name alone.",
     "The ₹999 plan is now 'Starter Practice Pass' with no expiry — confirm that is the name and scope to use in the Terms and on invoices.",
     "For the captured-payment-but-account-failed case: refund in full, or auto-activate the plan manually? The product currently does neither automatically.",
     "Is any discretionary refund allowed (e.g. within 48 hours if unused)? Today the answer is no — decide and write it.",
     "What is the retention period for exam records and payment records (and what should be deleted on account closure)?",
-    "Who is the grievance officer (name, email, postal address) under DPDP?",
+    "Grievance Officer is Mirnal Kishore (mirnal@careerloop.co.in) — postal address published as 'c/o CareerLoop, Sonpur, Bihar, India'; working hours still unspecified, and the address is a town rather than a street address + PIN",
     "Do we need a separate DPDP privacy notice per data category (proctoring data vs. payment data vs. marketing analytics)?",
     "Should the 450+ partner claim be substantiated, qualified ('network of partner agencies, subject to availability'), or removed?",
-    "Which courts/arbitration seat governs, and what is the dispute-resolution path?",
+    "Governing courts: answered — exclusive jurisdiction of the courts at Patna, Bihar. Arbitration seat and escalation path still undecided.",
     "Are refunds and cancellations subject to a cooling-off period required under Indian consumer protection rules for online services (no plan expires any more)?",
     "Should third-party processors (Supabase, Vercel, PayU, Resend, Ethora) be named in the privacy policy, and do we hold signed DPAs?",
     "Do we need to publish an accessibility statement or grievance SLA as part of the terms?"

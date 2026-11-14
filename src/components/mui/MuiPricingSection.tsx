@@ -40,13 +40,13 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
       isFeatured: false,
       price: "₹999",
       billingSubtitle: "",
+      inherits: "",
       description: "A low-cost entry pack to experience CareerLoop before committing. Upgrade to Pro or 1-on-1 anytime for the full programme.",
       deliverables: [
         "Basic version of limited tests — for practice & benchmarking",
         "Standard Resume Diagnostic Checklist",
         "Community Q&A and Knowledge Base Access",
         "Complimentary Direct Referrals to 450+ Fast-Hiring HR Agencies — free",
-        "Or submit your profile by email to support@careerloop.co.in",
       ],
       buttonLabel: "Get Starter Pass (₹999)",
       buttonVariant: "outlined" as const,
@@ -58,13 +58,13 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
       isFeatured: true,
       price: "₹4,999",
       billingSubtitle: "",
+      inherits: "Everything in the Starter Practice Pass, plus:",
       description: "Complete career acceleration pass. Covers weekly mocks, live mentorship, expert resume curation, and direct HR referral dispatch.",
       deliverables: [
         "Unlimited access to Weekly Mock Test Series",
         "Live Expert Mentorship & Interview Prep Sessions",
         "Professional Resume Analysis & Curation by our Team",
         "Performance tracking based on peak mock marks",
-        "All foundation features included — everything in the Starter Practice Pass",
       ],
       buttonLabel: "Enroll & Secure Your Pass (₹4,999)",
       buttonVariant: "contained" as const,
@@ -76,9 +76,9 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
       isFeatured: false,
       price: "₹8,999",
       billingSubtitle: "Dedicated Placement Advisory Track",
+      inherits: "Everything in the CareerLoop Pro All-Access Pass, plus:",
       description: "For specialists, graduates, and professionals seeking dedicated 1-on-1 interview drills, custom company targeting, and executive resume overhaul.",
       deliverables: [
-        "All foundation features included — everything in the CareerLoop Pro All-Access Pass",
         "Dedicated 1-on-1 Senior Industry Mock Interviews",
         "Tailored ATS Resume Customization for Target Companies",
         "Priority Fast-Track Dispatch to Enterprise HR Recruiters",
@@ -94,9 +94,9 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
       isFeatured: false,
       price: "Custom",
       billingSubtitle: "Institutional & Bulk Hiring Cohorts",
+      inherits: "Everything in the 1-on-1 Intensive Mentorship Track, plus:",
       description: "Customized assessment suites, campus placement acceleration, dedicated drive coordination, and volume candidate referrals tailored for colleges and enterprise hiring teams.",
       deliverables: [
-        "All foundation features included — everything in the 1-on-1 Intensive Mentorship Track",
         "Dedicated institutional proctored testing portal",
         "Custom domain mock series tailored to partner employers",
         "Bulk verified dossier exports & analytics dashboard",
@@ -243,6 +243,31 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
                   <Typography variant="caption" sx={{ fontWeight: 800, color: "text.primary", letterSpacing: "0.04em", fontSize: "0.7rem" }}>
                     PROGRAM DELIVERABLES INCLUDED:
                   </Typography>
+                  {plan.inherits && (
+                    <Box
+                      sx={{
+                        px: 1.2,
+                        py: 0.7,
+                        borderRadius: 1.5,
+                        bgcolor: plan.isFeatured ? "rgba(16, 185, 129, 0.10)" : "rgba(64, 95, 226, 0.07)",
+                        border: "1px dashed",
+                        borderColor: plan.isFeatured ? "rgba(16, 185, 129, 0.45)" : "rgba(64, 95, 226, 0.35)",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontWeight: 800,
+                          color: plan.isFeatured ? "#047857" : "#405FE2",
+                          fontSize: "0.72rem",
+                          lineHeight: 1.35,
+                          display: "block",
+                        }}
+                      >
+                        {plan.inherits}
+                      </Typography>
+                    </Box>
+                  )}
                   {plan.deliverables.map((item, dIdx) => (
                     <Box key={dIdx} sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
                       <CheckCircleIcon sx={{ fontSize: 16, color: plan.isFeatured ? "#10b981" : "#405FE2", mt: 0.2, flexShrink: 0 }} />
