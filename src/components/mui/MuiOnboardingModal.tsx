@@ -974,7 +974,7 @@ export function MuiOnboardingModal({
                     <Chip label="₹999" size="small" color="default" sx={{ fontWeight: 700, fontSize: "0.68rem" }} />
                   </Box>
                   <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "0.72rem", lineHeight: 1.35 }}>
-                    Basic limited tests and resume check. One-time payment, no expiry.
+                    Basic limited tests and resume check.
                   </Typography>
                 </div>
               </Paper>
@@ -1187,9 +1187,6 @@ export function MuiOnboardingModal({
                 <Box sx={{ minWidth: 0 }}>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>
                     {PLAN_META[selectedPlan].name}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    One-time payment · activates instantly, no expiry
                   </Typography>
                 </Box>
               </Box>

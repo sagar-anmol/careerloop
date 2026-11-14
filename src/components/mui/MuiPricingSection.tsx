@@ -35,12 +35,12 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
   const plans = [
     {
       name: "Starter Practice Pass",
-      badge: "Foundational • No Expiry",
+      badge: "Foundational",
       badgeColor: "default" as const,
       isFeatured: false,
       price: "₹999",
-      billingSubtitle: "One-Time • No Expiry",
-      description: "A low-cost entry pack to experience CareerLoop before committing. One-time payment with no expiry — upgrade to Pro or 1-on-1 anytime for the full programme.",
+      billingSubtitle: "",
+      description: "A low-cost entry pack to experience CareerLoop before committing. Upgrade to Pro or 1-on-1 anytime for the full programme.",
       deliverables: [
         "Basic version of limited tests — for practice & benchmarking",
         "Standard Resume Diagnostic Checklist",
@@ -55,7 +55,7 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
       badgeColor: "primary" as const,
       isFeatured: true,
       price: "₹4,999",
-      billingSubtitle: "Lifetime Portal & Program Access",
+      billingSubtitle: "",
       description: "Complete career acceleration pass. Covers weekly mocks, live mentorship, expert resume curation, and direct HR referral dispatch.",
       deliverables: [
         "Unlimited access to Weekly Mock Test Series",
@@ -190,18 +190,20 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
                   >
                     {plan.name}
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "text.secondary",
-                      display: "block",
-                      mb: 1.5,
-                      fontSize: "0.72rem",
-                      minHeight: 32,
-                    }}
-                  >
-                    {plan.billingSubtitle}
-                  </Typography>
+                  {plan.billingSubtitle && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "text.secondary",
+                        display: "block",
+                        mb: 1.5,
+                        fontSize: "0.72rem",
+                        minHeight: 32,
+                      }}
+                    >
+                      {plan.billingSubtitle}
+                    </Typography>
+                  )}
 
                   <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.8 }}>
                     <Typography
