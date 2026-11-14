@@ -1,0 +1,399 @@
+{
+  "meta": {
+    "document": "CareerLoop website — factual briefing for legal drafting",
+    "purpose": "Give the legal team accurate, implementation-level facts so Terms & Conditions, Refund Policy, and Privacy Policy can be drafted to match what the website actually does (not aspirational copy).",
+    "generated_on": "2026-11-14",
+    "generated_from": [
+      "live production site https://www.careerloop.co.in (commit 7f52ea5)",
+      "application source (src/) and Supabase schema (project vyjpliikvzcbicpskhrn)",
+      "payment plan rows in table public.payment_plans"
+    ],
+    "confidence": "Every 'implemented' item below is verified in code or live schema. Items marked 'not_implemented' or 'unknown' are gaps — do not assume they exist.",
+    "status_legend": {
+      "implemented": "exists in the live product today",
+      "not_implemented": "does not exist today; policy wording must not promise it unless the product is changed",
+      "unknown": "not determined by the engineering side; needs a business/legal decision"
+    }
+  },
+
+  "entity": {
+    "brand_name": "CareerLoop (marketed as 'CareerLoop Pro')",
+    "website": "https://www.careerloop.co.in",
+    "bare_domain": "careerloop.co.in",
+    "short_name_on_site": "CareerLoop (careerloop.co.in)",
+    "legal_entity_name": "unknown — not published anywhere on the site",
+    "registered_address": "unknown — not published anywhere on the site",
+    "gstin": "unknown — not published; no GST invoice issuance exists in the product",
+    "country_of_operation": "India",
+    "currency": "INR (₹) only",
+    "cities_listed_in_footer": ["Bengaluru", "Pune", "Hyderabad", "Gurgaon", "Chennai"],
+    "founder_credit_in_footer": "Built by Sagar Kumar",
+    "support_email_public": "support@careerloop.co.in",
+    "transactional_email_from": "hello@m.careerloop.co.in",
+    "transactional_email_reply_to": "mail@m.careerloop.co.in",
+    "governing_law_clause": "unknown — no governing-law, jurisdiction, or dispute-resolution text exists on the site yet",
+    "grievance_officer": "unknown — no grievance officer name, email, or address is published; required for DPDP Act 2023 compliance"
+  },
+
+  "contact_points": [
+    {
+      "address": "support@careerloop.co.in",
+      "where_shown": "site footer (Support & Trust column)",
+      "role": "general support"
+    },
+    {
+      "address": "mail@m.careerloop.co.in",
+      "where_shown": "payment failure page copy; Reply-To on all transactional email (OTP mail footer says 'Reply to this mail if you need help')",
+      "role": "payment disputes / help replies"
+    },
+    {
+      "address": "hello@m.careerloop.co.in",
+      "where_shown": "From: address of OTP and transactional email (Resend verified domain m.careerloop.co.in)",
+      "role": "outbound sender only"
+    },
+    {
+      "address": "WhatsApp channel (https://whatsapp.com/channel/0029VbDuIK30wajjaHo1IO3X)",
+      "where_shown": "floating button on the landing page",
+      "role": "outbound announcement channel; outbound link only, no WhatsApp API integration"
+    }
+  ],
+
+  "published_claims_to_review": {
+    "existing_footer_disclaimer_verbatim": "CareerLoop (careerloop.co.in) is an independent career acceleration and skill preparation platform, not a government agency or guaranteed employment provider. The subscription fee covers mock testing, mentorship, resume curation, and dossier management services. Employer referrals and interview scheduling are complimentary assistance benefits. Final hiring selections and compensation packages rest solely with respective corporate employers.",
+    "claims_made_in_marketing_copy": [
+      "weekly mock tests",
+      "live mentorship sessions",
+      "expert resume optimization / resume curation",
+      "analysis of candidate performance metrics",
+      "dossier routed directly to 450+ fast-hiring HR agencies and corporate employers",
+      "complimentary direct referrals to 450+ fast-hiring HR agencies",
+      "onboarding consent text states: fee covers weekly mock tests, live mentorship, and resume curation, with complimentary direct referrals to fast-hiring HR partner networks",
+      "DPDP Act 2023 compliance asserted in footer"
+    ],
+    "legal_attention": "Every quantified claim (especially '450+') needs substantiation on file or must be softened. Calling the ₹999 product a 'Trial' while charging for it is a consumer-protection risk — legal should decide whether to rename or to define 'trial' explicitly as a paid, time-boxed pass."
+  },
+
+  "plans": [
+    {
+      "plan_key": "starter_practice",
+      "display_name": "Starter 7-Day Trial Pass",
+      "price_inr": 999,
+      "billing": "one-time payment, no auto-renewal, no subscription",
+      "entitlement_window_days": 7,
+      "entitlement_starts": "at payment verification (server timestamp), not at signup",
+      "expiry_behaviour_implemented": "after 7 days the account is held at sign-in behind a full-screen upgrade prompt; records are retained indefinitely; the user can pay for another plan to regain access",
+      "pricing_source": "authoritative row in database table payment_plans (is_active flag); code catalogue is a fallback only"
+    },
+    {
+      "plan_key": "pro_all_access",
+      "display_name": "CareerLoop Pro All-Access Pass",
+      "price_inr": 4999,
+      "billing": "one-time payment, no auto-renewal, no subscription",
+      "entitlement_window_days": null,
+      "entitlement_window_note": "no expiry is set in the product — treated as non-expiring",
+      "pricing_source": "database row (payment_plans)"
+    },
+    {
+      "plan_key": "mentorship_1on1",
+      "display_name": "1-on-1 Intensive Mentorship Track",
+      "price_inr": 8999,
+      "billing": "one-time payment, no auto-renewal, no subscription",
+      "entitlement_window_days": null,
+      "entitlement_window_note": "no expiry is set in the product — treated as non-expiring",
+      "pricing_source": "database row (payment_plans)"
+    }
+  ],
+
+  "payment_and_billing": {
+    "gateway": "PayU India — PayU-hosted checkout (secure.payu.in). CareerLoop never receives, sees, or stores card numbers, UPI PINs, or bank credentials.",
+    "accepted_methods": "whatever PayU hosts on its checkout: UPI, debit/credit cards, net banking, wallets",
+    "currency": "INR only",
+    "flow_implemented": [
+      "user completes signup details (name, email, phone; email verified by 6-digit OTP) and picks a plan",
+      "server creates a payment order with a unique transaction reference (txnid) and signs the checkout with SHA-512",
+      "browser is redirected to PayU's hosted page and pays there",
+      "PayU posts the result back to CareerLoop; the server verifies the cryptographic response hash, matches the amount, and calls PayU's verify_payment API as a second check",
+      "only after that verification is the payment marked completed and the account created"
+    ],
+    "account_creation_rule": "No CareerLoop account exists until a payment is verified. If payment fails, nothing is created and no credentials are stored.",
+    "refund_triggers_factually_implemented": [
+      {
+        "trigger": "payment declined or failed at PayU",
+        "money_moved": false,
+        "behaviour": "no charge, or if the bank shows a temporary debit it auto-reverses; the website tells users 5–7 business days"
+      },
+      {
+        "trigger": "amount mismatch between PayU and the order",
+        "money_moved": "unknown",
+        "behaviour": "order marked failed; website copy promises auto-reversal in 5–7 business days"
+      },
+      {
+        "trigger": "response hash verification failure",
+        "money_moved": "unknown",
+        "behaviour": "order marked failed; same auto-reversal copy"
+      },
+      {
+        "trigger": "payment captured but account creation failed (e.g. an account with the same email/phone appeared between checkout and callback)",
+        "money_moved": true,
+        "behaviour": "payment is kept as completed with an internal reconciliation note; the user is shown a 'contact support with your transaction reference' page. Refund vs. manual activation is a manual, currently undefined decision — THIS NEEDS A WRITTEN POLICY."
+      }
+    ],
+    "no_discretionary_refund_policy_exists": true,
+    "cancellation_flow": "not_implemented — there is nothing to cancel because all payments are one-time; there is no subscription or recurring mandate",
+    "proration": "not_implemented — no partial refunds or credits exist anywhere in the product",
+    "invoicing": "not_implemented — no GST invoice, receipt PDF, or tax document is generated or emailed",
+    "chargeback_process": "not_implemented — no documented process, no evidence package tooling",
+    "price_change_policy": "not_implemented — prices can be changed in the database at any time; no notice mechanism exists",
+    "coupons_or_discounts": "not_implemented"
+  },
+
+  "signup_flow": {
+    "steps_in_order": [
+      "Step 0: name, email, 10-digit Indian mobile, password, domain, experience, city; duplicate email/phone blocked here; a 6-digit email OTP is sent and must be verified to continue",
+      "Step 1: webcam photo (live capture, single frame, not a video recording) with client-side face detection; photo is stored",
+      "Step 2: resume PDF upload (optional in the form, but the paid-flow UI encourages it), program/plan selection, DPDP consent checkbox",
+      "Step 3: payment on PayU's hosted page",
+      "Conclusion: PayU returns the user to a success page; the account is created server-side after verified payment"
+    ],
+    "uniqueness_rules": "one account per email address and one account per 10-digit mobile number, enforced by database unique indexes",
+    "password_handling": "passwords are stored only as hashes by Supabase Auth; the plaintext exists transiently in the pending payment record until the payment callback consumes it, then it is wiped",
+    "otp_mechanics": {
+      "code_length": 6,
+      "validity_minutes": 10,
+      "verified_window_minutes": 60,
+      "max_attempts": 5,
+      "resend_cooldown_seconds": 60,
+      "hourly_send_cap_per_email": 10,
+      "storage": "only a peppered SHA-256 hash of the code is stored; the code itself is never persisted",
+      "consumption": "a verified code creates exactly one account"
+    },
+    "age_verification": "not_implemented — there is no age gate or minimum-age attestation anywhere in signup",
+    "terms_acceptance_mechanism": "one checkbox at Step 2 titled 'Data Processing & Terms Consent' (DPDP consent text only — it does not link to any Terms page, because none exists yet)",
+    "consent_text_verbatim": "I agree to the processing of my proctoring data and assessment scores in full compliance with the Digital Personal Data Protection (DPDP) Act 2023. I understand that the program fee covers weekly mock tests, live mentorship, and resume curation, with complimentary direct referrals to fast-hiring HR partner networks."
+  },
+
+  "assessment_rules": {
+    "test_categories": ["aptitude & reasoning", "core/technical", "English & comprehension", "mains exam"],
+    "source": "server-side JSON question banks; answer keys never reach the browser",
+    "scoring": "server-side only, negative marking for wrong answers, result released after submit; pass mark is 40% of total",
+    "attempts_per_set": 2,
+    "demo_gate": "a short unscored demo orientation must be completed on the account before any scored test can start; enforced server-side, cannot be skipped via direct URL",
+    "timed": "yes — each attempt has a server-enforced deadline (30-second grace); late submissions are scored from the last autosave",
+    "proctoring_implemented": {
+      "webcam_snapshot": "one still photo captured at enrollment and stored with the profile",
+      "face_detection": "client-side face detection (browser FaceDetector API with a fallback); verifies a single face is present and aligned",
+      "integrity_flags": "counters stored per attempt (e.g. face/lookup events), plus client metadata",
+      "live_human_proctor": "none",
+      "video_recording": "not stored",
+      "screen_recording": "none",
+      "biometric_template_storage": "none — only the captured photo is stored"
+    },
+    "consequences_of_integrity_flags": "not_implemented — flags are recorded but no automatic consequence (disqualification, refund forfeiture) is applied or documented"
+  },
+
+  "data_inventory": [
+    {
+      "table": "auth.users (Supabase-managed)",
+      "purpose": "account identity and login",
+      "personal_data": ["email", "password hash", "full name", "phone", "candidate id", "domain (user metadata)"]
+    },
+    {
+      "table": "candidates",
+      "purpose": "candidate dossier used for tests, scoring and referral assistance",
+      "personal_data": [
+        "full name", "email", "phone", "domain", "experience", "city",
+        "photo_url (webcam snapshot)", "resume_url + resume_name (PDF)",
+        "assessment_score", "assessment_status", "integrity_flags",
+        "partner_route (which paid plan they bought)",
+        "free-form metadata column"
+      ]
+    },
+    {
+      "table": "exam_attempts",
+      "purpose": "test delivery, scoring, history",
+      "personal_data": ["set id", "exam type", "attempted/submitted timestamps", "duration", "question count", "max marks", "score", "correct/wrong/unattempted counts", "section-wise scores", "integrity flags", "client metadata (device/browser info as sent by the browser)", "hashed attempt token"]
+    },
+    {
+      "table": "exam_responses",
+      "purpose": "per-question answers and timing",
+      "personal_data": ["selected option per question", "mark-for-review flag", "visited flag", "time spent per question"]
+    },
+    {
+      "table": "candidate_assessments",
+      "purpose": "legacy proctored-assessment records (older flow)",
+      "personal_data": ["test title", "domain", "score", "status", "integrity flags", "duration", "completion time"]
+    },
+    {
+      "table": "demo_completions",
+      "purpose": "demo-unlock gate",
+      "personal_data": ["user id", "completion timestamp"]
+    },
+    {
+      "table": "email_otp_challenges",
+      "purpose": "signup email verification and abuse limits",
+      "personal_data": ["email", "hashed OTP", "send counts and timestamps", "expiry", "attempt count", "verification/consumption timestamps"]
+    },
+    {
+      "table": "payment_orders",
+      "purpose": "payment record for the purchase and entitlement",
+      "personal_data": [
+        "user id (or null for guest checkout)", "plan", "amount", "status",
+        "gateway = payu", "txnid (our reference)", "mihpayid (PayU's reference)",
+        "gateway_status", "gateway_error", "verified_at", "expires_at",
+        "account_created_at",
+        "signup_payload (TEMPORARY: full dossier incl. plaintext password, photo and resume, held only between checkout and payment callback; wiped on success, failure, or supersession)"
+      ]
+    },
+    {
+      "table": "storage bucket candidate-assets",
+      "purpose": "candidate photos and resumes, publicly readable by URL (bucket is public)",
+      "personal_data": ["webcam snapshot image", "resume PDF"],
+      "risk_note": "public bucket is a privacy risk for identity documents — legal should require a lockdown or signed URLs"
+    }
+  ],
+
+  "data_processors": [
+    {
+      "processor": "Supabase",
+      "role": "database, authentication, file storage (project hosted on Supabase cloud)",
+      "data_shared": "all application data listed above",
+      "contract_or_dpa": "unknown — needs a signed DPA"
+    },
+    {
+      "processor": "Vercel",
+      "role": "website hosting and serverless function execution (production domain www.careerloop.co.in)",
+      "data_shared": "HTTP requests, IP addresses, request metadata, server logs (payment transaction reference and status are logged during callback handling)"
+    },
+    {
+      "processor": "PayU India",
+      "role": "payment processing and checkout",
+      "data_shared": "name, email, phone, amount, product name, our transaction reference; PayU collects card/UPI/bank details directly and returns a payment reference"
+    },
+    {
+      "processor": "Resend",
+      "role": "transactional email delivery (OTP and account emails)",
+      "data_shared": "recipient email address and message content; sending domain m.careerloop.co.in is verified with them"
+    },
+    {
+      "processor": "Ethora",
+      "role": "AI chat assistant embedded on the landing page",
+      "data_shared": "whatever the visitor types into the assistant widget, plus standard technical data collected by their embed",
+      "note": "third-party widget with its own cookies/storage; its privacy terms have not been reviewed in this document"
+    },
+    {
+      "processor": "Google Tag Manager",
+      "role": "analytics/tag management (container GTM-W7L22656)",
+      "data_shared": "page views, click events, device/browser data, IP; may set cookies depending on the tags configured inside the container"
+    },
+    {
+      "processor": "Cloudflare",
+      "role": "DNS only for careerloop.co.in (no proxy/CDN of user data)",
+      "data_shared": "none from end users"
+    },
+    {
+      "processor": "WhatsApp (Meta)",
+      "role": "outbound link to a public announcement channel",
+      "data_shared": "nothing is transmitted by the site; only if the user clicks through"
+    }
+  ],
+
+  "device_storage": {
+    "local_storage": [
+      {
+        "key": "cl_candidate",
+        "content": "cached candidate profile (name, email, phone, photo/resume URLs, domain, city, etc.)",
+        "persistence": "until cleared or sign-out"
+      },
+      {
+        "key": "Supabase auth session",
+        "content": "access + refresh tokens for login persistence",
+        "persistence": "until sign-out/expiry"
+      }
+    ],
+    "cookies": "no first-party cookies are set by CareerLoop itself; cookies may be set by Google Tag Manager tags and the Ethora assistant widget",
+    "cookie_consent_banner": "not_implemented",
+    "analytics_opt_out": "not_implemented"
+  },
+
+  "retention": {
+    "payment_orders": "kept indefinitely — the product explicitly never deletes a paid record; trial expiry is computed from expires_at",
+    "exam_attempts_and_responses": "kept indefinitely (history API exposes the last 50 attempts; nothing is pruned)",
+    "candidates_profile": "kept until deleted by staff (see account deletion below)",
+    "photos_and_resumes": "kept indefinitely in public storage until deleted by staff",
+    "email_otp_challenges": "rows persist after use/expiry (hashed codes only); no pruning job exists",
+    "unfulfilled_checkout_payload": "wiped when the attempt is superseded or fails; wiped at fulfillment",
+    "documented_retention_schedule": "not_implemented — no policy, no automated deletion, no data-minimisation schedule"
+  },
+
+  "account_and_rights": {
+    "self_serve_account_deletion": "not_implemented — no delete-account button, no API; deletion is a manual support operation",
+    "self_serve_data_export": "not_implemented — no download-my-data path; candidates can see their profile in the dashboard but cannot export it",
+    "data_correction": "partially implemented — the candidate can edit profile fields in the dashboard (name, contact, resume re-upload)",
+    "consent_withdrawal": "not_implemented — no mechanism; withdrawal effectively requires account deletion via support",
+    "sign_out": "implemented (client-side session clear)",
+    "grievance_redressal": "not_implemented — only a support email exists"
+  },
+
+  "security_practices": {
+    "transport": "HTTPS everywhere (Vercel-managed TLS on careerloop.co.in)",
+    "access_control": "row-level security on customer tables; service-role key used server-side only; payment, exam and OTP tables deny all client access",
+    "payment_security": "SHA-512 request/response signatures with a merchant salt held server-side; no card data touches CareerLoop",
+    "password_storage": "delegated to Supabase Auth (bcrypt-class hashing); no plaintext at rest outside the short-lived checkout payload",
+    "known_open_risks": [
+      "candidate-assets storage bucket is public and could allow writes — photos/resumes are readable by anyone with the URL",
+      "no rate limiting on the checkout-initiation endpoint",
+      "OTP sending has no captcha (cooldown + hourly cap only)",
+      "legacy candidate_assessments table permissions are still effectively open to the anonymous key"
+    ]
+  },
+
+  "compliance_position": {
+    "law_referenced_on_site": "Digital Personal Data Protection Act, 2023 (India)",
+    "dpdp_items_missing": [
+      "privacy notice with itemised purposes (the site has none — this document is the input for it)",
+      "notice of data principal rights and how to exercise them",
+      "grievance officer / Data Protection Board escalation information",
+      "consent withdrawal mechanism",
+      "retention statement",
+      "children's data handling (site has no age gate; DPDP requires verifiable parental consent for under-18s)"
+    ],
+    "consumer_protection_notes": [
+      "prices are displayed as one-time, but the 'Trial' naming may imply free — clarify",
+      "no refund policy page exists; payment-failure copy promises 5–7 day auto-reversal for declined payments only",
+      "no terms page exists; checkout does not link to any terms",
+      "no cancellation policy page exists (nothing to cancel, but the absence should be stated explicitly)"
+    ],
+    "international_users": "not_implemented — the product assumes India (10-digit mobile, INR, UPI-first); no statement restricting use to India"
+  },
+
+  "gaps_and_risks": [
+    { "id": "G1", "risk": "No Terms, Refund or Privacy page exists; checkout and signup never link to any contract", "severity": "high" },
+    { "id": "G2", "risk": "No legal entity name, registered address, GSTIN or jurisdiction clause published", "severity": "high" },
+    { "id": "G3", "risk": "No grievance officer designated (DPDP requirement)", "severity": "high" },
+    { "id": "G4", "risk": "Photos and resumes live in a public storage bucket", "severity": "high" },
+    { "id": "G5", "risk": "No age gate; DPDP requires special handling for under-18 data", "severity": "high" },
+    { "id": "G6", "risk": "Paid product named 'Trial'", "severity": "medium" },
+    { "id": "G7", "risk": "Captured-payment-without-account scenario has no written refund/activation rule (manual today)", "severity": "high" },
+    { "id": "G8", "risk": "'450+ fast-hiring HR agencies' claim lacks published substantiation", "severity": "medium" },
+    { "id": "G9", "risk": "No GST invoice/receipt is issued", "severity": "medium" },
+    { "id": "G10", "risk": "No cookie/analytics consent or notice despite GTM and a third-party AI widget", "severity": "medium" },
+    { "id": "G11", "risk": "No self-serve deletion/export/consent withdrawal", "severity": "medium" },
+    { "id": "G12", "risk": "No retention schedule; customer data kept indefinitely by design", "severity": "medium" },
+    { "id": "G13", "risk": "No chargeback or dispute handling process", "severity": "medium" }
+  ],
+
+  "open_questions_for_legal": [
+    "What is the operating legal entity (proprietorship / LLP / Pvt Ltd), its registered address, and GSTIN?",
+    "Should 'Starter 7-Day Trial Pass' be renamed to avoid a 'free trial' implication?",
+    "For the captured-payment-but-account-failed case: refund in full, or auto-activate the plan manually? The product currently does neither automatically.",
+    "Is any discretionary refund allowed (e.g. within 48 hours if unused)? Today the answer is no — decide and write it.",
+    "What is the retention period for exam records and payment records (and what should be deleted on account closure)?",
+    "Who is the grievance officer (name, email, postal address) under DPDP?",
+    "Do we need a separate DPDP privacy notice per data category (proctoring data vs. payment data vs. marketing analytics)?",
+    "Should the 450+ partner claim be substantiated, qualified ('network of partner agencies, subject to availability'), or removed?",
+    "Which courts/arbitration seat governs, and what is the dispute-resolution path?",
+    "Are refunds, cancellations and trial expiry subject to a cooling-off period required under Indian consumer protection rules for online services?",
+    "Should third-party processors (Supabase, Vercel, PayU, Resend, Ethora) be named in the privacy policy, and do we hold signed DPAs?",
+    "Do we need to publish an accessibility statement or grievance SLA as part of the terms?"
+  ]
+}
