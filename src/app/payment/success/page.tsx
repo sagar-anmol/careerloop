@@ -20,6 +20,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 function PaymentSuccessInner() {
   const searchParams = useSearchParams();
   const txnid = searchParams.get("txnid");
+  const isUpgrade = searchParams.get("kind") === "upgrade";
 
   return (
     <Box
@@ -46,13 +47,17 @@ function PaymentSuccessInner() {
         >
           <CheckCircleIcon sx={{ fontSize: 72, color: "#10b981", mb: 2 }} />
           <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
-            Payment received — you&apos;re in!
+            {isUpgrade ? "Upgrade complete — your new pass is live!" : "Payment received — you're in!"}
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary", mb: 1 }}>
-            Your payment via PayU was verified and your CareerLoop account is ready.
+            {isUpgrade
+              ? "Your payment via PayU was verified and the plan has been applied to your account."
+              : "Your payment via PayU was verified and your CareerLoop account is ready."}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary", mb: 3 }}>
-            Sign in with the email and password you used during enrollment.
+            {isUpgrade
+              ? "Open your dashboard — everything in your plan is already unlocked."
+              : "Sign in with the email and password you used during enrollment."}
           </Typography>
 
           {txnid && (

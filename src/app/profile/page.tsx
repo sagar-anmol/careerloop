@@ -39,10 +39,12 @@ import {
 } from "@/components/ui/table";
 
 import { supabase } from "@/lib/supabaseClient";
+import { planFromCandidate } from "@/lib/payments/plans";
 import { fetchCandidateProfile, signOutCandidate } from "@/lib/candidateService";
 import { CandidateProfileData } from "@/components/mui/MuiProfileModal";
 import { MuiDemoAssessmentModal } from "@/components/mui/MuiDemoAssessmentModal";
 import { MainsExamPanel, OFFICIAL_MAINS_SET_ID } from "@/components/exam/MainsExamPanel";
+import { PlanCard } from "@/components/exam/PlanCard";
 import {
   completeDemo,
   fetchDemoStatus,
@@ -242,17 +244,10 @@ export default function CandidateProfileDashboardPage() {
     }
   };
 
-  const is1on1User =
-    Boolean(currentUser?.partner_route?.includes("8,999")) ||
-    Boolean(currentUser?.partner_route?.includes("1-on-1")) ||
-    Boolean(currentUser?.selected_plan === "mentorship_1on1") ||
-    Boolean(currentUser?.plan_tier === "mentorship_1on1");
-  const isProUser =
-    !is1on1User &&
-    (Boolean(currentUser?.partner_route?.includes("4,999")) ||
-      Boolean(currentUser?.partner_route?.includes("Pro")) ||
-      Boolean(currentUser?.selected_plan === "pro_all_access") ||
-      Boolean(currentUser?.plan_tier === "pro_all_access"));
+  // The owned plan: `candidates.plan` first (server-written), legacy label as fallback.
+  const ownedPlan = planFromCandidate(currentUser);
+  const is1on1User = ownedPlan === "mentorship_1on1";
+  const isProUser = ownedPlan === "pro_all_access";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
@@ -657,6 +652,9 @@ export default function CandidateProfileDashboardPage() {
                   </Button>
                 </div>
               )}
+
+              {/* Plan + upgrade */}
+              <PlanCard />
 
               {/* 3 Real Metric Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

@@ -8,6 +8,8 @@ import {
   PLAN_CATALOG,
   type PlanKey,
   isPlanKey,
+  isUpgradeFrom,
+  partnerRouteForPlan,
 } from "@/lib/payments/plans";
 
 /**
@@ -190,6 +192,75 @@ export async function markOrderCompleted(
     })
     .eq("id", orderId);
   if (error) throw new Error(error.message);
+}
+
+/**
+ * The plan a signed-in candidate currently owns, priced from the plan table.
+ *
+ * The `candidates.plan` column is the record of the owned tier; the
+ * `payment_orders` row remains the receipt. Both are written only here and in
+ * the payment callback — never from the browser.
+ */
+export async function getOwnedPlan(userId: string): Promise<PlanView | null> {
+  const { data } = await getSupabaseAdmin()
+    .from("candidates")
+    .select("plan")
+    .eq("auth_user_id", userId)
+    .maybeSingle();
+
+  const key = isPlanKey(data?.plan) ? (data.plan as PlanKey) : null;
+  return key ? resolvePlan(key) : null;
+}
+
+export interface GrantPlanResult {
+  granted: boolean;
+  /** Machine-readable reason when the grant was refused. */
+  reason?: "NO_CANDIDATE_ROW" | "ALREADY_ON_PLAN" | "UPDATE_FAILED";
+}
+
+/**
+ * Applies a paid plan to its account. Runs only after PayU verified the money.
+ * Refuses a non-upgrade rather than silently downgrading someone, and never
+ * creates or deletes a candidate row.
+ */
+export async function grantPlanToCandidate(
+  userId: string,
+  plan: PlanKey
+): Promise<GrantPlanResult> {
+  const admin = getSupabaseAdmin();
+  const { data: candidate, error: readErr } = await admin
+    .from("candidates")
+    .select("id, plan")
+    .eq("auth_user_id", userId)
+    .maybeSingle();
+
+  if (readErr) {
+    console.error("grantPlanToCandidate: candidate lookup failed:", readErr.message);
+    return { granted: false, reason: "UPDATE_FAILED" };
+  }
+  if (!candidate) {
+    // Paid, but no candidate row exists — money is taken, so the caller must
+    // leave a reconciliation note instead of pretending it worked.
+    return { granted: false, reason: "NO_CANDIDATE_ROW" };
+  }
+  if (isPlanKey(candidate.plan) && !isUpgradeFrom(candidate.plan as PlanKey, plan)) {
+    return { granted: false, reason: "ALREADY_ON_PLAN" };
+  }
+
+  const { error: updateErr } = await admin
+    .from("candidates")
+    .update({
+      plan,
+      partner_route: partnerRouteForPlan(plan),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", candidate.id);
+
+  if (updateErr) {
+    console.error("grantPlanToCandidate: update failed:", updateErr.message);
+    return { granted: false, reason: "UPDATE_FAILED" };
+  }
+  return { granted: true };
 }
 
 /**

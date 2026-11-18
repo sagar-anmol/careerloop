@@ -4,6 +4,7 @@ import {
   markOrderCompleted,
   markOrderFailed,
   attachAccountToOrder,
+  grantPlanToCandidate,
   recordFulfillmentFailure,
 } from "@/lib/payments/orders";
 import { createAccountFromPayload } from "@/lib/payments/fulfill";
@@ -24,7 +25,8 @@ export const dynamic = "force-dynamic";
  *      API is unreachable we log and trust the hash rather than punish a user
  *      who already paid.
  * Only then: mark the order completed (no expiry — every plan is permanent) and
- * — for guest signups — create the account, burn the OTP, wipe signup_payload.
+ * — for guest signups — create the account, burn the OTP, wipe signup_payload;
+ * for a signed-in upgrade, apply the purchased plan to the existing account.
  */
 export async function POST(request: Request) {
   const cfg = safeConfig();
@@ -110,9 +112,22 @@ export async function POST(request: Request) {
         const reason = result.code === "EMAIL_TAKEN" || result.code === "PHONE_TAKEN" ? "account_exists" : "account_failed";
         return fail(reason, txnid);
       }
+    } else if (order.user_id) {
+      // Signed-in purchase (upgrade): the account already exists, so the only
+      // thing left to fulfil is the plan itself.
+      const granted = await grantPlanToCandidate(order.user_id, order.plan);
+      if (!granted.granted) {
+        // Money is captured: never pretend it worked — leave it for support.
+        const note = `Payment completed but the plan was not applied (${granted.reason ?? "UNKNOWN"}). Reconcile manually.`;
+        console.error("payment/callback:", note, "txnid:", txnid);
+        await recordFulfillmentFailure(order.id, note);
+      }
     }
 
-    return redirectTo(request, `/payment/success?txnid=${encodeURIComponent(txnid)}`);
+    return redirectTo(
+      request,
+      `/payment/success?txnid=${encodeURIComponent(txnid)}${order.user_id ? "&kind=upgrade" : ""}`
+    );
   } catch (err) {
     console.error("payment/callback error:", err);
     return fail("internal", null);

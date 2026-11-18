@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import {
   createCheckoutOrder,
   findOrderByTxnId,
+  getOwnedPlan,
   resolvePlan,
   supersedePendingCheckouts,
   type SignupPayload,
@@ -13,7 +14,7 @@ import {
   getPayUConfig,
   payUFormAction,
 } from "@/lib/payments/payu";
-import { isPlanKey } from "@/lib/payments/plans";
+import { isPlanKey, isUpgradeFrom } from "@/lib/payments/plans";
 
 export const dynamic = "force-dynamic";
 
@@ -190,6 +191,25 @@ export async function POST(request: Request) {
     }
 
     if (userId) await supersedePendingCheckouts({ userId });
+
+    // A signed-in purchase is an upgrade: the owned plan already includes
+    // every lower tier, so the same or a lower plan is refused before money
+    // moves. Full fee, no proration (Refund Policy §8).
+    if (userId) {
+      const owned = await getOwnedPlan(userId);
+      if (!isUpgradeFrom(owned?.plan ?? null, planKey)) {
+        const samePlan = owned?.plan === planKey;
+        return NextResponse.json(
+          {
+            error: samePlan
+              ? `You already have the ${plan.name}.`
+              : `You already have the ${owned?.name ?? "higher"}, which includes everything in the ${plan.name}.`,
+            code: samePlan ? "ALREADY_ON_PLAN" : "NOT_AN_UPGRADE",
+          },
+          { status: 409 }
+        );
+      }
+    }
 
     const txnid = generateTxnId();
     // A unique collision would surface as a 23505 on insert; vanishingly rare, and a 500 is honest.

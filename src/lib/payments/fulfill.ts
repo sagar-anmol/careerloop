@@ -1,5 +1,10 @@
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import type { SignupPayload } from "@/lib/payments/orders";
+import {
+  isPlanKey,
+  partnerRouteForPlan,
+  type PlanKey,
+} from "@/lib/payments/plans";
 
 /**
  * Account creation shared by the PayU fulfillment path. The money is ALREADY
@@ -22,14 +27,6 @@ export interface FulfillResult {
     | "CANDIDATES_INSERT_FAILED"
     | "AUTH_CREATE_FAILED";
   message?: string;
-}
-
-function partnerRouteForPlan(plan: string): string {
-  return plan === "mentorship_1on1"
-    ? "1-on-1 Mentorship (₹8,999)"
-    : plan === "pro_all_access"
-    ? "CareerLoop Pro (₹4,999)"
-    : "Starter Practice Pass (₹999)";
 }
 
 function serverCandidateId(candidateId: string | undefined): string {
@@ -74,6 +71,8 @@ export async function createAccountFromPayload(
 ): Promise<FulfillResult> {
   const admin = getSupabaseAdmin();
   const email = payload.email.trim().toLowerCase();
+  // An unrecognised plan must not fail the insert after the money is captured.
+  const ownedPlan: PlanKey | null = isPlanKey(plan) ? plan : null;
   const phoneDigits = String(payload.phone ?? "").replace(/\D/g, "");
   const phone =
     phoneDigits.length === 11 && phoneDigits.startsWith("0")
@@ -154,7 +153,8 @@ export async function createAccountFromPayload(
       photo_url: photoUrl,
       resume_url: resumeUrl,
       resume_name: resumeUrl ? resumeName : null,
-      partner_route: partnerRouteForPlan(plan),
+      plan: ownedPlan,
+      partner_route: partnerRouteForPlan(ownedPlan ?? "starter_practice"),
       updated_at: new Date().toISOString(),
     });
     if (candErr) throw candErr;

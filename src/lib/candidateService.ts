@@ -142,9 +142,52 @@ export async function startPayuUpgradeCheckout(plan: string): Promise<void> {
 
   const response = await postToInitiate({ plan }, token);
   if (!response.ok) {
-    throw new Error(response.json?.error || "Could not start payment. Check your connection and try again.");
+    const code = response.json?.code ?? "";
+    const friendly =
+      code === "ALREADY_ON_PLAN"
+        ? "You already have this plan."
+        : code === "NOT_AN_UPGRADE"
+        ? "Your current plan already includes everything in this one."
+        : code === "UNAUTHENTICATED"
+        ? "Your session expired. Sign in again to continue."
+        : response.json?.error || "Could not start payment. Check your connection and try again.";
+    throw new Error(friendly);
   }
   postFormToPayu(response.action, response.fields);
+}
+
+export interface PlanOption {
+  plan: string;
+  name: string;
+  amountInr: number;
+}
+
+export interface UpgradeOptions {
+  current: PlanOption | null;
+  upgrades: PlanOption[];
+}
+
+/**
+ * Server-resolved plan picture for the signed-in candidate: current plan plus
+ * the tiers that can still be bought from here, with prices read from the
+ * plan table (never the browser).
+ */
+export async function fetchUpgradeOptions(): Promise<UpgradeOptions> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) throw new Error("Sign in to see your plans.");
+
+  const response = await fetch("/api/payment/upgrade-options", {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  const json = (await response.json()) as UpgradeOptions & { error?: string; code?: string };
+  if (!response.ok) {
+    throw new Error(json?.error || "Could not load your plans. Try again in a moment.");
+  }
+  return {
+    current: json.current ?? null,
+    upgrades: Array.isArray(json.upgrades) ? json.upgrades : [],
+  };
 }
 
 async function postToInitiate(
