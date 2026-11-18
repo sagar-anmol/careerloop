@@ -10,11 +10,7 @@ import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import Alert from "@mui/material/Alert";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
-import StarIcon from "@mui/icons-material/Star";
 import HandshakeIcon from "@mui/icons-material/Handshake";
-import SchoolIcon from "@mui/icons-material/School";
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 
 interface MuiPricingSectionProps {
   onEnroll?: () => void;
@@ -53,7 +49,7 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
     },
     {
       name: "CareerLoop Pro All-Access Pass",
-      badge: "Most Popular • All-Access",
+      badge: "All-Access Pass",
       badgeColor: "primary" as const,
       isFeatured: true,
       price: "₹4,999",
@@ -156,12 +152,18 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
                     : "0 4px 16px rgba(0, 0, 0, 0.04)",
                   transform: plan.isFeatured ? { lg: "scale(1.02)" } : "none",
                   zIndex: plan.isFeatured ? 2 : 1,
-                  transition: "all 0.25s ease-in-out",
+                  transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease",
+                  "&:hover": {
+                    transform: plan.isFeatured ? { lg: "scale(1.03) translateY(-4px)", xs: "translateY(-4px)" } : "translateY(-4px)",
+                    boxShadow: plan.isFeatured
+                      ? "0 18px 42px rgba(64, 95, 226, 0.22)"
+                      : "0 12px 28px rgba(0, 0, 0, 0.08)",
+                    borderColor: plan.isFeatured ? "primary.main" : "rgba(64, 95, 226, 0.4)",
+                  },
                 }}
               >
                 {/* Highlight Badge */}
                 <Chip
-                  icon={plan.isFeatured ? <StarIcon sx={{ fontSize: 13, color: "#ffffff !important" }} /> : undefined}
                   label={plan.badge}
                   color={plan.badgeColor}
                   size="small"
@@ -295,8 +297,11 @@ export function MuiPricingSection({ onEnroll, onSelectPlan }: MuiPricingSectionP
                     fontWeight: 800,
                     borderRadius: 2.2,
                     boxShadow: plan.isFeatured ? "0 6px 20px rgba(64, 95, 226, 0.4)" : "none",
+                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
                     "&:hover": {
                       bgcolor: plan.isFeatured ? "#2843be" : undefined,
+                      transform: "translateY(-1px)",
+                      boxShadow: plan.isFeatured ? "0 8px 24px rgba(64, 95, 226, 0.55)" : "0 4px 12px rgba(64, 95, 226, 0.2)",
                     },
                   }}
                 >

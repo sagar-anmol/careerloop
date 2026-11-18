@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -17,9 +16,9 @@ import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PersonIcon from "@mui/icons-material/Person";
 import type { CandidateProfileData } from "./MuiProfileModal";
+import { planFromCandidate } from "@/lib/payments/plans";
 
 interface MuiHeaderProps {
   onStartAssessment: () => void;
@@ -46,22 +45,10 @@ export function MuiHeader({
     { label: "FAQ", href: "#faq" },
   ];
 
-  const is1on1User = Boolean(
-    currentUser &&
-      (currentUser.partner_route?.includes("8,999") ||
-        currentUser.partner_route?.includes("1-on-1") ||
-        currentUser.selected_plan === "mentorship_1on1" ||
-        (currentUser as CandidateProfileData & { plan_tier?: string }).plan_tier === "mentorship_1on1")
-  );
-
-  const isProUser = Boolean(
-    currentUser &&
-      !is1on1User &&
-      (currentUser.partner_route?.includes("4,999") ||
-        currentUser.partner_route?.includes("Pro") ||
-        currentUser.selected_plan === "pro_all_access" ||
-        (currentUser as CandidateProfileData & { plan_tier?: string }).plan_tier === "pro_all_access")
-  );
+  // The owned plan: `candidates.plan` first (server-written), legacy label as fallback.
+  const ownedPlan = currentUser ? planFromCandidate(currentUser) : null;
+  const is1on1User = ownedPlan === "mentorship_1on1";
+  const isProUser = ownedPlan === "pro_all_access";
 
   return (
     <AppBar position="sticky" elevation={0}>
@@ -75,36 +62,19 @@ export function MuiHeader({
               alt="CareerLoop logo"
               sx={{ width: 40, height: 40, objectFit: "contain" }}
             />
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography
-                variant="h6"
-                component="a"
-                href="/"
-                sx={{
-                  fontWeight: 800,
-                  color: "text.primary",
-                  textDecoration: "none",
-                  letterSpacing: "-0.5px",
-                }}
-              >
-                Career<span style={{ color: "#405FE2" }}>Loop</span>
-              </Typography>
-              <Chip
-                icon={<CheckCircleIcon style={{ fontSize: 14, color: "#15803d" }} />}
-                label="Career Accelerator Pass"
-                size="small"
-                variant="outlined"
-                sx={{
-                  display: { xs: "none", sm: "inline-flex" },
-                  borderColor: "rgba(21, 128, 61, 0.3)",
-                  color: "#15803d",
-                  bgcolor: "rgba(21, 128, 61, 0.08)",
-                  fontWeight: 600,
-                  fontSize: "0.75rem",
-                  height: 24,
-                }}
-              />
-            </Box>
+            <Typography
+              variant="h6"
+              component="a"
+              href="/"
+              sx={{
+                fontWeight: 800,
+                color: "text.primary",
+                textDecoration: "none",
+                letterSpacing: "-0.5px",
+              }}
+            >
+              Career<span style={{ color: "#405FE2" }}>Loop</span>
+            </Typography>
           </Box>
 
           {/* Desktop Navigation */}
@@ -117,6 +87,7 @@ export function MuiHeader({
                   color: "text.secondary",
                   fontSize: "0.875rem",
                   fontWeight: 500,
+                  transition: "color 0.2s ease",
                   "&:hover": { color: "text.primary" },
                 }}
               >
@@ -275,8 +246,10 @@ export function MuiHeader({
                       borderRadius: 2,
                       bgcolor: "#405FE2",
                       boxShadow: "0 4px 14px rgba(64, 95, 226, 0.35)",
+                      transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
                       "&:hover": {
                         bgcolor: "#2843be",
+                        transform: "translateY(-1px)",
                         boxShadow: "0 6px 18px rgba(64, 95, 226, 0.5)",
                       },
                     }}

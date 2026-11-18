@@ -43,7 +43,7 @@ export function MuiFooter() {
           {/* Quick Links */}
           <Grid size={{ xs: 6, sm: 4, md: 3 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "text.primary" }} gutterBottom>
-              CANDIDATES
+              Candidates
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Link href="#features" underline="hover" color="text.secondary" variant="body2">
@@ -61,7 +61,7 @@ export function MuiFooter() {
           {/* Hiring Tracks */}
           <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "text.primary" }} gutterBottom>
-              QUALIFICATIONS
+              Qualifications
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Typography variant="body2" color="text.secondary">Technical &amp; Skilled Trades</Typography>
@@ -74,7 +74,7 @@ export function MuiFooter() {
           {/* Legal / Contact */}
           <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "text.primary" }} gutterBottom>
-              SUPPORT & TRUST
+              Support &amp; trust
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
               Strict proctored integrity standards. DPDP Act 2023 compliant data privacy.

@@ -8,8 +8,6 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutlineOutlined";
-import Chip from "@mui/material/Chip";
 
 export function MuiFaq() {
   const [expanded, setExpanded] = useState<string | false>("panel0");
@@ -49,19 +47,6 @@ export function MuiFaq() {
     >
       <Container maxWidth="md">
         <Box sx={{ textAlign: "center", mb: 5 }}>
-          <Chip
-            icon={<HelpOutlineIcon style={{ fontSize: 16, color: "#405FE2" }} />}
-            label="Got Questions?"
-            size="small"
-            variant="outlined"
-            sx={{
-              mb: 2,
-              borderColor: "rgba(64, 95, 226, 0.35)",
-              bgcolor: "rgba(64, 95, 226, 0.08)",
-              color: "#2843be",
-              fontWeight: 600,
-            }}
-          />
           <Typography
             variant="h2"
             sx={{
@@ -91,9 +76,18 @@ export function MuiFaq() {
                   borderColor: "divider",
                   borderRadius: 2,
                   "&:before": { display: "none" },
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                  "&:hover": {
+                    borderColor: "rgba(64, 95, 226, 0.4)",
+                    boxShadow: "0 4px 12px rgba(64, 95, 226, 0.04)",
+                  },
                   "&.Mui-expanded": {
                     borderColor: "primary.main",
+                    boxShadow: "0 4px 16px rgba(64, 95, 226, 0.08)",
                   },
+                }}
+                slotProps={{
+                  transition: { unmountOnExit: true, timeout: 250 },
                 }}
               >
                 <AccordionSummary

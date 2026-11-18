@@ -6,44 +6,12 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Chip from "@mui/material/Chip";
 import QuizIcon from "@mui/icons-material/Quiz";
 import DescriptionIcon from "@mui/icons-material/Description";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import ShareIcon from "@mui/icons-material/Share";
 
 export function MuiProgramFeatures() {
-  const features = [
-    {
-      icon: <QuizIcon sx={{ fontSize: 32, color: "#405FE2" }} />,
-      title: "Weekly Mock Test Series",
-      description:
-        "Regular timed assessments mirroring actual technical and aptitude rounds used by fast-hiring enterprises.",
-      bg: "rgba(64, 95, 226, 0.08)",
-    },
-    {
-      icon: <DescriptionIcon sx={{ fontSize: 32, color: "#15803d" }} />,
-      title: "Expert Resume & Profile Curation",
-      description:
-        "Our internal team reviews, optimizes, and updates your resume and skill dossier to meet strict corporate ATS and HR standards.",
-      bg: "rgba(21, 128, 61, 0.08)",
-    },
-    {
-      icon: <RecordVoiceOverIcon sx={{ fontSize: 32, color: "#d97706" }} />,
-      title: "Live Expert Mentorship",
-      description:
-        "Interactive guidance sessions focused on problem-solving approaches, interview etiquette, and technical readiness.",
-      bg: "rgba(217, 119, 6, 0.08)",
-    },
-    {
-      icon: <ShareIcon sx={{ fontSize: 32, color: "#0284c7" }} />,
-      title: "Direct HR & Agency Referrals",
-      description:
-        "Your mock scores, performance trends, and curated resume are actively routed by our team to 450+ fast-hiring partner networks.",
-      bg: "rgba(2, 132, 199, 0.08)",
-    },
-  ];
-
   return (
     <Box
       id="features"
@@ -56,14 +24,7 @@ export function MuiProgramFeatures() {
       }}
     >
       <Container maxWidth="lg">
-        <Box sx={{ textAlign: "center", mb: 6 }}>
-          <Chip
-            label="All-In-One Subscription"
-            size="small"
-            color="primary"
-            variant="outlined"
-            sx={{ mb: 1.5, fontWeight: 700 }}
-          />
+        <Box sx={{ mb: 6 }}>
           <Typography
             variant="h2"
             sx={{
@@ -73,64 +34,200 @@ export function MuiProgramFeatures() {
               color: "text.primary",
             }}
           >
-            Everything Included in Your CareerLoop Pro Pass
+            What your pass includes
           </Typography>
           <Typography
             variant="body1"
             sx={{
               color: "text.secondary",
-              maxWidth: 680,
-              mx: "auto",
+              maxWidth: 520,
               lineHeight: 1.6,
             }}
           >
-            Designed to bridge the gap between skill preparation and direct employer hiring.
+            Four programmes working together to move you from preparation to placement.
           </Typography>
         </Box>
 
-        <Grid container spacing={3}>
-          {features.map((feat, idx) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={idx}>
-              <Paper
-                variant="outlined"
+        {/* Row 1: Featured pair — different compositions to reflect content hierarchy */}
+        <Grid container spacing={3} sx={{ mb: 3 }}>
+          {/* Flagship card: Mock Tests — larger, left-aligned icon, more visual weight */}
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: { xs: 3, md: 4 },
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 3,
+                borderColor: "primary.main",
+                borderWidth: 1.5,
+                bgcolor: "rgba(64, 95, 226, 0.03)",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 12px 28px rgba(64, 95, 226, 0.12)",
+                },
+                "&:hover .feature-icon": {
+                  transform: "scale(1.08)",
+                },
+              }}
+            >
+              <Box
+                className="feature-icon"
                 sx={{
-                  p: 3,
-                  height: "100%",
+                  width: 56,
+                  height: 56,
+                  borderRadius: 2,
+                  bgcolor: "rgba(64, 95, 226, 0.10)",
                   display: "flex",
-                  flexDirection: "column",
-                  borderRadius: 3,
-                  borderColor: "divider",
-                  transition: "all 0.25s ease",
-                  "&:hover": {
-                    borderColor: "primary.main",
-                    transform: "translateY(-4px)",
-                    boxShadow: "0 10px 24px rgba(64, 95, 226, 0.08)",
-                  },
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mb: 2.5,
+                  transition: "transform 0.25s ease",
                 }}
               >
-                <Box
-                  sx={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: 2,
-                    bgcolor: feat.bg,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    mb: 2,
-                  }}
-                >
-                  {feat.icon}
+                <QuizIcon sx={{ fontSize: 30, color: "#405FE2" }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1.1rem", mb: 1 }}>
+                Weekly Mock Test Series
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+                Timed assessments that mirror the technical and aptitude rounds used by fast-hiring enterprises. Each set is scored server-side with negative marking, so your result reflects what hiring managers actually see.
+              </Typography>
+            </Paper>
+          </Grid>
+
+          {/* Supporting flagship: Resume Curation — horizontal layout, text-heavier */}
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: { xs: 3, md: 4 },
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 3,
+                borderColor: "divider",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 10px 24px rgba(0, 0, 0, 0.06)",
+                  borderColor: "primary.main",
+                },
+                "&:hover .feature-icon": {
+                  transform: "scale(1.1)",
+                },
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+                <Box className="feature-icon" sx={{ display: "inline-flex", transition: "transform 0.25s ease" }}>
+                  <DescriptionIcon sx={{ fontSize: 26, color: "#15803d", flexShrink: 0 }} />
                 </Box>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1.05rem", mb: 1 }}>
-                  {feat.title}
+                <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1.05rem" }}>
+                  Expert Resume &amp; Profile Curation
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
-                  {feat.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
+              </Box>
+              <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+                Our internal team reviews your resume against corporate ATS criteria, optimizes it for the roles you are targeting, and packages it with your mock results into a verified dossier ready for HR dispatch.
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+
+        {/* Row 2: Supporting pair — equal columns, simpler treatment */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 3,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 3,
+                borderColor: "divider",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 10px 24px rgba(0, 0, 0, 0.06)",
+                  borderColor: "primary.main",
+                },
+                "&:hover .feature-icon": {
+                  transform: "scale(1.08)",
+                },
+              }}
+            >
+              <Box
+                className="feature-icon"
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
+                  bgcolor: "rgba(217, 119, 6, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mb: 2,
+                  transition: "transform 0.25s ease",
+                }}
+              >
+                <RecordVoiceOverIcon sx={{ fontSize: 26, color: "#d97706" }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1rem", mb: 1 }}>
+                Live Expert Mentorship
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                Interactive sessions on problem-solving approaches, interview etiquette, and technical readiness, led by practitioners in your domain.
+              </Typography>
+            </Paper>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 3,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 3,
+                borderColor: "divider",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 10px 24px rgba(0, 0, 0, 0.06)",
+                  borderColor: "primary.main",
+                },
+                "&:hover .feature-icon": {
+                  transform: "scale(1.08)",
+                },
+              }}
+            >
+              <Box
+                className="feature-icon"
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
+                  bgcolor: "rgba(2, 132, 199, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mb: 2,
+                  transition: "transform 0.25s ease",
+                }}
+              >
+                <ShareIcon sx={{ fontSize: 26, color: "#0284c7" }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1rem", mb: 1 }}>
+                Direct HR &amp; Agency Referrals
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                Your mock scores, performance trends, and curated resume are routed by our team to 450+ fast-hiring partner networks on an active, rolling basis.
+              </Typography>
+            </Paper>
+          </Grid>
         </Grid>
       </Container>
     </Box>

@@ -17,15 +17,15 @@ export const LEGAL_META = {
    * BRACKETS] so a draft can never pass for a published document by accident.
    */
   entityName: "CareerLoop",
-  registeredOffice: "Sonpur, Bihar, India",
+  registeredOffice: "Ward No-43, Chandwara, Banke Sah Chowk, Muzaffarpur, Bihar - 842001, India",
   jurisdictionCity: "Patna, Bihar",
-  effectiveDate: "14 November 2026",
+  effectiveDate: "18 November 2026",
   grievanceOfficerName: "Mirnal Kishore",
   grievanceOfficerDesignation: "Grievance Officer",
   grievanceOfficerEmail: "mirnal@careerloop.co.in",
-  grievanceOfficerAddress: "c/o CareerLoop, Sonpur, Bihar, India",
+  grievanceOfficerAddress: "c/o CareerLoop, Ward No-43, Chandwara, Banke Sah Chowk, Muzaffarpur, Bihar - 842001, India",
 
-  lastUpdated: "14 November 2026",
+  lastUpdated: "18 November 2026",
   version: "1.0",
   /** flip to false only after every placeholder above is replaced */
   draft: false,

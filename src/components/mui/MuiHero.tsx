@@ -9,10 +9,10 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 interface MuiHeroProps {
   onOpenSignup: () => void;
-  onStartAssessment: () => void;
+  onStartAssessment?: () => void;
 }
 
-export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
+export function MuiHero({ onOpenSignup }: MuiHeroProps) {
   return (
     <Box
       component="section"
@@ -54,6 +54,7 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               color: "#ffffff",
               mb: 2,
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+              animation: "fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards",
             }}
           >
             Weekly Mocks. Expert Mentorship.
@@ -75,13 +76,22 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
               mb: 3.5,
               maxWidth: 580,
               textShadow: "0 1px 6px rgba(0, 0, 0, 0.4)",
+              animation: "fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both",
             }}
           >
-            Join CareerLoop Pro to access weekly mock tests, live mentorship sessions, and expert resume optimization. Our team analyzes your performance metrics and routes your verified candidate dossier directly to 450+ fast-hiring HR agencies and corporate employers.
+            Take structured weekly mock tests, sharpen your interview skills with live mentors, and let our team build a verified profile that goes directly to hiring HR agencies and partner employers.
           </Typography>
 
-          {/* Call to Action Buttons (Separated Signup & Assessment) */}
-          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, justifyContent: { xs: "center", md: "flex-start" } }}>
+          {/* Call to Action Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 2,
+              justifyContent: { xs: "center", md: "flex-start" },
+              animation: "fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both",
+            }}
+          >
             <Button
               variant="contained"
               size="large"
@@ -95,13 +105,15 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 bgcolor: "#405FE2",
                 color: "#ffffff",
                 boxShadow: "0 6px 20px rgba(64, 95, 226, 0.5)",
+                transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
                 "&:hover": {
                   bgcolor: "#2843be",
-                  boxShadow: "0 8px 24px rgba(64, 95, 226, 0.7)",
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 10px 28px rgba(64, 95, 226, 0.7)",
                 },
               }}
             >
-              Unlock CareerLoop Pro
+              Join CareerLoop Pro
             </Button>
             <Button
               variant="outlined"
@@ -117,13 +129,15 @@ export function MuiHero({ onOpenSignup, onStartAssessment }: MuiHeroProps) {
                 borderColor: "rgba(255, 255, 255, 0.4)",
                 bgcolor: "rgba(255, 255, 255, 0.08)",
                 backdropFilter: "blur(6px)",
+                transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
                 "&:hover": {
                   borderColor: "#ffffff",
                   bgcolor: "rgba(255, 255, 255, 0.18)",
+                  transform: "translateY(-2px)",
                 },
               }}
             >
-              Explore Program Pass
+              View Plans
             </Button>
           </Box>
         </Box>
